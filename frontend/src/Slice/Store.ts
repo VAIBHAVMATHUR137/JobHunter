@@ -1,9 +1,12 @@
 import {configureStore} from '@reduxjs/toolkit'
-import { candidateLoginReducer,recruiterLoginReducer } from './Slice';
+import { candidateLoginReducer,recruiterLoginReducer,candidateRegistrationReducer,recruiterRegistrationReducer } from './Slice';
 const store=configureStore({
     reducer:{
         candidateLogin:candidateLoginReducer,
-        recruiterLogin:recruiterLoginReducer
+        recruiterLogin:recruiterLoginReducer,
+        candidateRegister:candidateRegistrationReducer,
+        recruiterRegister:recruiterRegistrationReducer
+        
     }   
 })
 export type RootState=ReturnType<typeof store.getState>

@@ -6,7 +6,7 @@ const mobileNumberRegex: RegExp = /^(\+\d{1,3}[- ]?)?\d{10}$/;
 
 interface IRecruiter extends Document{
     name:string,
-    number:string,
+    number:number,
     email:string,
     password:string,
     company:string,
@@ -19,7 +19,7 @@ const recruiterSchema:Schema=new mongoose.Schema({
       },
 
       number: {
-        type: String,
+        type: Number,
         required: [true, "Mobile number is required"],
         unique: true,
         validate: {

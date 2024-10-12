@@ -8,14 +8,14 @@ const mobileNumberRegex: RegExp = /^(\+\d{1,3}[- ]?)?\d{10}$/;
 interface ICandidate extends Document {
   name: string;
   email: string;
-  number: string;
+  number: number;
   password: string;
   current_location: string;
   degree: string;
   skills: string[];
   college_name: string;
   college_tier: string;
-  preferred_location: string;
+  preferred_location: string[];
   notice_period: number;
   years_of_experience: number;
   github: string;
@@ -36,7 +36,7 @@ const candidateSchema: Schema = new mongoose.Schema({
     unique: true,
   },
   number: {
-    type: String,
+    type: Number,
     required: [true, "Mobile number is required"],
     unique: true,
     validate: {
@@ -75,7 +75,7 @@ const candidateSchema: Schema = new mongoose.Schema({
     required: true,
   },
   preferred_location: {
-    type: String,
+    type: [String],
     required: true,
   },
   notice_period: {
