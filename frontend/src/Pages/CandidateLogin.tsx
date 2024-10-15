@@ -1,15 +1,46 @@
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../Slice/Store";
-const candidateLogin = (credentials: { email: string; password: string }) => ({
-  type: "CANDIDATE_LOGIN",
-  payload: credentials,
-});
+import React, { ChangeEvent } from "react";
+import {
+  Button,
+  TextField,
+  Card,
+  CardContent,
+  CardHeader,
+  CardActions,
+  Typography,
+  Box,
+} from "@mui/material";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+//Create a custom theme
+const theme=createTheme({
+palette:{
+  primary:{
+    main:"#3a71a8"
+  }
+}
+})
+
+
 
 function CandidateLogin() {
   const dispatch = useDispatch();
-  const loginData = useSelector((state: RootState) => state.candidateLogin);
+  const {email,password}= useSelector((state: RootState) => state.candidateLogin);
+  const handleInputChange=(e:ChangeEvent<HTMLInputElement>)=>{
 
-  return <div></div>;
+  }
+  return (
+    <>
+      <label>
+        Email:
+        <input type="email" name="email" id="email" />
+      </label>
+      <label>
+        Password:
+        <input type="password" name="password" id="password"  />
+      </label>
+    </>
+  );
 }
 
 export default CandidateLogin;

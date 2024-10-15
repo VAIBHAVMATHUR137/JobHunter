@@ -18,6 +18,7 @@ interface ICandidate extends Document {
   preferred_location: string[];
   notice_period: number;
   years_of_experience: number;
+
   github: string;
   xProfile?: string;     // Optional field
   linkedin: string;
@@ -86,6 +87,7 @@ const candidateSchema: Schema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+
   github: {
     type: String,
     required: true,
