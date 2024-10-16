@@ -1,6 +1,8 @@
 import Candidate from "../schema/CandidateSchema";
+import Login from "../schema/LoginSchema";
 import { Request, Response } from "express";
 
+//Fetching all the candidates registered at the portal
 export const fetchAllCandidates = async (req: Request, res: Response) => {
   try {
     const candidates = await Candidate.find();
@@ -9,6 +11,7 @@ export const fetchAllCandidates = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Error fetching candidates", error });
   }
 };
+//Fetching a particular candidate, registered at the portal
 export const fetchIndividualCandidate = async (req: Request, res: Response) => {
   const candidate = await Candidate.findById(req.params.id);
   if (!candidate) {
@@ -19,6 +22,7 @@ export const fetchIndividualCandidate = async (req: Request, res: Response) => {
     .status(200)
     .json(`Here we found application for the candidate ${req.body.name}`);
 };
+//Registartion by a candidate at portal
 export const postCandidate = async (req: Request, res: Response) => {
   const {
     name,
@@ -77,6 +81,7 @@ export const postCandidate = async (req: Request, res: Response) => {
   });
   res.status(200).json(candidate);
 };
+//Deleting a candidate from the portal
 export const deleteCandidate = async (req: Request, res: Response) => {
   const candidate = await Candidate.findById(req.params.id);
   if (!candidate) {
@@ -86,3 +91,8 @@ export const deleteCandidate = async (req: Request, res: Response) => {
   await Candidate.deleteOne({ _id: candidate._id });
   res.status(200).json(`Candidate ${candidate.name} has been deleted`);
 };
+//Login feature for candidate
+
+export const candidateLogin=async (req:Request,res:Response)=>{
+  res.status(200).json({"Message":"Login API for candidate is running fine"})
+}
