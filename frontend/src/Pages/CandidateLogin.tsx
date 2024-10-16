@@ -8,7 +8,7 @@ import {
   CardContent,
 
   CardActions,
-
+  CardHeader,
   Box,
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -58,19 +58,18 @@ function CandidateLogin() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "100vh",
-          bgcolor: "background.default",
-        }}
+      <div
+      className="flex justify-center items-center min-h-screen bg-gray-100 p-4"
       >
-        <Card sx={{ width: "100%", maxWidth: "24rem" }}>
+        <Card className="w-full max-w-md">
+        <CardHeader
+            title="Login"
+            subheader="Candidate kindly login here"
+            className="text-center"
+          />
           <form onSubmit={handleSubmit}>
             <CardContent
-              sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+              className="space-y-4"
             >
               <TextField
                 fullWidth
@@ -95,18 +94,21 @@ function CandidateLogin() {
             </CardContent>
             <CardActions sx={{padding:'2'}}>
               <Button 
-              type="submit"
-              variant="outlined"
-              color="primary"
-              fullWidth
-              disabled={!isFormComplete}
+             type="submit" 
+             variant="contained" 
+             color="primary" 
+             fullWidth
+             
+             disabled={!isFormComplete}
+           
+              
               >
                 Login
               </Button>
             </CardActions>
           </form>
         </Card>
-      </Box>
+      </div>
     </ThemeProvider>
   );
 }
