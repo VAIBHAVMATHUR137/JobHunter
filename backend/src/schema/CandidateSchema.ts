@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 // Regex patterns
-const passwordRegex: RegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+// const passwordRegex: RegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 const mobileNumberRegex: RegExp = /^(\+\d{1,3}[- ]?)?\d{10}$/;
 
 // Define the interface for the schema
@@ -48,12 +48,12 @@ const candidateSchema: Schema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, "Password is required"],
-    minlength: [8, "Password must be at least 8 characters long"],
-    validate: {
-      validator: (value: string) => passwordRegex.test(value),
-      message:
-        "Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character.",
-    },
+    // minlength: [8, "Password must be at least 8 characters long"],
+    // validate: {
+    //   validator: (value: string) => passwordRegex.test(value),
+    //   message:
+    //     "Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character.",
+    // },
   },
   current_location: {
     type: String,
