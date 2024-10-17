@@ -124,18 +124,24 @@ export const deleteCandidate = expressAsyncHandler(
 export const candidateLogin = expressAsyncHandler(
   async (req: Request, res: Response) => {
     const { email, password } = req.body;
+
+    // Validate input
     if (!email || !password) {
       res.status(400);
       throw new Error("All fields are mandatory for job seeker to login");
     }
+
+    // Find candidate by email
     const candidate = await Candidate.findOne({ email });
+
+    // Check password
     if (candidate && (await bcrypt.compare(password, candidate.password))) {
       if (!SECRET_ACCESS_TOKEN) {
         res.status(500);
-        throw new Error(
-          "Internal server error: SECRET_ACCESS_TOKEN is not defined"
-        );
+        throw new Error("Internal server error: SECRET_ACCESS_TOKEN is not defined");
       }
+
+      // Generate access token
       const accessToken = jwt.sign(
         {
           candidate: {
@@ -146,11 +152,18 @@ export const candidateLogin = expressAsyncHandler(
         SECRET_ACCESS_TOKEN,
         { expiresIn: "15m" }
       );
+
+      // Return the token and user information
+      res.status(200).json({
+        accessToken,
+        candidate: {
+          email: candidate.email,
+          id: candidate.id,
+        },
+      });
     } else {
       res.status(401);
-      throw new Error(
-        "Email or Password entered by the candidate is not valid"
-      );
+      throw new Error("Invalid email or password");
     }
   }
 );
