@@ -1,10 +1,37 @@
-import { NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import { constants } from "../constants";
-const errorHandler=(err:Error,req:Request,res:Response&{statusCode?:number},next:NextFunction)=>{
-    const statusCode=res.statusCode?res.statusCode:500
-    switch(statusCode){
-        case constants.VALIDATION_ERROR:
 
-        
-    }
+interface CustomError extends Error {
+  statusCode?: number;
 }
+
+const errorHandler = (
+  err: CustomError,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const statusCode = err.statusCode || 500;
+
+  let title = "Server Error";
+
+  if (statusCode === constants.VALIDATION_ERROR) {
+    title = "Validation Failed";
+  } else if (statusCode === constants.UNAUTHORIZED) {
+    title = "Unauthorized";
+  } else if (statusCode === constants.FORBIDDEN) {
+    title = "Forbidden";
+  } else if (statusCode === constants.NOT_FOUND) {
+    title = "Not Found";
+  }
+
+  const errorResponse = {
+    title: title,
+    message: err.message,
+    stackTrace: process.env.NODE_ENV === "production" ? "🥞" : err.stack,
+  };
+
+  res.status(statusCode).json(errorResponse);
+};
+
+export default errorHandler;
