@@ -1,27 +1,35 @@
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../Slice/Store";
-import React, { ChangeEvent, FormEvent } from "react";
+import React, { ChangeEvent, FormEvent, useState, useEffect } from "react";
 import {
   Button,
   TextField,
   Card,
   CardContent,
-
   CardActions,
   CardHeader,
-  Box,
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { styled } from "@mui/system";
 import {
   resetCandidateLoginField,
   updateCandidateLoginField,
 } from "../Slice/Slice";
-//Create a custom theme
+
+// Create a custom theme
 const theme = createTheme({
   palette: {
     primary: {
       main: "#3a71a8",
     },
+  },
+});
+
+// Styled button with hover rotation effect
+const RotatingButton = styled(Button)({
+  transition: "transform 0.7s ease", // Correct syntax
+  "&:hover": {
+    transform: "rotate(180deg)",
   },
 });
 
@@ -31,46 +39,59 @@ function CandidateLogin() {
     (state: RootState) => state.candidateLogin
   );
 
-  //function to handle input
+  // Local state to track if the form is complete
+  const [isFormComplete, setIsFormComplete] = useState(false);
+
+  // Check form completion whenever email or password changes
+  useEffect(() => {
+    setIsFormComplete(email.trim() !== "" && password.trim() !== "");
+  }, [email, password]);
+
+  // Function to handle input changes
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     dispatch(
       updateCandidateLoginField({ field: name as "email" | "password", value })
     );
-    
   };
-  //this will return true if name and value are not empty
-  const isFormComplete=(event:ChangeEvent<HTMLInputElement>)=>{
-    const {name,value}=event.target
-    if(!name||value.trim()===''){
-      return false;
-    }
-    return true;
-  }
 
-  //function to handle form submission
+  // Function to handle form submission
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    console.log("login attempt with" + " " + { email, password });
-    dispatch(resetCandidateLoginField({ field: "email", value: " " }));
+    console.log("Login attempt with", { email, password });
+
+    // Reset form fields after submission
+    dispatch(resetCandidateLoginField({ field: "email", value: "" }));
     dispatch(resetCandidateLoginField({ field: "password", value: "" }));
+  };
+
+  // Render the appropriate button based on form completeness
+  const renderButton = () => {
+    if (isFormComplete) {
+      return (
+        <Button type="submit" variant="contained" color="primary" fullWidth>
+          Login
+        </Button>
+      );
+    }
+    return (
+      <RotatingButton variant="contained" color="primary" fullWidth>
+      Login
+      </RotatingButton>
+    );
   };
 
   return (
     <ThemeProvider theme={theme}>
-      <div
-      className="flex justify-center items-center min-h-screen bg-gray-100 p-4"
-      >
+      <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
         <Card className="w-full max-w-md">
-        <CardHeader
+          <CardHeader
             title="Login"
             subheader="Candidate kindly login here"
             className="text-center"
           />
           <form onSubmit={handleSubmit}>
-            <CardContent
-              className="space-y-4"
-            >
+            <CardContent className="space-y-4">
               <TextField
                 fullWidth
                 label="Email"
@@ -92,19 +113,8 @@ function CandidateLogin() {
                 variant="outlined"
               />
             </CardContent>
-            <CardActions sx={{padding:'2'}}>
-              <Button 
-             type="submit" 
-             variant="contained" 
-             color="primary" 
-             fullWidth
-             
-             disabled={!isFormComplete}
-           
-              
-              >
-                Login
-              </Button>
+            <CardActions sx={{ padding: "2" }}>
+              {renderButton()}
             </CardActions>
           </form>
         </Card>
