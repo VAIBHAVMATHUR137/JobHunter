@@ -27,9 +27,14 @@ const theme = createTheme({
 
 // Styled button with hover rotation effect
 const RotatingButton = styled(Button)({
-  transition: "transform 0.7s ease", // Correct syntax
+  backgroundColor: "#3a71a8", // Initial blue background
+  color: "#fff", // Initial white text color
+  transition: "background-color 0.3s ease, color 0.3s ease", // Smooth transition for both properties
+
   "&:hover": {
-    transform: "rotate(180deg)",
+    backgroundColor: "transparent", // Transparent background on hover
+    color: "#000", // Black text on hover
+     cursor: "default"
   },
 });
 
