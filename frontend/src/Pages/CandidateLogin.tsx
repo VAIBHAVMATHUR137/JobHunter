@@ -25,9 +25,9 @@ const theme = createTheme({
   },
 });
 
-// Styled button with hover rotation effect
-const RotatingButton = styled(Button)({
-  backgroundColor: "#3a71a8", // Initial blue background
+//Styled button with transparent effect at hover
+const LoginButton = styled(Button)({
+  backgroundColor: theme.palette.primary.main, // Initial blue background
   color: "#fff", // Initial white text color
   transition: "background-color 0.3s ease, color 0.3s ease", // Smooth transition for both properties
 
@@ -80,9 +80,9 @@ function CandidateLogin() {
       );
     }
     return (
-      <RotatingButton variant="contained" color="primary" fullWidth>
+      <LoginButton variant="contained" color="primary" fullWidth>
       Login
-      </RotatingButton>
+      </LoginButton>
     );
   };
 
