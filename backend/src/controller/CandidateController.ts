@@ -1,5 +1,5 @@
 import Candidate from "../schema/CandidateSchema";
-import Login from "../schema/LoginSchema";
+
 import { Request, Response } from "express";
 import expressAsyncHandler from "express-async-handler";
 import bcrypt from "bcrypt";

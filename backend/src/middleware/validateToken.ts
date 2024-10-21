@@ -21,9 +21,11 @@ const validateToken = expressAsyncHandler(
       try {
         const decoded = jwt.verify(token, process.env.SECRET_ACCESS_TOKEN as string) as JwtPayload;
         console.log(decoded);
-
+      
+        
         next();
       } catch (error) {
+        console.log(error)
         res.status(401);
         throw new Error("User not authorized");
       }
