@@ -5,7 +5,7 @@ import jobRoute from "./routes/JobPostingRoute"
 import cors from 'cors';
 import connectDb from './dbConnection';
 import dotenv from 'dotenv';
-import JobPosting from './schema/JobPostingSchema';
+
 
 dotenv.config();
 connectDb()

@@ -3,7 +3,7 @@ import mongoose, { Document, Schema } from "mongoose";
 interface EachJobPosting extends Document {
   job_role: string;
   CTC: number;
-  experience_required: boolean;
+  experience_required: String ;
   years_of_experience_required: number;
   degree_required: string[];
   bond: string;
@@ -22,7 +22,7 @@ const jobPostingSchema: Schema = new mongoose.Schema({
     required: true
   },
   experience_required: {
-    type: Boolean,
+    type: String,
     required: true
   },
   years_of_experience_required: {
