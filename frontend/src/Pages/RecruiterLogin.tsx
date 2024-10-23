@@ -13,8 +13,7 @@ import {
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { styled } from "@mui/system";
 import {
-  resetRecruiterLoginField,
-  updateRecruiterLoginField,
+  recruiterLoginUpdateField, recruiterLoginResetField
 } from "../Slice/Slice";
 
 
@@ -52,14 +51,14 @@ function RecruiterLogin() {
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     dispatch(
-      updateRecruiterLoginField({ field: name as "email" | "password", value })
+      recruiterLoginUpdateField({ field: name as "email" | "password", value })
     );
   };
   //Function to handle form submission by recruiter
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
-    dispatch(resetRecruiterLoginField({ field: "email", value: "" }));
-    dispatch(resetRecruiterLoginField({ field: "password", value: "" }));
+    dispatch(recruiterLoginResetField({ field: "email", value: "" }));
+    dispatch(recruiterLoginResetField({ field: "password", value: "" }));
   };
   //Function to display the style of button depending upon completion of form
   function RenderButton() {

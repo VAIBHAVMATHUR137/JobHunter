@@ -12,8 +12,8 @@ import {
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { styled } from "@mui/system";
 import {
-  resetCandidateLoginField,
-  updateCandidateLoginField,
+
+  candidateLoginUpdateField, candidateLoginResetField
 } from "../Slice/Slice";
 
 // Create a custom theme
@@ -56,7 +56,7 @@ function CandidateLogin() {
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     dispatch(
-      updateCandidateLoginField({ field: name as "email" | "password", value })
+      candidateLoginUpdateField({ field: name as "email" | "password", value })
     );
   };
 
@@ -66,8 +66,8 @@ function CandidateLogin() {
     console.log("Login attempt with", { email, password });
 
     // Reset form fields after submission
-    dispatch(resetCandidateLoginField({ field: "email", value: "" }));
-    dispatch(resetCandidateLoginField({ field: "password", value: "" }));
+    dispatch(candidateLoginResetField({ field: "email", value: "" }));
+    dispatch(candidateLoginResetField({ field: "password", value: "" }));
   };
 
   // Render the appropriate button based on form completeness
