@@ -1,7 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../Slice/Store";
 import React, { ChangeEvent, FormEvent, useState, useEffect } from "react";
-
 import {
   Button,
   TextField,
@@ -13,11 +12,11 @@ import {
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { styled } from "@mui/system";
 import {
-  recruiterLoginUpdateField, recruiterLoginResetField
+  recruiterLoginUpdateField,
+  recruiterLoginResetField
 } from "../Slice/Slice";
 
-
-//Create custom theme
+// Create custom theme
 const theme = createTheme({
   palette: {
     primary: {
@@ -25,57 +24,64 @@ const theme = createTheme({
     },
   },
 });
-//Styled button with transparent effect at hover
-const LoginButton = styled(Button)({
-  backgroundColor: theme.palette.primary.main, // Initial blue background
-  color: "#fff", // Initial white text color
-  transition: "background-color 0.3s ease, color 0.3s ease", // Smooth transition for both properties
 
+// Styled button with transparent effect at hover
+const LoginButton = styled(Button)({
+  backgroundColor: theme.palette.primary.main,
+  color: "#fff",
+  transition: "background-color 0.3s ease, color 0.3s ease",
   "&:hover": {
-    backgroundColor: "transparent", // Transparent background on hover
-    color: "#000", // Black text on hover
+    backgroundColor: "transparent",
+    color: "#000",
     cursor: "default",
   },
 });
 
+// Simple array of field names
+const formFields = ["email", "password"] as const;
+type FieldName = typeof formFields[number];
+
 function RecruiterLogin() {
   const dispatch = useDispatch();
-  const { email, password } = useSelector(
-    (state: RootState) => state.recruiterLogin
-  );
+  const formData = useSelector((state: RootState) => state.recruiterLogin);
   const [formComplete, setIsFormComplete] = useState(false);
+
   useEffect(() => {
-    setIsFormComplete(email.trim() !== "" && password.trim() !== "");
-  }, [email, password]);
-  //Function to handle input change
+    const isComplete = formFields.every(field => formData[field].trim() !== "");
+    setIsFormComplete(isComplete);
+  }, [formData]);
+
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    dispatch(
-      recruiterLoginUpdateField({ field: name as "email" | "password", value })
-    );
+    dispatch(recruiterLoginUpdateField({ field: name as FieldName, value }));
   };
-  //Function to handle form submission by recruiter
+
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
-    dispatch(recruiterLoginResetField({ field: "email", value: "" }));
-    dispatch(recruiterLoginResetField({ field: "password", value: "" }));
+    formFields.forEach(field => {
+      dispatch(recruiterLoginResetField({ field, value: "" }));
+    });
   };
-  //Function to display the style of button depending upon completion of form
-  function RenderButton() {
-    if (formComplete) {
-      return (
-        <Button type="submit" variant="contained" color="primary" fullWidth>
-          Login
-        </Button>
-      );
-    } else {
-      return (
-        <LoginButton variant="contained" color="primary" fullWidth>
-          Login
-        </LoginButton>
-      );
-    }
-  }
+
+  const RenderButton = () => (
+    formComplete ? (
+      <Button type="submit" variant="contained" color="primary" fullWidth>
+        Login
+      </Button>
+    ) : (
+      <LoginButton variant="contained" color="primary" fullWidth>
+        Login
+      </LoginButton>
+    )
+  );
+
+  // Helper function to get field type
+  const getFieldType = (field: FieldName): string => field;
+
+  // Helper function to get field label
+  const getFieldLabel = (field: FieldName): string => 
+    field.charAt(0).toUpperCase() + field.slice(1);
+
   return (
     <ThemeProvider theme={theme}>
       <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
@@ -87,32 +93,28 @@ function RecruiterLogin() {
           />
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">
-              <TextField
-                fullWidth
-                label="Email"
-                name="email"
-                type="email"
-                value={email}
-                onChange={handleInputChange}
-                required
-                variant="outlined"
-              />
-              <TextField
-                fullWidth
-                label="Password"
-                name="password"
-                type="password"
-                value={password}
-                onChange={handleInputChange}
-                required
-                variant="outlined"
-              />
+              {formFields.map((field) => (
+                <TextField
+                  key={field}
+                  fullWidth
+                  label={getFieldLabel(field)}
+                  name={field}
+                  type={getFieldType(field)}
+                  value={formData[field]}
+                  onChange={handleInputChange}
+                  required
+                  variant="outlined"
+                />
+              ))}
             </CardContent>
-            <CardActions sx={{ padding: "2" }}>{RenderButton()}</CardActions>
+            <CardActions sx={{ padding: "2" }}>
+              <RenderButton />
+            </CardActions>
           </form>
         </Card>
       </div>
     </ThemeProvider>
   );
 }
+
 export default RecruiterLogin;

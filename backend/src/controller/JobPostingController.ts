@@ -1,6 +1,15 @@
 import JobPosting from "../schema/JobPostingSchema";
-import e, { Request, Response } from "express";
+import { Request, Response } from "express";
 import expressAsyncHandler from "express-async-handler";
+
+// Custom Middleware to ensure only recruiters can access the job posting 
+const recruiterOnly = (req: Request, res: Response, next: Function) => {
+  if (req.user?.role !== 'recruiter') {
+    res.status(403);
+    throw new Error('Access denied: Only recruiters can perform this action');
+  }
+  next();
+};
 
 //Fetch all the jobs posted by a particular recruiter
 export const fetchAllJobsPosted = expressAsyncHandler(
@@ -9,7 +18,7 @@ export const fetchAllJobsPosted = expressAsyncHandler(
       const jobposted = await JobPosting.find();
       res.status(200).json(jobposted);
     } catch (error) {
-      res.status(500).json({ message: "Error fetching candidates", error });
+      res.status(500).json({ message: "Error fetching jobs", error });
     }
   }
 );
@@ -19,20 +28,37 @@ export const fetchParticularJobPosted = expressAsyncHandler(
   async (req: Request, res: Response) => {
     const jobposted = await JobPosting.findById(req.params.id);
     if (!jobposted) {
-      res.status(400);
+      res.status(404);
       throw new Error("No such job exists");
     }
-    res
-      .status(200)
-      .json(
-        `This job has been posted for the company ${jobposted.company}for the role of ${jobposted.job_role}`
-      );
+    res.status(200).json(jobposted);
   }
 );
+
 //Edit requirements of job already posted by recruiter
 export const editjobPosting = expressAsyncHandler(
   async (req: Request, res: Response) => {
-    res.status(200).json({ Message: "editJobPosting API running fine" });
+    const jobId = req.params.id;
+    const jobPosting = await JobPosting.findById(jobId);
+
+    if (!jobPosting) {
+      res.status(404);
+      throw new Error("Job posting not found");
+    }
+
+    // Convert IDs to strings for comparison
+    if (jobPosting.recruiterId.toString() !== req.user?.id) {
+      res.status(403);
+      throw new Error("You can only edit your own job postings");
+    }
+
+    const updatedJob = await JobPosting.findByIdAndUpdate(
+      jobId,
+      req.body,
+      { new: true }
+    );
+
+    res.status(200).json(updatedJob);
   }
 );
 
@@ -50,6 +76,7 @@ export const postNewJob = expressAsyncHandler(
       company,
       skills_required,
     } = req.body;
+
     if (
       !job_role ||
       !CTC ||
@@ -66,11 +93,16 @@ export const postNewJob = expressAsyncHandler(
         "All fields are mandatory for a recruiter to post a new job"
       );
     }
+
+    // Validate experience logic
     if (experience_required === "FALSE" && years_of_experience_required > 0) {
+      res.status(400);
       throw new Error(
         "This is a fresher job and cannot demand experience from candidate"
       );
     }
+
+    // Add recruiter information to the job posting
     const job = await JobPosting.create({
       job_role,
       CTC,
@@ -81,17 +113,11 @@ export const postNewJob = expressAsyncHandler(
       job_location,
       company,
       skills_required,
+      recruiterId: req.user?.id,
+      recruiterEmail: req.user?.email, 
     });
-    console.log(
-      `Here we created a job for ${company} for recruitment of ${job_role}`
-    );
-    if (job) {
-      res.status(201).json(job);
-      console.log(`Here we created a candidate with id: ${job._id}`);
-    } else {
-      res.status(400);
-      throw new Error("Data entered by candidate is not valid");
-    }
+
+    res.status(201).json(job);
   }
 );
 
@@ -99,11 +125,23 @@ export const postNewJob = expressAsyncHandler(
 export const deleteExistingJob = expressAsyncHandler(
   async (req: Request, res: Response) => {
     const jobposting = await JobPosting.findById(req.params.id);
+    
     if (!jobposting) {
-      res.status(400);
-      throw new Error("Such candidate do not exists in our database");
+      res.status(404);
+      throw new Error("Job posting not found");
     }
-    await jobposting.deleteOne({ _id: jobposting._id });
-    res.status(200).json(`Job posting for the role of ${jobposting.job_role} has been deleted`);
+
+    // Convert IDs to strings for comparison
+    if (jobposting.recruiterId.toString() !== req.user?.id) {
+      res.status(403);
+      throw new Error("You can only delete your own job postings");
+    }
+
+    await JobPosting.deleteOne({ _id: req.params.id });
+    res.status(200).json({
+      message: `Job posting for the role of ${jobposting.job_role} has been deleted`,
+    });
   }
 );
+
+export { recruiterOnly };

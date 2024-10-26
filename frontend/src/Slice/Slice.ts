@@ -103,7 +103,7 @@ const initialRecruiterRegisterState: recruiterAuthentication = {
   location: "",
 };
 //common reducer to update the field
-const loginUpdateField =<T extends keyof loginFormState> (
+const loginUpdateField = <T extends keyof loginFormState>(
   state: loginFormState,
   action: PayloadAction<{ field: T; value: loginFormState[T] }>
 ) => {

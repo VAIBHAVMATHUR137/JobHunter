@@ -1,15 +1,19 @@
 import mongoose, { Document, Schema } from "mongoose";
 
 interface EachJobPosting extends Document {
+  _id: mongoose.Types.ObjectId;
   job_role: string;
   CTC: number;
-  experience_required: String ;
+  experience_required: string;
   years_of_experience_required: number;
-  degree_required: string[];
+  degree_required: string;
   bond: string;
   job_location: string;
   company: string;
   skills_required: string[];
+  recruiterId: mongoose.Types.ObjectId;
+  recruiterEmail: string;
+
 }
 
 const jobPostingSchema: Schema = new mongoose.Schema({
@@ -48,7 +52,17 @@ const jobPostingSchema: Schema = new mongoose.Schema({
   skills_required: {
     type: [String],
     required: true
-  }
+  },
+  recruiterId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'Recruiter'
+  },
+  recruiterEmail: {
+    type: String,
+    required: true
+  },
+
 });
 
 const JobPosting = mongoose.model<EachJobPosting>("JobPosting", jobPostingSchema);
