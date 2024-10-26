@@ -82,6 +82,7 @@ export const recruiterLogin = expressAsyncHandler(
           recruiter: {
             email: recruiter.email,
             id: recruiter.id,
+             role:'recruiter'
           },
         },
         SECRET_ACCESS_TOKEN,
@@ -92,6 +93,7 @@ export const recruiterLogin = expressAsyncHandler(
         recruiter: {
           email: recruiter.email,
           id: recruiter.id,
+          role:'recruiter'
         },
       });
     } else {

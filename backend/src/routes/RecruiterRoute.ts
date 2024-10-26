@@ -5,5 +5,5 @@ const router=express.Router();
 router.get('/fetchRecruiter/:id',fetchIndividualRecruiter);
 router.post('/createRecruiter',createRecruiter);
 router.delete('/deleteRecruiter/:id',deleteRecruiter);
-router.post('/login',validateToken,recruiterLogin)
+router.post('/login',recruiterLogin)
 export default router

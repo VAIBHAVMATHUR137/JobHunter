@@ -147,6 +147,7 @@ export const candidateLogin = expressAsyncHandler(
           candidate: {
             email: candidate.email,
             id: candidate.id,
+             role:'candidate'
           },
         },
         SECRET_ACCESS_TOKEN,
@@ -159,6 +160,7 @@ export const candidateLogin = expressAsyncHandler(
         candidate: {
           email: candidate.email,
           id: candidate.id,
+          role:'candidate'
         },
       });
     } else {
