@@ -46,8 +46,8 @@ const formFields = [
 type fieldName = (typeof formFields)[number];
 function RecruiterRegistration() {
   const dispatch = useDispatch();
-  const formData = useSelector((state: RootState) => state.recruiterLogin);
-
+  const formData = useSelector((state: RootState) => state.recruiterRegister);
+  console.log(formData)
   const [isFormComplete, setIsFormComplete] = useState(false);
 
   useEffect(() => {
@@ -69,7 +69,7 @@ function RecruiterRegistration() {
       dispatch(recruiterRegistrationReset({ field, value: " " }));
     });
   };
-  function RenderButton() {
+const RenderButton=()=> (
     isFormComplete ? (
       <Button type="submit" variant="contained" color="primary" fullWidth>
         Register
@@ -78,12 +78,43 @@ function RecruiterRegistration() {
       <RegistrationButton variant="contained" color="primary" fullWidth>
         Register
       </RegistrationButton>
-    );
-  }
+    )
+)
+  //Helper function to get field type
+  const getFieldType = (field: fieldName): string => field;
+  //Function to get field label
+  const getFieldLabel = (field: fieldName): string =>
+    field.charAt(0).toUpperCase() + field.slice(1);
 
   return (
     <ThemeProvider theme={theme}>
-      <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4"></div>
+      <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader title="Registration" subheader="Recruiter needs to register themselves here" className="text-center"/>
+          <form onSubmit={handleSubmit}>
+            <CardContent className="space-y-4">
+              {formFields.map((field)=>
+              <TextField
+              key={field}
+              fullWidth
+              label={getFieldLabel(field)}
+              name={field}
+              type={getFieldType(field)}
+              value={formData[field]}
+              onChange={handleInputChange}
+              required
+              variant="outlined"
+              
+              />)}
+
+            </CardContent>
+            <CardActions sx={{padding:"2"}}>
+           <RenderButton/>
+            </CardActions>
+          </form>
+
+        </Card>
+      </div>
     </ThemeProvider>
   );
 }

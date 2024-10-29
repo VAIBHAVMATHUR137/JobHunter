@@ -136,9 +136,10 @@ const candidateRegistrationResetField = <
   T extends keyof candidateAuthentication
 >(
   state: candidateAuthentication,
-  action: PayloadAction<{ field: T }>
+  action: PayloadAction<{ field: T, value:candidateAuthentication[T] }>
 ) => {
   const { field } = action.payload;
+  
 
   // Reset based on the type of the field being reset
   if (typeof state[field] === "string") {
@@ -149,17 +150,17 @@ const candidateRegistrationResetField = <
 };
 
 //Update the recruiter registration field
-const recruiterRegistrationUpdateField = (
+const recruiterRegistrationUpdateField = <T extends keyof recruiterAuthentication>(
   state: recruiterAuthentication,
-  action: PayloadAction<{ field: keyof recruiterAuthentication; value: string }>
+  action: PayloadAction<{ field:T; value: recruiterAuthentication[T] }>
 ) => {
   const { field, value } = action.payload;
   state[field] = value;
 };
 //RESET the recruiter registration field
-const recruiterRegistartionResetField = (
+const recruiterRegistartionResetField =<T extends keyof recruiterAuthentication> (
   state: recruiterAuthentication,
-  action: PayloadAction<{ field: keyof recruiterAuthentication; value: string }>
+  action: PayloadAction<{ field: T; value: recruiterAuthentication[T] }>
 ) => {
   const { field } = action.payload;
   state[field] = "";

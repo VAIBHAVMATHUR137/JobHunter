@@ -12,8 +12,8 @@ import {
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { styled } from "@mui/system";
 import {
-
-  candidateLoginUpdateField, candidateLoginResetField
+  candidateLoginUpdateField,
+  candidateLoginResetField,
 } from "../Slice/Slice";
 
 // Create a custom theme
@@ -26,32 +26,33 @@ const theme = createTheme({
 });
 
 //Styled button with transparent effect at hover
-const LoginButton = styled(Button)({
-  backgroundColor: theme.palette.primary.main, // Initial blue background
-  color: "#fff", // Initial white text color
-  transition: "background-color 0.3s ease, color 0.3s ease", // Smooth transition for both properties
 
+const LoginButton = styled(Button)({
+  backgroundColor: theme.palette.primary.main,
+  color: "#fff",
+  transition: "background-color 0.3s ease, color 0.3s ease",
   "&:hover": {
-    backgroundColor: "transparent", // Transparent background on hover
-    color: "#000", // Black text on hover
-     cursor: "default"
+    backgroundColor: "transparent",
+    color: "#000",
+    cursor: "default",
   },
 });
+// Simple array of field names
+const formFields = ["email", "password"] as const;
+type FieldName = (typeof formFields)[number];
 
 function CandidateLogin() {
   const dispatch = useDispatch();
-  const { email, password } = useSelector(
-    (state: RootState) => state.candidateLogin
-  );
+  const formData = useSelector((state: RootState) => state.candidateLogin);
 
-  // Local state to track if the form is complete
-  const [isFormComplete, setIsFormComplete] = useState(false);
+  const [formComplete, setIsFormComplete] = useState(false);
 
-  // Check form completion whenever email or password changes
   useEffect(() => {
-    setIsFormComplete(email.trim() !== "" && password.trim() !== "");
-  }, [email, password]);
-
+    const isComplete = formFields.every(
+      (field) => formData[field].trim() !== ""
+    );
+    setIsFormComplete(isComplete);
+  }, [formData]);
   // Function to handle input changes
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -63,28 +64,28 @@ function CandidateLogin() {
   // Function to handle form submission
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    console.log("Login attempt with", { email, password });
-
-    // Reset form fields after submission
-    dispatch(candidateLoginResetField({ field: "email", value: "" }));
-    dispatch(candidateLoginResetField({ field: "password", value: "" }));
+    formFields.forEach((field) => {
+      dispatch(candidateLoginResetField({ field, value: "" }));
+    });
   };
 
   // Render the appropriate button based on form completeness
-  const renderButton = () => {
-    if (isFormComplete) {
-      return (
-        <Button type="submit" variant="contained" color="primary" fullWidth>
-          Login
-        </Button>
-      );
-    }
-    return (
+  const RenderButton = () =>
+    formComplete ? (
+      <Button type="submit" variant="contained" color="primary" fullWidth>
+        Login
+      </Button>
+    ) : (
       <LoginButton variant="contained" color="primary" fullWidth>
-      Login
+        Login
       </LoginButton>
     );
-  };
+  // Helper function to get field type
+  const getFieldType = (field: FieldName): string => field;
+
+  // Helper function to get field label
+  const getFieldLabel = (field: FieldName): string =>
+    field.charAt(0).toUpperCase() + field.slice(1);
 
   return (
     <ThemeProvider theme={theme}>
@@ -92,34 +93,27 @@ function CandidateLogin() {
         <Card className="w-full max-w-md">
           <CardHeader
             title="Login"
-            subheader="Candidate kindly login here"
+            subheader="Candidate needs to login here"
             className="text-center"
           />
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">
-              <TextField
-                fullWidth
-                label="Email"
-                name="email"
-                type="email"
-                value={email}
-                onChange={handleInputChange}
-                required
-                variant="outlined"
-              />
-              <TextField
-                fullWidth
-                label="Password"
-                name="password"
-                type="password"
-                value={password}
-                onChange={handleInputChange}
-                required
-                variant="outlined"
-              />
+              {formFields.map((field) => (
+                <TextField
+                  key={field}
+                  fullWidth
+                  label={getFieldLabel(field)}
+                  name={field}
+                  type={getFieldType(field)}
+                  value={formData[field]}
+                  onChange={handleInputChange}
+                  required
+                  variant="outlined"
+                />
+              ))}
             </CardContent>
             <CardActions sx={{ padding: "2" }}>
-              {renderButton()}
+              <RenderButton />
             </CardActions>
           </form>
         </Card>
