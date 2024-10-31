@@ -47,7 +47,7 @@ type fieldName = (typeof formFields)[number];
 function RecruiterRegistration() {
   const dispatch = useDispatch();
   const formData = useSelector((state: RootState) => state.recruiterRegister);
-  console.log(formData)
+
   const [isFormComplete, setIsFormComplete] = useState(false);
 
   useEffect(() => {

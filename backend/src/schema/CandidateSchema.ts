@@ -22,6 +22,8 @@ interface ICandidate extends Document {
   xProfile?: string;     // Optional field
   linkedin: string;
   portfolio?: string;    // Optional field
+  photo: Buffer;
+  resume: Buffer;
 }
 
 // Create the candidate schema
@@ -113,6 +115,14 @@ const candidateSchema: Schema = new mongoose.Schema({
       validator: (v: string) => /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}\/?$/.test(v),
       message: (props: { value: string }) => `${props.value} is not a valid portfolio URL!`,
     },
+  },
+  photo: {
+    type: Buffer,
+    required: false,
+  },
+  resume: {
+    type: Buffer,
+    required: false,
   },
 });
 

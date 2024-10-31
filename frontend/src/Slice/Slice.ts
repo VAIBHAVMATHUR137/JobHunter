@@ -40,6 +40,8 @@ interface candidateAuthentication {
   xProfile?: string;
   linkedin: string;
   portfolio?: string;
+  photo: File | null; 
+  resume: File | null; 
 }
 //interface for first time registration/signin by the recruiter
 interface recruiterAuthentication {
@@ -92,6 +94,9 @@ const initialCandidateRegisterState: candidateAuthentication = {
   xProfile: "",
   linkedin: "",
   portfolio: "",
+  photo: null,
+  resume: null
+  
 };
 //initial state of recruiter during first time registration
 const initialRecruiterRegisterState: recruiterAuthentication = {
