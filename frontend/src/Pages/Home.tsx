@@ -1,236 +1,163 @@
 import React from 'react';
-import {
-  AppBar,
-  Button,
-  Card,
-  CardContent,
-  Container,
-  Grid,
-  Typography,
-  Toolbar,
-  Box,
-} from '@mui/material';
-import { styled } from '@mui/material/styles';
-import {
-  Work as WorkIcon,
-  People as PeopleIcon,
-  Business as BusinessIcon,
-  Star as StarIcon,
-} from '@mui/icons-material';
+import { Button, Card, CardContent, CardHeader, Typography } from '@mui/material';
+import { Briefcase, Users, TrendingUp, Menu } from 'lucide-react';
+import { Link as RouterLink } from 'react-router-dom';
 
-// Define styled components
-const Section = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(8, 0),
-}));
-
-const IconWrapper = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  width: 60,
-  height: 60,
-  borderRadius: '50%',
-  backgroundColor: theme.palette.primary.main,
-  color: theme.palette.primary.contrastText,
-  marginBottom: theme.spacing(2),
-}));
-
-// Define data structures
-interface JobCategory {
-  icon: React.ElementType;
-  name: string;
-}
-
-interface HowItWorksStep {
-  title: string;
-  description: string;
-}
-
-interface Job {
-  title: string;
-  company: string;
-  location: string;
-}
-
-interface Testimonial {
-  name: string;
-  role: string;
-  content: string;
-}
-
-// Sample data
-const jobCategories: JobCategory[] = [
-  { icon: WorkIcon, name: 'Technology' },
-  { icon: PeopleIcon, name: 'Customer Service' },
-  { icon: BusinessIcon, name: 'Finance' },
-];
-
-const howItWorks: HowItWorksStep[] = [
-  { title: 'Create an account', description: 'Sign up and complete your profile' },
-  { title: 'Search jobs', description: 'Browse through thousands of job listings' },
-  { title: 'Apply with ease', description: 'Submit your application with just a few clicks' },
-];
-
-const latestJobs: Job[] = [
-  { title: 'Frontend Developer', company: 'TechCorp', location: 'Remote' },
-  { title: 'Marketing Manager', company: 'BrandCo', location: 'New York, NY' },
-  { title: 'Data Analyst', company: 'DataInsights', location: 'San Francisco, CA' },
-];
-
-const testimonials: Testimonial[] = [
-  { name: 'John Doe', role: 'Software Engineer', content: 'I found my dream job through this portal. The process was smooth and efficient!' },
-  { name: 'Jane Smith', role: 'Marketing Specialist', content: 'The variety of job listings is impressive. I highly recommend this platform to all job seekers.' },
-];
-
-const EnhancedJobPortalLanding: React.FC = () => {
+const Home: React.FC = () => {
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            JobPortal
-          </Typography>
-          <Button color="inherit">Log In</Button>
-          <Button color="inherit">Sign Up</Button>
-        </Toolbar>
-      </AppBar>
-
-      <Container>
-        <Section>
-          <Typography variant="h2" align="center" gutterBottom>
-            Find Your Dream Job Today
-          </Typography>
-          <Typography variant="h5" align="center" color="textSecondary" paragraph>
-            Thousands of jobs from top companies are waiting for you
-          </Typography>
-          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <Button variant="contained" size="large">
-              Get Started
-            </Button>
-          </Box>
-        </Section>
-
-        <Section>
-          <Typography variant="h4" align="center" gutterBottom>
-            Featured Job Categories
-          </Typography>
-          <Grid container spacing={4}>
-            {jobCategories.map((category) => (
-              <Grid item xs={12} sm={4} key={category.name}>
-                <Card>
-                  <CardContent>
-                    <IconWrapper>
-                      <category.icon />
-                    </IconWrapper>
-                    <Typography variant="h6" align="center">
-                      {category.name}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </Section>
-
-        <Section>
-          <Typography variant="h4" align="center" gutterBottom>
-            How It Works
-          </Typography>
-          <Grid container spacing={4}>
-            {howItWorks.map((step, index) => (
-              <Grid item xs={12} sm={4} key={step.title}>
-                <Box sx={{ textAlign: 'center' }}>
-                  <Typography variant="h1" color="primary" gutterBottom>
-                    {index + 1}
-                  </Typography>
-                  <Typography variant="h6" gutterBottom>
-                    {step.title}
-                  </Typography>
-                  <Typography variant="body1" color="textSecondary">
-                    {step.description}
-                  </Typography>
-                </Box>
-              </Grid>
-            ))}
-          </Grid>
-        </Section>
-
-        <Section>
-          <Typography variant="h4" align="center" gutterBottom>
-            Latest Job Listings
-          </Typography>
-          {latestJobs.map((job) => (
-            <Card key={job.title} sx={{ mb: 2 }}>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  {job.title}
+    <div className="flex flex-col min-h-screen">
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container flex h-14 items-center">
+          <div className="mr-4 hidden md:flex">
+            <RouterLink to="/" className="mr-6 flex items-center space-x-2">
+              <Briefcase className="h-6 w-6" />
+              <span className="hidden font-bold sm:inline-block">JobSearch</span>
+            </RouterLink>
+            <nav className="flex items-center space-x-6 text-sm font-medium">
+              <RouterLink to="/jobs">Find Jobs</RouterLink>
+              <RouterLink to="/companies">Companies</RouterLink>
+              <RouterLink to="/resources">Resources</RouterLink>
+            </nav>
+          </div>
+          <Button
+            variant="outlined"
+            className="mr-2 px-0 text-base hover:bg-transparent focus:ring-0 md:hidden"
+            startIcon={<Menu className="h-6 w-6" />}
+          >
+            <span className="sr-only">Toggle Menu</span>
+          </Button>
+          <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
+            <div className="w-full flex-1 md:w-auto md:flex-none">
+              <Button
+                variant="outlined"
+                className="ml-auto h-8 w-full md:w-[120px]"
+                component={RouterLink}
+                to="/signin"
+              >
+                Sign In
+              </Button>
+            </div>
+          </div>
+        </div>
+      </header>
+      <main className="flex-1">
+        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-muted">
+          <div className="container px-4 md:px-6">
+            <div className="flex flex-col items-center space-y-4 text-center">
+              <div className="space-y-2">
+                <Typography variant="h1" className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
+                  Find Your Dream Job Today
                 </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  {job.company} - {job.location}
+                <Typography variant="body1" className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
+                  Connect with top companies and start your career journey now.
                 </Typography>
-                <Button variant="outlined" sx={{ mt: 2 }}>
-                  Apply Now
+              </div>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  component={RouterLink}
+                  to="/register/recruiter"
+                >
+                  Register as Recruiter
                 </Button>
-              </CardContent>
-            </Card>
-          ))}
-          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <Button variant="outlined">View All Jobs</Button>
-          </Box>
-        </Section>
-
-        <Section>
-          <Typography variant="h4" align="center" gutterBottom>
-            What Our Users Say
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  size="large"
+                  component={RouterLink}
+                  to="/register/job-seeker"
+                >
+                  Register as Job Seeker
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section className="w-full py-12 md:py-24 lg:py-32">
+          <div className="container px-4 md:px-6">
+            <Typography variant="h2" className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-12">
+              Why Choose Us
+            </Typography>
+            <div className="grid gap-6 lg:grid-cols-3 lg:gap-12">
+              <Card>
+                <CardHeader
+                  title="Extensive Job Listings"
+                  avatar={<Briefcase className="h-10 w-10" />}
+                />
+                <CardContent>
+                  <Typography>
+                    Access thousands of job opportunities from top companies across various industries.
+                  </Typography>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader
+                  title="Personalized Matches"
+                  avatar={<Users className="h-10 w-10" />}
+                />
+                <CardContent>
+                  <Typography>
+                    Our AI-powered system matches you with jobs that fit your skills and preferences.
+                  </Typography>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader
+                  title="Career Growth"
+                  avatar={<TrendingUp className="h-10 w-10" />}
+                />
+                <CardContent>
+                  <Typography>
+                    Get insights and resources to help you advance in your career and achieve your goals.
+                  </Typography>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+        <section className="w-full py-12 md:py-24 lg:py-32 bg-muted">
+          <div className="container px-4 md:px-6">
+            <div className="flex flex-col items-center justify-center space-y-4 text-center">
+              <div className="space-y-2">
+                <Typography variant="h2" className="text-3xl font-bold tracking-tighter sm:text-5xl">
+                  Ready to Start Your Journey?
+                </Typography>
+                <Typography variant="body1" className="mx-auto max-w-[600px] text-muted-foreground md:text-xl">
+                  Join thousands of job seekers and recruiters who have found their perfect match with us.
+                </Typography>
+              </div>
+              <Button
+                variant="contained"
+                color="primary"
+                size="large"
+                component={RouterLink}
+                to="/signup"
+              >
+                Sign Up Now
+              </Button>
+            </div>
+          </div>
+        </section>
+      </main>
+      <footer className="border-t">
+        <div className="container flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6">
+          <Typography variant="caption" className="text-muted-foreground">
+            © 2024 JobSearch Inc. All rights reserved.
           </Typography>
-          <Grid container spacing={4}>
-            {testimonials.map((testimonial) => (
-              <Grid item xs={12} sm={6} key={testimonial.name}>
-                <Card>
-                  <CardContent>
-                    <Box sx={{ display: 'flex', mb: 2 }}>
-                      {[...Array(5)].map((_, i) => (
-                        <StarIcon key={i} color="primary" />
-                      ))}
-                    </Box>
-                    <Typography variant="body1" paragraph>
-                      "{testimonial.content}"
-                    </Typography>
-                    <Typography variant="subtitle1">{testimonial.name}</Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      {testimonial.role}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </Section>
-
-        <Section>
-          <Typography variant="h4" align="center" gutterBottom>
-            Ready to Start Your Job Search?
-          </Typography>
-          <Typography variant="h6" align="center" color="textSecondary" paragraph>
-            Join thousands of job seekers who have found their perfect match
-          </Typography>
-          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <Button variant="contained" size="large">
-              Create Your Account
-            </Button>
-          </Box>
-        </Section>
-      </Container>
-
-      <Box component="footer" sx={{ bgcolor: 'background.paper', py: 6 }}>
-        <Container maxWidth="lg">
-          <Typography variant="body2" color="text.secondary" align="center">
-            © 2024 JobPortal. All rights reserved.
-          </Typography>
-        </Container>
-      </Box>
-    </Box>
+          <nav className="sm:ml-auto flex gap-4 sm:gap-6">
+            <RouterLink to="#" className="text-xs hover:underline underline-offset-4">
+              Terms of Service
+            </RouterLink>
+            <RouterLink to="#" className="text-xs hover:underline underline-offset-4">
+              Privacy
+            </RouterLink>
+          </nav>
+        </div>
+      </footer>
+    </div>
   );
 };
 
-export default EnhancedJobPortalLanding;
+export default Home;

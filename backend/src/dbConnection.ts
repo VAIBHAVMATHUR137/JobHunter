@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
-import dotenv from 'dotenv';
-
+import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -8,12 +7,13 @@ const connectDb = async (): Promise<void> => {
   try {
     const connectionString = process.env.CONNECTION_STRING;
     if (!connectionString) {
-      throw new Error("CONNECTION_STRING is not defined in environment variables");
+      throw new Error(
+        "CONNECTION_STRING is not defined in environment variables"
+      );
     }
 
     console.log("Attempting to connect to MongoDB...");
     const connect = await mongoose.connect(connectionString);
-
 
     console.log(
       `Database connected: ${connect.connection.host}, ${connect.connection.name}`

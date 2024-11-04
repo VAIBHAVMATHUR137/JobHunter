@@ -1,3 +1,4 @@
+
 import express, { Express } from 'express';
 import candidateRoute from "./routes/CandidateRoute";
 import recruiterRoute from './routes/RecruiterRoute';
@@ -6,17 +7,19 @@ import cors from 'cors';
 import connectDb from './dbConnection';
 import dotenv from 'dotenv';
 
-
 dotenv.config();
-connectDb()
 const app: Express = express();
-const port = process.env.PORT ||5000;
+const port = process.env.PORT || 5001;
 
-app.use(cors({
-  origin: "*"
-}));
+app.use(cors())
 app.use(express.json());
 
+// Configure routes
+app.use('/candidate', candidateRoute);
+app.use('/recruiter', recruiterRoute);
+app.use('/job', jobRoute);
+
+// Connect to database and start server
 connectDb().then(() => {
   app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
@@ -25,7 +28,3 @@ connectDb().then(() => {
   console.error("Failed to connect to the database:", error);
   process.exit(1);
 });
-
-app.use('/candidate', candidateRoute);
-app.use('/recruiter', recruiterRoute);
-app.use('/job',jobRoute)

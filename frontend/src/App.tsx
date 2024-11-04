@@ -28,7 +28,7 @@ async function getData() {
 
   try {
     const response: AxiosResponse<Candidate[]> = await axios.get<Candidate[]>(
-      "http://localhost:5001/candidate/getAllCandidates"
+      "http://localhost:5000/candidate/getAllCandidates"
     );
     console.log(response.data.filter((candidate)=>candidate.years_of_experience>=2).map((candidate)=>candidate.name));
   } catch (error) {
