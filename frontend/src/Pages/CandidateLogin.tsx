@@ -15,9 +15,10 @@ import {
   candidateLoginUpdateField,
   candidateLoginResetField,
 } from "../Slice/Slice";
+import Navbar from "../Components/Navbar"
 
 // Create a custom theme
-const theme = createTheme({
+export const theme = createTheme({
   palette: {
     primary: {
       main: "#3a71a8",
@@ -88,6 +89,8 @@ function CandidateLogin() {
     field.charAt(0).toUpperCase() + field.slice(1);
 
   return (
+    <>
+    <Navbar/>
     <ThemeProvider theme={theme}>
       <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
         <Card className="w-full max-w-md">
@@ -119,6 +122,7 @@ function CandidateLogin() {
         </Card>
       </div>
     </ThemeProvider>
+    </>
   );
 }
 

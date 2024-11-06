@@ -15,6 +15,7 @@ import {
   recruiterLoginUpdateField,
   recruiterLoginResetField
 } from "../Slice/Slice";
+import Navbar from "../Components/Navbar";
 
 // Create custom theme
 const theme = createTheme({
@@ -83,6 +84,8 @@ function RecruiterLogin() {
     field.charAt(0).toUpperCase() + field.slice(1);
 
   return (
+    <>
+    <Navbar/>
     <ThemeProvider theme={theme}>
       <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
         <Card className="w-full max-w-md">
@@ -114,6 +117,7 @@ function RecruiterLogin() {
         </Card>
       </div>
     </ThemeProvider>
+    </>
   );
 }
 

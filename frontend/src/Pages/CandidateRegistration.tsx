@@ -18,7 +18,7 @@ import {
   candidateRegistartionReset,
 } from "../Slice/Slice";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-
+import Navbar from "../Components/Navbar";
 const theme = createTheme({
   palette: {
     primary: {
@@ -228,6 +228,8 @@ function CandidateRegistration() {
       .join(" ");
 
   return (
+    <>
+    <Navbar/>
     <ThemeProvider theme={theme}>
       <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
         <Card className="w-full max-w-md">
@@ -329,6 +331,7 @@ function CandidateRegistration() {
         </Card>
       </div>
     </ThemeProvider>
+    </>
   );
 }
 

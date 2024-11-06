@@ -9,6 +9,10 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./Pages/Home";
 import Error from "./Pages/Error";
 import CandidateLogin from "./Pages/CandidateLogin";
+import CandidateRegistration from "./Pages/CandidateRegistration";
+import RecruiterLogin from "./Pages/RecruiterLogin";
+import RecruiterRegistration from "./Pages/RecruiterRegistration";
+import CommonAuthentication from "./Pages/CommonAuthentication";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -16,10 +20,30 @@ const router = createBrowserRouter([
     errorElement: <Error />,
   },
   {
-    path:"/CandidateLogin",
-    element:<CandidateLogin/>,
-    errorElement:<Error/>
-  }
+    path: "/CandidateLogin",
+    element: <CandidateLogin />,
+    errorElement: <Error />,
+  },
+  {
+    path: "/CandidateSignup",
+    element: <CandidateRegistration />,
+    errorElement: <Error />,
+  },
+  {
+    path: "/RecruiterLogin",
+    element: <RecruiterLogin />,
+    errorElement: <Error />,
+  },
+  {
+    path: "/RecruiterSignUp",
+    element: <RecruiterRegistration />,
+    errorElement: <Error />,
+  },
+  {
+    path: "/CommonAuthentication",
+    element: <CommonAuthentication />,
+    errorElement: <Error />,
+  },
 ]);
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <Provider store={store}>

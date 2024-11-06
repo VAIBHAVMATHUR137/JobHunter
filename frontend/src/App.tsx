@@ -2,10 +2,8 @@ import React from "react";
 import axios, { AxiosResponse } from "axios";
 import "./App.css";
 import Home from "./Pages/Home";
-import RecruiterLogin from "./Pages/RecruiterLogin";
-import CandidateLogin from "./Pages/CandidateLogin";
-import RecruiterRegistration from "./Pages/RecruiterRegistration";
-import CandidateRegistration from "./Pages/CandidateRegistration";
+
+
 async function getData() {
   interface Candidate {
     name: string;
@@ -44,10 +42,8 @@ function App() {
   return (
     <>
       <Home />
-      <RecruiterLogin />
-      <RecruiterRegistration />
-      <CandidateLogin />
-      <CandidateRegistration />
+      
+
     </>
   );
 }
