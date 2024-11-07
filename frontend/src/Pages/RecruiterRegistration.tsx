@@ -9,33 +9,14 @@ import {
   CardActions,
   CardHeader,
 } from "@mui/material";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { styled } from "@mui/system";
+import { ThemeProvider } from "@mui/material/styles";
+
 import {
   recruiterRegistrationReset,
   recruiterRegistrationUpdate,
 } from "../Slice/Slice";
 import Navbar from "../Components/Navbar";
-
-//Create custom theme in material UI
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#3a71a8",
-    },
-  },
-});
-//Button with hover styling conditionally
-const RegistrationButton = styled(Button)({
-  backgroundColor: theme.palette.primary.main,
-  color: "#fff",
-  transition: "background-color 0.3s ease, color 0.3 ease",
-  "&:hover": {
-    backgroundColor: "transparent",
-    color: "#000",
-    cursor: "default",
-  },
-});
+import { RegistrationButton, theme } from "../Components/CustomTheme";
 const formFields = [
   "name",
   "number",
@@ -70,7 +51,7 @@ function RecruiterRegistration() {
       dispatch(recruiterRegistrationReset({ field, value: " " }));
     });
   };
-const RenderButton=()=> (
+  const RenderButton = () =>
     isFormComplete ? (
       <Button type="submit" variant="contained" color="primary" fullWidth>
         Register
@@ -79,8 +60,7 @@ const RenderButton=()=> (
       <RegistrationButton variant="contained" color="primary" fullWidth>
         Register
       </RegistrationButton>
-    )
-)
+    );
   //Helper function to get field type
   const getFieldType = (field: fieldName): string => field;
   //Function to get field label
@@ -89,36 +69,38 @@ const RenderButton=()=> (
 
   return (
     <>
-    <Navbar/>
-    <ThemeProvider theme={theme}>
-      <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
-        <Card className="w-full max-w-md">
-          <CardHeader title="Registration" subheader="Recruiter needs to register themselves here" className="text-center"/>
-          <form onSubmit={handleSubmit}>
-            <CardContent className="space-y-4">
-              {formFields.map((field)=>
-              <TextField
-              key={field}
-              fullWidth
-              label={getFieldLabel(field)}
-              name={field}
-              type={getFieldType(field)}
-              value={formData[field]}
-              onChange={handleInputChange}
-              required
-              variant="outlined"
-              
-              />)}
-
-            </CardContent>
-            <CardActions sx={{padding:"2"}}>
-           <RenderButton/>
-            </CardActions>
-          </form>
-
-        </Card>
-      </div>
-    </ThemeProvider>
+      <Navbar />
+      <ThemeProvider theme={theme}>
+        <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
+          <Card className="w-full max-w-md">
+            <CardHeader
+              title="Registration"
+              subheader="Recruiter needs to register themselves here"
+              className="text-center"
+            />
+            <form onSubmit={handleSubmit}>
+              <CardContent className="space-y-4">
+                {formFields.map((field) => (
+                  <TextField
+                    key={field}
+                    fullWidth
+                    label={getFieldLabel(field)}
+                    name={field}
+                    type={getFieldType(field)}
+                    value={formData[field]}
+                    onChange={handleInputChange}
+                    required
+                    variant="outlined"
+                  />
+                ))}
+              </CardContent>
+              <CardActions sx={{ padding: "2" }}>
+                <RenderButton />
+              </CardActions>
+            </form>
+          </Card>
+        </div>
+      </ThemeProvider>
     </>
   );
 }

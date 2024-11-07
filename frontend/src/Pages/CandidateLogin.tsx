@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../Slice/Store";
-import React, { ChangeEvent, FormEvent, useState, useEffect } from "react";
+import { ChangeEvent, FormEvent, useState, useEffect } from "react";
 import {
   Button,
   TextField,
@@ -9,35 +9,15 @@ import {
   CardActions,
   CardHeader,
 } from "@mui/material";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { styled } from "@mui/system";
+import { ThemeProvider } from "@mui/material/styles";
+
 import {
   candidateLoginUpdateField,
   candidateLoginResetField,
 } from "../Slice/Slice";
-import Navbar from "../Components/Navbar"
+import Navbar from "../Components/Navbar";
+import { theme, LoginButton } from "../Components/CustomTheme";
 
-// Create a custom theme
-export const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#3a71a8",
-    },
-  },
-});
-
-//Styled button with transparent effect at hover
-
-const LoginButton = styled(Button)({
-  backgroundColor: theme.palette.primary.main,
-  color: "#fff",
-  transition: "background-color 0.3s ease, color 0.3s ease",
-  "&:hover": {
-    backgroundColor: "transparent",
-    color: "#000",
-    cursor: "default",
-  },
-});
 // Simple array of field names
 const formFields = ["email", "password"] as const;
 type FieldName = (typeof formFields)[number];
@@ -90,38 +70,38 @@ function CandidateLogin() {
 
   return (
     <>
-    <Navbar/>
-    <ThemeProvider theme={theme}>
-      <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
-        <Card className="w-full max-w-md">
-          <CardHeader
-            title="Login"
-            subheader="Candidate needs to login here"
-            className="text-center"
-          />
-          <form onSubmit={handleSubmit}>
-            <CardContent className="space-y-4">
-              {formFields.map((field) => (
-                <TextField
-                  key={field}
-                  fullWidth
-                  label={getFieldLabel(field)}
-                  name={field}
-                  type={getFieldType(field)}
-                  value={formData[field]}
-                  onChange={handleInputChange}
-                  required
-                  variant="outlined"
-                />
-              ))}
-            </CardContent>
-            <CardActions sx={{ padding: "2" }}>
-              <RenderButton />
-            </CardActions>
-          </form>
-        </Card>
-      </div>
-    </ThemeProvider>
+      <Navbar />
+      <ThemeProvider theme={theme}>
+        <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
+          <Card className="w-full max-w-md">
+            <CardHeader
+              title="Login"
+              subheader="Candidate needs to login here"
+              className="text-center"
+            />
+            <form onSubmit={handleSubmit}>
+              <CardContent className="space-y-4">
+                {formFields.map((field) => (
+                  <TextField
+                    key={field}
+                    fullWidth
+                    label={getFieldLabel(field)}
+                    name={field}
+                    type={getFieldType(field)}
+                    value={formData[field]}
+                    onChange={handleInputChange}
+                    required
+                    variant="outlined"
+                  />
+                ))}
+              </CardContent>
+              <CardActions sx={{ padding: "2" }}>
+                <RenderButton />
+              </CardActions>
+            </form>
+          </Card>
+        </div>
+      </ThemeProvider>
     </>
   );
 }

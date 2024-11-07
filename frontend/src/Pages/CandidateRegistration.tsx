@@ -8,24 +8,18 @@ import {
   CardContent,
   CardActions,
   CardHeader,
- 
   Avatar,
 } from "@mui/material";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import { styled } from "@mui/system";
 import {
   candidateRegistartionUpdate,
   candidateRegistartionReset,
 } from "../Slice/Slice";
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import Navbar from "../Components/Navbar";
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#3a71a8",
-    },
-  },
-});
+import { theme, RegistrationButton } from "../Components/CustomTheme";
+
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
   clipPath: "inset(50%)",
@@ -44,16 +38,6 @@ const UploadButton = styled(Button)({
   display: "flex",
   alignItems: "center",
   gap: "0.5rem",
-});
-const RegistrationButton = styled(Button)({
-  backgroundColor: theme.palette.primary.main,
-  color: "#fff",
-  transition: "background-color 0.3s ease, color 0.3s ease",
-  "&:hover": {
-    backgroundColor: "transparent",
-    color: "#000",
-    cursor: "default",
-  },
 });
 
 // Basic form fields excluding nested objects
@@ -94,44 +78,76 @@ type BasicFieldName = (typeof basicFormFields)[number];
 
 function CandidateRegistration() {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-  const [resumeName, setResumeName] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [uploadUrl, setUploadUrl] = useState<string | null>(null);
   const dispatch = useDispatch();
   const formData = useSelector((state: RootState) => state.candidateRegister);
   const [formComplete, setIsFormComplete] = useState(false);
-  const handlePhotoUpload = (event: ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoUpload = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file && file.type.startsWith("image/")) {
-      // Create preview URL for the image
-      const previewUrl = URL.createObjectURL(file);
-      setPhotoPreview(previewUrl);
+    if (file) {
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", "yntb9vkk"); // Unsigned preset name
 
-      dispatch(
-        candidateRegistartionUpdate({
-          field: "photo",
-          value: file,
-        })
-      );
+        const response = await fetch(
+          "https://api.cloudinary.com/v1_1/dvmdmvlqz/image/upload",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
+        const data = await response.json();
+
+        if (data.secure_url) {
+          console.log("Uploaded URL:", data.secure_url); // Logs the URL of the uploaded file
+          setPhotoPreview(data.secure_url);
+          dispatch(
+            candidateRegistartionUpdate({
+              field: "photo",
+              value: data.secure_url,
+            })
+          );
+        } else {
+          console.error("Failed to get secure_url:", data);
+        }
+      } catch (error) {
+        console.error("Error uploading photo:", error);
+      }
     } else {
-      alert("Please upload an image file");
+      alert("Please select a valid file.");
     }
   };
 
-  const handleResumeUpload = (event: ChangeEvent<HTMLInputElement>) => {
-    console.log("This function is running fine")
-    const file = event.target.files?.[0];
-    if (file && file.type === "application/pdf") {
-      setResumeName(file.name);
-      dispatch(
-        candidateRegistartionUpdate({
-          field: "resume",
-          value: file,
-        })
-      );
-    } else {
-      alert("Please upload a PDF file");
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      setFile(event.target.files[0]);
     }
   };
+  const handleResumeUpload = async () => {
+    if (!file) return alert("Please select a file first.");
 
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "your_upload_preset"); // Use your unsigned preset name
+
+    try {
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/your-cloud-name/raw/upload`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      const data = await response.json();
+      setUploadUrl(data.secure_url); // Get the PDF URL from the response
+    } catch (error) {
+      console.error("Error uploading PDF:", error);
+    }
+  };
   useEffect(() => {
     return () => {
       if (photoPreview) {
@@ -205,7 +221,7 @@ function CandidateRegistration() {
       </Button>
     ) : (
       <RegistrationButton variant="contained" color="primary" fullWidth>
-        Login
+        Register
       </RegistrationButton>
     );
 
@@ -229,108 +245,115 @@ function CandidateRegistration() {
 
   return (
     <>
-    <Navbar/>
-    <ThemeProvider theme={theme}>
-      <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
-        <Card className="w-full max-w-md">
-          <CardHeader
-            title="Registration"
-            subheader="Candidate Registration Form"
-            className="text-center"
-          />
-          <form onSubmit={handleSubmit}>
-            <CardContent className="space-y-4">
-              {/* Basic Fields */}
-              <div className="flex flex-col items-center space-y-4">
-                <Avatar
-                  src={photoPreview || undefined}
-                  sx={{ width: 100, height: 100 }}
-                />
-                <Button
-                  component="label"
-                  variant="contained"
-                  startIcon={<CloudUploadIcon />}
-                >
-                  Upload Photo
-                  <VisuallyHiddenInput
-                    type="file"
-                    accept="image/*"
-                    onChange={handlePhotoUpload}
+      <Navbar />
+      <ThemeProvider theme={theme}>
+        <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
+          <Card className="w-full max-w-md">
+            <CardHeader
+              title="Registration"
+              subheader="Candidate Registration Form"
+              className="text-center"
+            />
+            <form onSubmit={handleSubmit}>
+              <CardContent className="space-y-4">
+                {/* Basic Fields */}
+                <div className="flex flex-col items-center space-y-4">
+                  <Avatar
+                    src={photoPreview || undefined}
+                    sx={{ width: 100, height: 100 }}
                   />
-                </Button>
-              </div>
-              Resume Upload Section
-              <div className="space-y-2">
-                <UploadButton
-                 
-                  variant="outlined"
-                  startIcon={<CloudUploadIcon />}
-                >
-                  {resumeName || "Upload Resume (PDF)"}
-                  <VisuallyHiddenInput
+                  <Button
+                    component="label"
+                    variant="contained"
+                    startIcon={<CloudUploadIcon />}
+                  >
+                    Upload Photo
+                    <VisuallyHiddenInput
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePhotoUpload}
+                    />
+                  </Button>
+                </div>
+                Resume Upload Section
+                <div>
+                  <input
                     type="file"
                     accept=".pdf"
-                    onChange={(event)=>handleResumeUpload(event)}
+                    onChange={handleFileChange}
                   />
-                </UploadButton>
-              </div>
-              {basicFormFields.map((field) => (
-                <TextField
-                  key={field}
-                  fullWidth
-                  label={getFieldLabel(field)}
-                  name={field}
-                  type={getFieldType(field)}
-                  value={formData[field]}
-                  onChange={handleBasicInputChange}
-                  required
-                  variant="outlined"
-                />
-              ))}
+                  <UploadButton onClick={handleResumeUpload}>
+                    Upload PDF
+                  </UploadButton>
 
-              {/* Skills Fields */}
-              <div className="space-y-4">
-                <div className="font-medium">Skills</div>
-                {skillFields.map((skill) => (
+                  {uploadUrl && (
+                    <div>
+                      <p>Uploaded PDF:</p>
+                      <a
+                        href={uploadUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        View PDF
+                      </a>
+                    </div>
+                  )}
+                </div>
+                {basicFormFields.map((field) => (
                   <TextField
-                    key={skill}
+                    key={field}
                     fullWidth
-                    label={getFieldLabel(skill)}
-                    name={skill}
-                    type="text"
-                    value={formData.skills[skill]}
-                    onChange={handleSkillChange}
+                    label={getFieldLabel(field)}
+                    name={field}
+                    type={getFieldType(field)}
+                    value={formData[field]}
+                    onChange={handleBasicInputChange}
                     required
                     variant="outlined"
                   />
                 ))}
-              </div>
-
-              {/* Preferred Location Fields */}
-              <div className="space-y-4">
-                <div className="font-medium">Preferred Locations</div>
-                {locationFields.map((location) => (
-                  <TextField
-                    key={location}
-                    fullWidth
-                    label={getFieldLabel(location)}
-                    name={location}
-                    type="text"
-                    value={formData.preferred_location[location]}
-                    onChange={handleLocationChange}
-                    required
-                    variant="outlined"
-                  />
-                ))}
-              </div>
-            </CardContent>
-            <CardActions sx={{ padding: 2 }}>
-              <RenderButton />
-            </CardActions>
-          </form>
-        </Card>
-      </div>
-    </ThemeProvider>
+                {/* Skills Fields */}
+                <div className="space-y-4">
+                  <div className="font-medium">Skills</div>
+                  {skillFields.map((skill) => (
+                    <TextField
+                      key={skill}
+                      fullWidth
+                      label={getFieldLabel(skill)}
+                      name={skill}
+                      type="text"
+                      value={formData.skills[skill]}
+                      onChange={handleSkillChange}
+                      required
+                      variant="outlined"
+                    />
+                  ))}
+                </div>
+                {/* Preferred Location Fields */}
+                <div className="space-y-4">
+                  <div className="font-medium">Preferred Locations</div>
+                  {locationFields.map((location) => (
+                    <TextField
+                      key={location}
+                      fullWidth
+                      label={getFieldLabel(location)}
+                      name={location}
+                      type="text"
+                      value={formData.preferred_location[location]}
+                      onChange={handleLocationChange}
+                      required
+                      variant="outlined"
+                    />
+                  ))}
+                </div>
+              </CardContent>
+              <CardActions sx={{ padding: 2 }}>
+                <RenderButton />
+              </CardActions>
+            </form>
+          </Card>
+        </div>
+      </ThemeProvider>
     </>
   );
 }
