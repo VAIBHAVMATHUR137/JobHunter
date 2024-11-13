@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import expressAsyncHandler from "express-async-handler";
 
 // Custom Middleware to ensure only recruiters can access the job posting 
-const recruiterOnly = (req: Request, res: Response, next: Function) => {
+export const recruiterOnly = (req: Request, res: Response, next: Function) => {
   if (req.user?.role !== 'recruiter') {
     res.status(403);
     throw new Error('Access denied: Only recruiters can perform this action');
@@ -144,4 +144,3 @@ export const deleteExistingJob = expressAsyncHandler(
   }
 );
 
-export { recruiterOnly };

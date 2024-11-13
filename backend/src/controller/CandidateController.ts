@@ -53,6 +53,8 @@ export const postCandidate = expressAsyncHandler(
       xProfile,
       linkedin,
       portfolio,
+      photo,
+      resume
     } = req.body;
     if (
       !name ||
@@ -68,7 +70,9 @@ export const postCandidate = expressAsyncHandler(
       !notice_period ||
       !years_of_experience ||
       !github ||
-      !linkedin
+      !linkedin||
+      !photo||
+      !resume
     ) {
       res.status(400);
       throw new Error("All fields are mandatory");
@@ -94,6 +98,8 @@ export const postCandidate = expressAsyncHandler(
       xProfile,
       linkedin,
       portfolio,
+      photo,
+      resume
     });
 
     console.log(`Here we created a candidate ${candidate}`);

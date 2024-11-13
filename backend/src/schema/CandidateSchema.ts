@@ -17,13 +17,12 @@ interface ICandidate extends Document {
   preferred_location: string[];
   notice_period: number;
   years_of_experience: number;
-
   github: string;
-  xProfile?: string;     // Optional field
+  xProfile?: string;    
   linkedin: string;
-  portfolio?: string;    // Optional field
-  photo: Buffer;
-  resume: Buffer;
+  portfolio?: string;    
+  photo: string;
+  resume: string;
 }
 
 // Create the candidate schema
@@ -103,26 +102,23 @@ const candidateSchema: Schema = new mongoose.Schema({
   linkedin: {
     type: String,
     required: true,
-    validate: {
-      validator: (v: string) => /^(https?:\/\/)?(www\.)?linkedin\.com\/in\/[a-zA-Z0-9_-]+$/.test(v),
-      message: (props: { value: string }) => `${props.value} is not a valid LinkedIn URL!`,
-    },
+
   },
   portfolio: {
     type: String,
-    required: false, // Optional field
+    required: false,
     validate: {
       validator: (v: string) => /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}\/?$/.test(v),
       message: (props: { value: string }) => `${props.value} is not a valid portfolio URL!`,
     },
   },
   photo: {
-    type: Buffer,
-    required: false,
+    type: String,
+    required: true,
   },
   resume: {
-    type: Buffer,
-    required: false,
+    type:String,
+    required: true,
   },
 });
 

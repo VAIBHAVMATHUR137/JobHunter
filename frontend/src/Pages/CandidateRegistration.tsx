@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../Slice/Store";
-import React, { ChangeEvent, FormEvent, useState, useEffect } from "react";
+import { ChangeEvent, FormEvent, useState, useEffect } from "react";
 import {
   Button,
   TextField,
@@ -19,6 +19,7 @@ import {
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import Navbar from "../Components/Navbar";
 import { theme, RegistrationButton } from "../Components/CustomTheme";
+import axios from "axios";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -30,14 +31,6 @@ const VisuallyHiddenInput = styled("input")({
   left: 0,
   whiteSpace: "nowrap",
   width: 1,
-});
-const UploadButton = styled(Button)({
-  width: "100%",
-  marginTop: "1rem",
-  marginBottom: "1rem",
-  display: "flex",
-  alignItems: "center",
-  gap: "0.5rem",
 });
 
 // Basic form fields excluding nested objects
@@ -56,6 +49,7 @@ const basicFormFields = [
   "xProfile",
   "linkedin",
   "portfolio",
+  "resume",
 ] as const;
 
 // Skills fields
@@ -78,21 +72,37 @@ type BasicFieldName = (typeof basicFormFields)[number];
 
 function CandidateRegistration() {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-  const [file, setFile] = useState<File | null>(null);
-  const [uploadUrl, setUploadUrl] = useState<string | null>(null);
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, string>
+  >({});
+
   const dispatch = useDispatch();
   const formData = useSelector((state: RootState) => state.candidateRegister);
   const [formComplete, setIsFormComplete] = useState(false);
+
+  // Function to format data for backend
+  const formatDataForBackend = () => {
+    const skills = Object.values(formData.skills);
+    const preferred_locations = Object.values(formData.preferred_location);
+
+    return {
+      ...formData,
+      skills: skills, // Convert skills object to array
+      preferred_location: preferred_locations, // Convert preferred_location object to array
+    };
+  };
+
+  // Function to handle the photo upload
   const handlePhotoUpload = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       try {
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("upload_preset", "yntb9vkk"); // Unsigned preset name
+        formData.append("upload_preset", "ml_default");
 
         const response = await fetch(
-          "https://api.cloudinary.com/v1_1/dvmdmvlqz/image/upload",
+          "https://api.cloudinary.com/v1_1/dqjqi572q/image/upload",
           {
             method: "POST",
             body: formData,
@@ -102,8 +112,8 @@ function CandidateRegistration() {
         const data = await response.json();
 
         if (data.secure_url) {
-          console.log("Uploaded URL:", data.secure_url); // Logs the URL of the uploaded file
           setPhotoPreview(data.secure_url);
+
           dispatch(
             candidateRegistartionUpdate({
               field: "photo",
@@ -116,38 +126,9 @@ function CandidateRegistration() {
       } catch (error) {
         console.error("Error uploading photo:", error);
       }
-    } else {
-      alert("Please select a valid file.");
     }
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      setFile(event.target.files[0]);
-    }
-  };
-  const handleResumeUpload = async () => {
-    if (!file) return alert("Please select a file first.");
-
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "your_upload_preset"); // Use your unsigned preset name
-
-    try {
-      const response = await fetch(
-        `https://api.cloudinary.com/v1_1/your-cloud-name/raw/upload`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      const data = await response.json();
-      setUploadUrl(data.secure_url); // Get the PDF URL from the response
-    } catch (error) {
-      console.error("Error uploading PDF:", error);
-    }
-  };
   useEffect(() => {
     return () => {
       if (photoPreview) {
@@ -172,6 +153,7 @@ function CandidateRegistration() {
     );
   }, [formData]);
 
+  // Function to handle basic input change
   const handleBasicInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     dispatch(
@@ -179,6 +161,7 @@ function CandidateRegistration() {
     );
   };
 
+  // Function to handle skills change
   const handleSkillChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     const updatedSkills = {
@@ -193,6 +176,7 @@ function CandidateRegistration() {
     );
   };
 
+  // Function to handle location change
   const handleLocationChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     const updatedLocations = {
@@ -207,21 +191,79 @@ function CandidateRegistration() {
     );
   };
 
-  const handleSubmit = (event: FormEvent) => {
+  // Function that handles post submission
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    basicFormFields.forEach((field) => {
-      dispatch(candidateRegistartionReset({ field, value: " " }));
-    });
+    try {
+      const formattedData = formatDataForBackend();
+      const response = await axios.post<{ success: boolean; data: any }>(
+        "http://localhost:5000/candidate/createCandidate",
+        formattedData
+      );
+      console.log("Data set all good !");
+      console.log(response.data);
+      console.log(response.data.success);
+      if (response.status === 201) {
+        // Reset form after successful submission
+        basicFormFields.forEach((field) => {
+          dispatch(candidateRegistartionReset({ field, value: "" }));
+        });
+        const emptySkills = {
+          skillOne: "",
+          skillTwo: "",
+          skillThree: "",
+          skillFour: "",
+          skillFive: "",
+        };
+        dispatch(
+          candidateRegistartionReset({
+            field: "skills",
+            value: emptySkills,
+          })
+        );
+
+        // Reset location fields
+        const emptyLocations = {
+          firstPreferrence: "",
+          secondPreferrence: "",
+          thirdPreferrence: "",
+        };
+        dispatch(
+          candidateRegistartionReset({
+            field: "preferred_location",
+            value: emptyLocations,
+          })
+        );
+        setPhotoPreview(null);
+      } else {
+        console.log("data not success");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        alert(
+          `Registration failed: ${
+            error.response?.data?.message || error.message
+          }`
+        );
+      } else {
+        alert("An unexpected error occurred");
+      }
+    }
   };
 
   const RenderButton = () =>
     formComplete ? (
       <Button type="submit" variant="contained" color="primary" fullWidth>
-        Login
+        Register
       </Button>
     ) : (
-      <RegistrationButton variant="contained" color="primary" fullWidth>
-        Register
+      <RegistrationButton
+        variant="contained"
+        color="primary"
+        fullWidth
+        disabled
+      >
+        Complete all fields
       </RegistrationButton>
     );
 
@@ -256,7 +298,7 @@ function CandidateRegistration() {
             />
             <form onSubmit={handleSubmit}>
               <CardContent className="space-y-4">
-                {/* Basic Fields */}
+                {/* Photo Upload */}
                 <div className="flex flex-col items-center space-y-4">
                   <Avatar
                     src={photoPreview || undefined}
@@ -275,30 +317,8 @@ function CandidateRegistration() {
                     />
                   </Button>
                 </div>
-                Resume Upload Section
-                <div>
-                  <input
-                    type="file"
-                    accept=".pdf"
-                    onChange={handleFileChange}
-                  />
-                  <UploadButton onClick={handleResumeUpload}>
-                    Upload PDF
-                  </UploadButton>
 
-                  {uploadUrl && (
-                    <div>
-                      <p>Uploaded PDF:</p>
-                      <a
-                        href={uploadUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        View PDF
-                      </a>
-                    </div>
-                  )}
-                </div>
+                {/* Basic Fields */}
                 {basicFormFields.map((field) => (
                   <TextField
                     key={field}
@@ -310,8 +330,11 @@ function CandidateRegistration() {
                     onChange={handleBasicInputChange}
                     required
                     variant="outlined"
+                    error={!!validationErrors[field]}
+                    helperText={validationErrors[field]}
                   />
                 ))}
+
                 {/* Skills Fields */}
                 <div className="space-y-4">
                   <div className="font-medium">Skills</div>
@@ -329,6 +352,7 @@ function CandidateRegistration() {
                     />
                   ))}
                 </div>
+
                 {/* Preferred Location Fields */}
                 <div className="space-y-4">
                   <div className="font-medium">Preferred Locations</div>

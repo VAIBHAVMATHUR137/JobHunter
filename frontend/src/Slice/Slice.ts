@@ -40,8 +40,8 @@ interface candidateAuthentication {
   xProfile?: string;
   linkedin: string;
   portfolio?: string;
-  photo: File | null; 
-  resume: File | null; 
+  photo: string; 
+  resume: string; 
 }
 //interface for first time registration/signin by the recruiter
 interface recruiterAuthentication {
@@ -94,8 +94,8 @@ const initialCandidateRegisterState: candidateAuthentication = {
   xProfile: "",
   linkedin: "",
   portfolio: "",
-  photo: null,
-  resume: null
+  photo: "",
+  resume: ""
   
 };
 //initial state of recruiter during first time registration
@@ -133,7 +133,7 @@ const candidateRegistrationUpdateField = <
   action: PayloadAction<{ field: T; value: candidateAuthentication[T] }>
 ) => {
   const { field, value } = action.payload;
-  state[field] = value; // Type-safe assignment
+  state[field] = value; 
 };
 
 // RESET field: Handle both string and object types correctly
@@ -141,16 +141,26 @@ const candidateRegistrationResetField = <
   T extends keyof candidateAuthentication
 >(
   state: candidateAuthentication,
-  action: PayloadAction<{ field: T, value:candidateAuthentication[T] }>
+  action: PayloadAction<{ field: T; value: candidateAuthentication[T] }>
 ) => {
   const { field } = action.payload;
-  
 
-  // Reset based on the type of the field being reset
-  if (typeof state[field] === "string") {
+  if (field === "skills") {
+    state.skills = {
+      skillOne: "",
+      skillTwo: "",
+      skillThree: "",
+      skillFour: "",
+      skillFive: "",
+    };
+  } else if (field === "preferred_location") {
+    state.preferred_location = {
+      firstPreferrence: "",
+      secondPreferrence: "",
+      thirdPreferrence: "",
+    };
+  } else if (typeof state[field] === "string") {
     state[field] = "" as candidateAuthentication[T];
-  } else if (typeof state[field] === "object") {
-    state[field] = {} as candidateAuthentication[T]; // Reset to an empty object
   }
 };
 
