@@ -40,8 +40,8 @@ interface candidateAuthentication {
   xProfile?: string;
   linkedin: string;
   portfolio?: string;
-  photo: string; 
-  resume: string; 
+  photo: string;
+  resume: string;
 }
 //interface for first time registration/signin by the recruiter
 interface recruiterAuthentication {
@@ -95,8 +95,7 @@ const initialCandidateRegisterState: candidateAuthentication = {
   linkedin: "",
   portfolio: "",
   photo: "",
-  resume: ""
-  
+  resume: "",
 };
 //initial state of recruiter during first time registration
 const initialRecruiterRegisterState: recruiterAuthentication = {
@@ -133,7 +132,7 @@ const candidateRegistrationUpdateField = <
   action: PayloadAction<{ field: T; value: candidateAuthentication[T] }>
 ) => {
   const { field, value } = action.payload;
-  state[field] = value; 
+  state[field] = value;
 };
 
 // RESET field: Handle both string and object types correctly
@@ -159,21 +158,27 @@ const candidateRegistrationResetField = <
       secondPreferrence: "",
       thirdPreferrence: "",
     };
+  } else if (field === "resume") {
+    state.resume = "";
   } else if (typeof state[field] === "string") {
     state[field] = "" as candidateAuthentication[T];
   }
 };
 
 //Update the recruiter registration field
-const recruiterRegistrationUpdateField = <T extends keyof recruiterAuthentication>(
+const recruiterRegistrationUpdateField = <
+  T extends keyof recruiterAuthentication
+>(
   state: recruiterAuthentication,
-  action: PayloadAction<{ field:T; value: recruiterAuthentication[T] }>
+  action: PayloadAction<{ field: T; value: recruiterAuthentication[T] }>
 ) => {
   const { field, value } = action.payload;
   state[field] = value;
 };
 //RESET the recruiter registration field
-const recruiterRegistartionResetField =<T extends keyof recruiterAuthentication> (
+const recruiterRegistartionResetField = <
+  T extends keyof recruiterAuthentication
+>(
   state: recruiterAuthentication,
   action: PayloadAction<{ field: T; value: recruiterAuthentication[T] }>
 ) => {

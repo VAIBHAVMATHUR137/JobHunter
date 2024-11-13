@@ -117,9 +117,14 @@ const candidateSchema: Schema = new mongoose.Schema({
     required: true,
   },
   resume: {
-    type:String,
+    type: String,
     required: true,
+    validate: {
+      validator: (value: string) => /^https:\/\/drive\.google\.com\/.*/.test(value),
+      message: 'Please provide a valid Google Drive link for your resume.',
+    },
   },
+
 });
 
 // Export the model

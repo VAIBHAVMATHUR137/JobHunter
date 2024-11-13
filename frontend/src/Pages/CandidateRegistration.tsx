@@ -49,7 +49,7 @@ const basicFormFields = [
   "xProfile",
   "linkedin",
   "portfolio",
-  "resume",
+ 
 ] as const;
 
 // Skills fields
@@ -72,9 +72,9 @@ type BasicFieldName = (typeof basicFormFields)[number];
 
 function CandidateRegistration() {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-  const [validationErrors, setValidationErrors] = useState<
-    Record<string, string>
-  >({});
+  // const [validationErrors, setValidationErrors] = useState<
+  //   Record<string, string>
+  // >({});
 
   const dispatch = useDispatch();
   const formData = useSelector((state: RootState) => state.candidateRegister);
@@ -84,6 +84,7 @@ function CandidateRegistration() {
   const formatDataForBackend = () => {
     const skills = Object.values(formData.skills);
     const preferred_locations = Object.values(formData.preferred_location);
+    
 
     return {
       ...formData,
@@ -234,6 +235,12 @@ function CandidateRegistration() {
             value: emptyLocations,
           })
         );
+        dispatch(
+          candidateRegistartionReset({
+            field: "resume",
+            value: "",
+          })
+        );
         setPhotoPreview(null);
       } else {
         console.log("data not success");
@@ -330,8 +337,8 @@ function CandidateRegistration() {
                     onChange={handleBasicInputChange}
                     required
                     variant="outlined"
-                    error={!!validationErrors[field]}
-                    helperText={validationErrors[field]}
+                    // error={!!validationErrors[field]}
+                    // helperText={validationErrors[field]}
                   />
                 ))}
 
@@ -369,6 +376,22 @@ function CandidateRegistration() {
                       variant="outlined"
                     />
                   ))}
+                </div>
+                <div className="space-y-4">
+                  <div className="font-medium">Resume</div>
+                  <div className="text-[#b91c1c]">
+                    * Kindly attach the link for resume, stored in Google Drive
+                    in read-only mode
+                  </div>
+                  <TextField 
+                      fullWidth
+                      label="Resume"
+                      name="resume"
+                      type="text"
+                      value={formData.resume}
+                      onChange={handleBasicInputChange}
+                      required
+                      variant="outlined"/>
                 </div>
               </CardContent>
               <CardActions sx={{ padding: 2 }}>
