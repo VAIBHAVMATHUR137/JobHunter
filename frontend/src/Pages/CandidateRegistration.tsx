@@ -49,7 +49,6 @@ const basicFormFields = [
   "xProfile",
   "linkedin",
   "portfolio",
- 
 ] as const;
 
 // Skills fields
@@ -72,9 +71,6 @@ type BasicFieldName = (typeof basicFormFields)[number];
 
 function CandidateRegistration() {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-  // const [validationErrors, setValidationErrors] = useState<
-  //   Record<string, string>
-  // >({});
 
   const dispatch = useDispatch();
   const formData = useSelector((state: RootState) => state.candidateRegister);
@@ -84,7 +80,6 @@ function CandidateRegistration() {
   const formatDataForBackend = () => {
     const skills = Object.values(formData.skills);
     const preferred_locations = Object.values(formData.preferred_location);
-    
 
     return {
       ...formData,
@@ -201,9 +196,6 @@ function CandidateRegistration() {
         "http://localhost:5000/candidate/createCandidate",
         formattedData
       );
-      console.log("Data set all good !");
-      console.log(response.data);
-      console.log(response.data.success);
       if (response.status === 201) {
         // Reset form after successful submission
         basicFormFields.forEach((field) => {
@@ -337,8 +329,6 @@ function CandidateRegistration() {
                     onChange={handleBasicInputChange}
                     required
                     variant="outlined"
-                    // error={!!validationErrors[field]}
-                    // helperText={validationErrors[field]}
                   />
                 ))}
 
@@ -383,15 +373,16 @@ function CandidateRegistration() {
                     * Kindly attach the link for resume, stored in Google Drive
                     in read-only mode
                   </div>
-                  <TextField 
-                      fullWidth
-                      label="Resume"
-                      name="resume"
-                      type="text"
-                      value={formData.resume}
-                      onChange={handleBasicInputChange}
-                      required
-                      variant="outlined"/>
+                  <TextField
+                    fullWidth
+                    label="Resume"
+                    name="resume"
+                    type="text"
+                    value={formData.resume}
+                    onChange={handleBasicInputChange}
+                    required
+                    variant="outlined"
+                  />
                 </div>
               </CardContent>
               <CardActions sx={{ padding: 2 }}>

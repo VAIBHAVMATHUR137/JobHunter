@@ -51,6 +51,7 @@ interface recruiterAuthentication {
   password: string;
   company: string;
   location: string;
+  photo: string;
 }
 //initial skills of candidate
 const initialSkills: candidateSkills = {
@@ -105,6 +106,7 @@ const initialRecruiterRegisterState: recruiterAuthentication = {
   password: "",
   company: "",
   location: "",
+  photo:""
 };
 //common reducer to update the field
 const loginUpdateField = <T extends keyof loginFormState>(
