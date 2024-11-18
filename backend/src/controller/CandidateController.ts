@@ -30,7 +30,7 @@ export const fetchIndividualCandidate = expressAsyncHandler(
     }
     res
       .status(200)
-      .json(`Here we found application for the candidate ${req.body.name}`);
+      .json(candidate);
   }
 );
 //Registartion by a candidate at portal
