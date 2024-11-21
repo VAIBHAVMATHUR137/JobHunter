@@ -1,18 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { candidateRegistartionUpdate } from "../Slice/Slice";
-import {
-  Container,
-  Paper,
-  Typography,
-  Avatar,
-  Box,
-  Skeleton,
-} from "@mui/material";
-import {Grid} from '@mui/material';
-import Navbar from "../Components/Navbar";
-import axios from "axios";
 import { RootState } from "../Slice/Store";
+import Navbar from "@/components/ui/navbar";
+import axios from "axios";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert } from "@/components/ui/alert";
+
 
 export default function CandidateDashboard() {
   const [isLoading, setIsLoading] = useState(true);
@@ -52,14 +48,39 @@ export default function CandidateDashboard() {
 
   return (
     <>
-      <Navbar />
-      <Container maxWidth="lg">
-        <Paper elevation={3} sx={{ p: 3, mt: 3 }}>
-          <Grid container spacing={3}>
+ 
+  <>
+    <Navbar />
+    <div className="container mx-auto mt-6">
+      <div className="max-w-4xl mx-auto p-6 bg-card shadow-lg rounded-lg">
+        <div className="flex flex-col items-center">
+          {isLoading ? (
+            <Skeleton className="h-24 w-24 rounded-full" />
+          ) : error ? (
+            <Alert variant="destructive">{error}</Alert>
+          ) : (
+            <Avatar className="h-24 w-24 rounded-full">
+            <AvatarImage src={candidatePhoto} alt="Candidate Photo" />
+            <AvatarFallback>CP</AvatarFallback>
+          </Avatar>
+          )}
 
-          </Grid>
-        </Paper>
-      </Container>
+          <Card className="mt-6">
+            <CardHeader>
+              <h2 className="text-xl font-bold">Candidate Dashboard</h2>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                Welcome to your dashboard. Here you can manage your profile and access important information.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  </>
+);
+
     </>
   );
 }
