@@ -16,14 +16,14 @@ export const fetchIndividualRecruiter = expressAsyncHandler(
       res.status(400);
       throw new Error("No such recruiter exists");
     }
-    res.status(200).json({ Message: `Welcome recruiter ${req.body.name}` });
+    res.status(200).json(recruiter);
   }
 );
 //Registartion by a recruiter at portal
 export const createRecruiter = expressAsyncHandler(
   async (req: Request, res: Response) => {
-    const { name, number, email, password, company, location } = req.body;
-    if (!name || !number || !email || !password || !company || !location) {
+    const { name, number, email, password, company, location,photo } = req.body;
+    if (!name || !number || !email || !password || !company || !location||!photo) {
       throw new Error("All fields are mandatory");
     }
 
@@ -37,6 +37,8 @@ export const createRecruiter = expressAsyncHandler(
       password:hashedPassword,
       company,
       location,
+      photo
+    
     });
     console.log(`Here we created a recruiter ${recruiter.name}`);
     if (recruiter) {

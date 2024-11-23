@@ -11,6 +11,7 @@ interface IRecruiter extends Document{
     password:string,
     company:string,
     location:string
+    photo:string
 }
 const recruiterSchema:Schema=new mongoose.Schema({
     name: {
@@ -42,6 +43,10 @@ const recruiterSchema:Schema=new mongoose.Schema({
         required:true
       },
       location:{
+        type:String,
+        required:true
+      },
+      photo:{
         type:String,
         required:true
       }
