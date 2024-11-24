@@ -36,7 +36,7 @@ export default function CandidateDashboard() {
       setIsLoading(true);
       try {
         const response = await axios.get(
-          "http://localhost:5000/candidate/getIndividualCandidate/673ece650d5f1a004c564946"
+          "http://localhost:5000/candidate/getIndividualCandidate/6742c02254776fe040f77a19"
         );
         if (response.data) {
           dispatch(

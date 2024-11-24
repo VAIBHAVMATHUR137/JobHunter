@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Global modal transitions */
+.dialog-overlay {
+  transition: opacity 0.3s ease-out;
+}
+
+.dialog-content {
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+}
+
 
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;

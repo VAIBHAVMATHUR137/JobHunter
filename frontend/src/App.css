@@ -1,6 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* Fade and scale animations for the modal */
+/* Global modal transitions */
+.dialog-overlay {
+  transition: opacity 0.3s ease-out;
+}
+
+.dialog-content {
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+}
+
 
 #root {
   max-width: 1280px;
