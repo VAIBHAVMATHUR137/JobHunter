@@ -3,23 +3,33 @@ import { useState } from "react";
 type AlertDialogDemoProps = {
   title: string;
   message: string;
-  onClose: () => void; 
-  nextPage:()=>void
+  onClose: () => void;
+  nextPage: () => void;
+  setIsSuccess: (value: boolean) => void;
+  isSuccess: boolean; // Add this prop to control button visibility
 };
 
-export function AlertDialogDemo({ title, message, onClose, nextPage }: AlertDialogDemoProps) {
+export function AlertDialogDemo({
+  title,
+  message,
+  onClose,
+  nextPage,
+  setIsSuccess,
+  isSuccess,
+}: AlertDialogDemoProps) {
   const [isOpen, setIsOpen] = useState(true);
 
   const handleCloseButtonOne = () => {
     setIsOpen(false);
     onClose();
   };
-  const handleCloseButtonTwo=()=>{
-  nextPage();
-  }
+
+  const handleCloseButtonTwo = () => {
+    setIsSuccess(true);
+    nextPage();
+  };
 
   if (!isOpen) return null;
-
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
@@ -33,12 +43,14 @@ export function AlertDialogDemo({ title, message, onClose, nextPage }: AlertDial
           >
             Close
           </button>
-          <button
-            className="px-4 py-2 bg-primary text-primary-foreground rounded"
-            onClick={handleCloseButtonTwo}
-          >
-            Navigate
-          </button>
+          {isSuccess && ( // Conditionally render the second button
+            <button
+              className="px-4 py-2 bg-primary text-primary-foreground rounded"
+              onClick={handleCloseButtonTwo}
+            >
+              Navigate
+            </button>
+          )}
         </div>
       </div>
     </div>

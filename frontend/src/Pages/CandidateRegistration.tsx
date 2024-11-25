@@ -57,12 +57,17 @@ const locationFields = [
 type BasicFieldName = (typeof basicFormFields)[number];
 
 export default function CandidateRegistration() {
+  const [isSuccess, setIsSuccess] = useState(false);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [showAlert, setShowAlert] = useState(false); // Add state for alert visibility
+  const[title,setTitle]=useState<string|"">('');
+  const[message,setMessage]=useState<string|" ">('');
   const dispatch = useDispatch();
   const formData = useSelector((state: RootState) => state.candidateRegister);
   const [formComplete, setIsFormComplete] = useState(false);
   const nav=useNavigate();
+  const putTitle=(heading:string)=>setTitle(heading)
+  const putMessage=(message:string)=>setMessage(message)
   // Existing helper functions from your original component
   const formatDataForBackend = () => {
     const skills = Object.values(formData.skills);
@@ -174,12 +179,15 @@ export default function CandidateRegistration() {
     try {
       const formattedData = formatDataForBackend();
       const response = await axios.post(
-        "http://localhost:5000/candidate/createCandidate",
+        "http://localhost:5000/candidate/Candidate",
         formattedData
       );
 
       if (response.status === 201) {
         setShowAlert(true);
+        putTitle("Welcome Candidate");
+        putMessage("You have been registered successfully! Kindly navigate to Login Page");
+        setIsSuccess(true)
         basicFormFields.forEach((field) => {
           dispatch(candidateRegistartionReset({ field, value: "" }));
         });
@@ -224,14 +232,18 @@ export default function CandidateRegistration() {
         console.log("data not success");
       }
     } catch (error) {
+
       if (axios.isAxiosError(error)) {
-        alert(
-          `Registration failed: ${
-            error.response?.data?.message || error.message
-          }`
-        );
+        setShowAlert(true);
+        putTitle("Error Occured");
+        putMessage(`${error.response?.data?.message || error.message}`);
+        setIsSuccess(false)
+       
       } else {
-        alert("An unexpected error occurred");
+        setShowAlert(true);
+        putTitle("Error Occured");
+        putMessage("An unexpected error occured");
+        setIsSuccess(false)
       }
     }
   };
@@ -374,10 +386,12 @@ export default function CandidateRegistration() {
       </div>
       {showAlert && (
         <AlertDialogDemo
-          title="Successful Registration"
-          message="Candidate registration successful!"
+          title={title}
+          message={message}
           onClose={() => setShowAlert(false)}
           nextPage={()=>nav('/CandidateLogin')}
+          setIsSuccess={setIsSuccess}
+          isSuccess={isSuccess}
         />
       )}
     </>
