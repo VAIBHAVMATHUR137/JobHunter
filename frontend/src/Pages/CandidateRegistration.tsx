@@ -179,7 +179,7 @@ export default function CandidateRegistration() {
     try {
       const formattedData = formatDataForBackend();
       const response = await axios.post(
-        "http://localhost:5000/candidate/Candidate",
+        "http://localhost:5000/candidate/createCandidate",
         formattedData
       );
 
@@ -234,16 +234,28 @@ export default function CandidateRegistration() {
     } catch (error) {
 
       if (axios.isAxiosError(error)) {
-        setShowAlert(true);
-        putTitle("Error Occured");
-        putMessage(`${error.response?.data?.message || error.message}`);
-        setIsSuccess(false)
-       
+        const status = error.response?.status;
+
+        if (status === 409) {
+          setShowAlert(true);
+          putTitle("Error");
+          putMessage("Candidate with same email or cell number already exists");
+          setIsSuccess(false);
+        } else if (status === 400) {
+          setShowAlert(true);
+          putTitle("Error");
+          putMessage(
+            "Kindly check the data you entered. There is some issue in the data you provided"
+          );
+          setIsSuccess(false);
+        } else {
+          setShowAlert(true);
+          putTitle("Error Occurred");
+          putMessage("Something went wrong. Please try again later.");
+          setIsSuccess(false);
+        }
       } else {
-        setShowAlert(true);
-        putTitle("Error Occured");
-        putMessage("An unexpected error occured");
-        setIsSuccess(false)
+        console.error("Non-Axios error:", error);
       }
     }
   };

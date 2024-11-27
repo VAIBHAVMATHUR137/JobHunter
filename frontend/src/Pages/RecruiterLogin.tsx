@@ -1,23 +1,30 @@
 import { useSelector, useDispatch } from "react-redux"
 import { RootState } from "../Slice/Store"
 import  { ChangeEvent, FormEvent, useState, useEffect } from "react"
-
 import {
   recruiterLoginUpdateField,
   recruiterLoginResetField,
 } from "../Slice/Slice"
-
+import { AlertDialogDemo } from "@/components/ui/AlertDialogDemo"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import Navbar from "@/components/ui/navbar"
-
+import axios from "axios"
+import { useNavigate } from "react-router-dom"
 // Simple array of field names
 const formFields = ["email", "password"] as const
 type FieldName = (typeof formFields)[number]
 
 function RecruiterLogin() {
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const[title,setTitle]=useState<string|"">('');
+  const[message,setMessage]=useState<string|" ">('');
+  const nav=useNavigate();
+  const putTitle=(heading:string)=>setTitle(heading)
+  const putMessage=(message:string)=>setMessage(message)
   const dispatch = useDispatch()
   const formData = useSelector((state: RootState) => state.recruiterLogin)
   const [formComplete, setIsFormComplete] = useState(false)
@@ -34,12 +41,58 @@ function RecruiterLogin() {
     dispatch(recruiterLoginUpdateField({ field: name as FieldName, value }))
   }
 
-  const handleSubmit = (event: FormEvent) => {
+  const handleSubmit =  async (event: FormEvent) => {
     event.preventDefault()
-    // Add your login logic here
-    formFields.forEach((field) => {
-      dispatch(recruiterLoginResetField({ field, value: "" }))
-    })
+   try {
+    const response= await axios.post("http://localhost:5000/recruiter/login",formData)
+    if(response.status===200){
+      setShowAlert(true);
+      putTitle("Welcome again Recruiter");
+      putMessage("You have successfully logged in ");
+      setIsSuccess(false)
+      formFields.forEach((field) => {
+        dispatch(recruiterLoginResetField({ field, value: "" }))
+      })
+    }
+   } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const status = error.response?.status;
+
+    if (status === 400) {
+        setShowAlert(true);
+        putTitle("Error");
+        putMessage(
+          "Kindly check the data you entered. There is some issue in the data you provided"
+        );
+        setIsSuccess(false);
+      } 
+      else if(status===404){
+        setShowAlert(true);
+        putTitle("Error");
+        putMessage(
+          "Recruiter with such credentials do not exists"
+        );
+        setIsSuccess(false);
+      }   else if(status===401){
+        setShowAlert(true);
+        putTitle("Error");
+        putMessage(
+          "Incorrect Password"
+        );
+        setIsSuccess(false);
+      }
+      else {
+        setShowAlert(true);
+        putTitle("Error Occurred");
+        putMessage("Something went wrong. Please try again later.");
+        setIsSuccess(false);
+      }
+    }else{
+      console.error("Non-Axios error:", error);
+    }
+   }
+
+  
   }
 
   // Helper function to get field type
@@ -92,6 +145,16 @@ function RecruiterLogin() {
         </form>
       </Card>
     </div>
+    {showAlert && (
+        <AlertDialogDemo
+          title={title}
+          message={message}
+          onClose={() => setShowAlert(false)}
+          nextPage={()=>nav('/CandidateLogin')}
+          setIsSuccess={setIsSuccess}
+          isSuccess={isSuccess}
+        />
+      )}
     </>
   )
 }

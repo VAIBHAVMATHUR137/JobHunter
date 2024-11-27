@@ -28,9 +28,7 @@ export const fetchIndividualCandidate = expressAsyncHandler(
       res.status(400);
       throw new Error("Candidate do not exist");
     }
-    res
-      .status(200)
-      .json(candidate);
+    res.status(200).json(candidate);
   }
 );
 //Registartion by a candidate at portal
@@ -54,7 +52,7 @@ export const postCandidate = expressAsyncHandler(
       linkedin,
       portfolio,
       photo,
-      resume
+      resume,
     } = req.body;
     if (
       !name ||
@@ -70,14 +68,25 @@ export const postCandidate = expressAsyncHandler(
       !notice_period ||
       !years_of_experience ||
       !github ||
-      !linkedin||
-      !photo||
+      !linkedin ||
+      !photo ||
       !resume
     ) {
-      res.status(400);
-      throw new Error("All fields are mandatory");
+      res.status(400).json({ Message: "All fields are mandatory" });
+      return;
     }
+    //Check if candidate with same email or number exists
 
+    const existingCandidate = await Candidate.findOne({
+      $or: [{ email }, { number }],
+    });
+
+    if (existingCandidate) {
+      res.status(409).json({
+        message: "Candidate with this email or number already exists",
+      });
+      return;
+    }
     const hashedPassword = await bcrypt.hash(password, 8);
     console.log("Hashed Password", hashedPassword);
 
@@ -99,7 +108,7 @@ export const postCandidate = expressAsyncHandler(
       linkedin,
       portfolio,
       photo,
-      resume
+      resume,
     });
 
     console.log(`Here we created a candidate ${candidate}`);
@@ -108,8 +117,8 @@ export const postCandidate = expressAsyncHandler(
       res.status(201).json(candidate);
       console.log(`Here we created a candidate with id: ${candidate._id}`);
     } else {
-      res.status(400);
-      throw new Error("Data entered by candidate is not valid");
+      res.status(400).json({"Message":"Data entered by candidate is not valid"});
+      return;
     }
   }
 );
@@ -137,14 +146,20 @@ export const candidateLogin = expressAsyncHandler(
       throw new Error("All fields are mandatory for job seeker to login");
     }
 
+
     // Find candidate by email
     const candidate = await Candidate.findOne({ email });
-
+     
+    if(!candidate){
+      res.status(404).json({ Message: "Candidate not found" });
+    }
     // Check password
     if (candidate && (await bcrypt.compare(password, candidate.password))) {
       if (!SECRET_ACCESS_TOKEN) {
         res.status(500);
-        throw new Error("Internal server error: SECRET_ACCESS_TOKEN is not defined");
+        throw new Error(
+          "Internal server error: SECRET_ACCESS_TOKEN is not defined"
+        );
       }
 
       // Generate access token
@@ -153,7 +168,7 @@ export const candidateLogin = expressAsyncHandler(
           candidate: {
             email: candidate.email,
             id: candidate.id,
-             role:'candidate'
+            role: "candidate",
           },
         },
         SECRET_ACCESS_TOKEN,
@@ -166,12 +181,12 @@ export const candidateLogin = expressAsyncHandler(
         candidate: {
           email: candidate.email,
           id: candidate.id,
-          role:'candidate'
+          role: "candidate",
         },
       });
     } else {
-      res.status(401);
-      throw new Error("Invalid email or password");
+      res.status(401).json({"Message":"Invalid email or pass"});
+      return;
     }
   }
 );

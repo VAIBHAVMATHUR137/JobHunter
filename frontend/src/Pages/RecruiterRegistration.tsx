@@ -103,6 +103,7 @@ function RecruiterRegistration() {
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
+
     try {
       const response = await axios.post(
         "http://localhost:5000/recruiter/createRecruiter",
@@ -122,10 +123,30 @@ function RecruiterRegistration() {
         setPhotoPreview(null);
       }
     } catch (error) {
-      setShowAlert(true);
-      putTitle("Error Occured");
-      putMessage(`${error}`);
-      setIsSuccess(false);
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status;
+
+        if (status === 409) {
+          setShowAlert(true);
+          putTitle("Error");
+          putMessage("Recruiter with same email or cell number already exists");
+          setIsSuccess(false);
+        } else if (status === 400) {
+          setShowAlert(true);
+          putTitle("Error");
+          putMessage(
+            "Kindly check the data you entered. There is some issue in the data you provided"
+          );
+          setIsSuccess(false);
+        } else {
+          setShowAlert(true);
+          putTitle("Error Occurred");
+          putMessage("Something went wrong. Please try again later.");
+          setIsSuccess(false);
+        }
+      } else {
+        console.error("Non-Axios error:", error);
+      }
     }
   };
 

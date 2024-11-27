@@ -13,8 +13,8 @@ export const fetchIndividualRecruiter = expressAsyncHandler(
   async (req: Request, res: Response) => {
     const recruiter = await Recruiter.findById(req.params.id);
     if (!recruiter) {
-      res.status(400);
-      throw new Error("No such recruiter exists");
+      res.status(404).json({ message: "Recruiter not found" });
+      return;
     }
     res.status(200).json(recruiter);
   }
@@ -22,30 +22,49 @@ export const fetchIndividualRecruiter = expressAsyncHandler(
 //Registartion by a recruiter at portal
 export const createRecruiter = expressAsyncHandler(
   async (req: Request, res: Response) => {
-    const { name, number, email, password, company, location,photo } = req.body;
-    if (!name || !number || !email || !password || !company || !location||!photo) {
-      throw new Error("All fields are mandatory");
+    const { name, number, email, password, company, location, photo } =
+      req.body;
+    if (
+      !name ||
+      !number ||
+      !email ||
+      !password ||
+      !company ||
+      !location ||
+      !photo
+    ) {
+      res.status(400).json({ Message: "All fields are mandatory" });
     }
+    // Check if a recruiter with the same email or number already exists
+    const existingRecruiter = await Recruiter.findOne({
+      $or: [{ email }, { number }],
+    });
 
+    if (existingRecruiter) {
+      res.status(409).json({
+        message: "Recruiter with this email or number already exists",
+      });
+      return;
+    }
     const hashedPassword = await bcrypt.hash(password, 8);
     console.log("Hashed Password", hashedPassword);
-
     const recruiter = await Recruiter.create({
       name,
       number,
       email,
-      password:hashedPassword,
+      password: hashedPassword,
       company,
       location,
-      photo
-    
+      photo,
     });
-    console.log(`Here we created a recruiter ${recruiter.name}`);
+
     if (recruiter) {
       res.status(201).json(recruiter);
     } else {
-      res.status(400);
-      throw new Error("Data entered by candidate is not valid");
+      res
+        .status(400)
+        .json({ Message: "Data entered here is not in proper form" });
+      return;
     }
   }
 );
@@ -70,6 +89,10 @@ export const recruiterLogin = expressAsyncHandler(
       throw new Error("All fields are mandatory for recruiter to login");
     }
     const recruiter = await Recruiter.findOne({ email });
+    //handle the error in which during login, email was not found
+    if (!recruiter) {
+      res.status(404).json({ Message: "Recruiter not found" });
+    }
 
     if (recruiter && (await bcrypt.compare(password, recruiter.password))) {
       if (!SECRET_ACCESS_TOKEN) {
@@ -84,7 +107,7 @@ export const recruiterLogin = expressAsyncHandler(
           recruiter: {
             email: recruiter.email,
             id: recruiter.id,
-             role:'recruiter'
+            role: "recruiter",
           },
         },
         SECRET_ACCESS_TOKEN,
@@ -95,12 +118,12 @@ export const recruiterLogin = expressAsyncHandler(
         recruiter: {
           email: recruiter.email,
           id: recruiter.id,
-          role:'recruiter'
+          role: "recruiter",
         },
       });
     } else {
-      res.status(401);
-      throw new Error("INvalid email or password");
+      res.status(401).json({"Message":"Invalid email or pass"});
+      return;
     }
   }
 );
