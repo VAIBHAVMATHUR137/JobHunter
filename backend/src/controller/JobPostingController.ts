@@ -5,8 +5,8 @@ import expressAsyncHandler from "express-async-handler";
 // Custom Middleware to ensure only recruiters can access the job posting 
 export const recruiterOnly = (req: Request, res: Response, next: Function) => {
   if (req.user?.role !== 'recruiter') {
-    res.status(403);
-    throw new Error('Access denied: Only recruiters can perform this action');
+    res.status(403).json({"Message":"Access denied: Only recruiters can perform this action"});
+    return;
   }
   next();
 };
