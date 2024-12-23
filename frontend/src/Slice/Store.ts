@@ -1,11 +1,12 @@
 import {configureStore} from '@reduxjs/toolkit'
-import { candidateLoginReducer,recruiterLoginReducer,candidateRegistrationReducer,recruiterRegistrationReducer } from './Slice';
+import { candidateLoginReducer,recruiterLoginReducer,candidateRegistrationReducer,recruiterRegistrationReducer,jobPostingReducer } from './Slice';
 const store=configureStore({
     reducer:{
         candidateLogin:candidateLoginReducer,
         recruiterLogin:recruiterLoginReducer,
         candidateRegister:candidateRegistrationReducer,
-        recruiterRegister:recruiterRegistrationReducer
+        recruiterRegister:recruiterRegistrationReducer,
+        jobPosting:jobPostingReducer
         
     }   
 })

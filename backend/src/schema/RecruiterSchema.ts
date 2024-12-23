@@ -12,7 +12,6 @@ interface IRecruiter extends Document {
   company: string;
   location: string;
   photo: string;
-  refreshToken: string;
 }
 const recruiterSchema: Schema = new mongoose.Schema({
   name: {
@@ -49,10 +48,6 @@ const recruiterSchema: Schema = new mongoose.Schema({
   photo: {
     type: String,
     required: true,
-  },
-  refreshToken: {
-    type: String,
-    required: false,
   },
 });
 const Recruiter = mongoose.model<IRecruiter>("Recruiter", recruiterSchema);

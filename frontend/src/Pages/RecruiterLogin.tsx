@@ -1,162 +1,169 @@
-import { useSelector, useDispatch } from "react-redux"
-import { RootState } from "../Slice/Store"
-import  { ChangeEvent, FormEvent, useState, useEffect } from "react"
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../Slice/Store";
+import { ChangeEvent, FormEvent, useState, useEffect } from "react";
 import {
   recruiterLoginUpdateField,
   recruiterLoginResetField,
-} from "../Slice/Slice"
-import { AlertDialogDemo } from "@/components/ui/AlertDialogDemo"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import Navbar from "@/components/ui/navbar"
-import axios from "axios"
-import { useNavigate } from "react-router-dom"
-// Simple array of field names
-const formFields = ["email", "password"] as const
-type FieldName = (typeof formFields)[number]
+} from "../Slice/Slice";
+import { AlertDialogDemo } from "@/components/ui/AlertDialogDemo";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+} from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import Navbar from "@/components/ui/navbar";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+import { useContext } from "react";
+import { AuthContext } from "@/context/Context";
+
+
+
+
+const formFields = ["email", "password"] as const;
+type FieldName = (typeof formFields)[number];
+
+
 
 function RecruiterLogin() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
-  const[title,setTitle]=useState<string|"">('');
-  const[message,setMessage]=useState<string|" ">('');
-  const nav=useNavigate();
-  const putTitle=(heading:string)=>setTitle(heading)
-  const putMessage=(message:string)=>setMessage(message)
-  const dispatch = useDispatch()
-  const formData = useSelector((state: RootState) => state.recruiterLogin)
-  const [formComplete, setIsFormComplete] = useState(false)
+  const [title, setTitle] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
+  const [formComplete, setIsFormComplete] = useState(false);
+  const nav = useNavigate();
+  const dispatch = useDispatch();
+  const formData = useSelector((state: RootState) => state.recruiterLogin);
+  const auth = useContext(AuthContext);
+  
+  if (!auth) {
+    throw new Error("RecruiterLogin must be used within an AuthProvider");
+  }
 
   useEffect(() => {
     const isComplete = formFields.every(
       (field) => formData[field].trim() !== ""
-    )
-    setIsFormComplete(isComplete)
-  }, [formData])
+    );
+    setIsFormComplete(isComplete);
+  }, [formData]);
+
+
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target
-    dispatch(recruiterLoginUpdateField({ field: name as FieldName, value }))
-  }
+    const { name, value } = event.target;
+    dispatch(recruiterLoginUpdateField({ field: name as FieldName, value }));
+    
+  };
 
-  const handleSubmit =  async (event: FormEvent) => {
-    event.preventDefault()
-   try {
-    const response= await axios.post("http://localhost:5000/recruiter/login",formData)
-    if(response.status===200){
-      setShowAlert(true);
-      putTitle("Welcome again Recruiter");
-      putMessage("You have successfully logged in ");
-      setIsSuccess(false)
-      formFields.forEach((field) => {
-        dispatch(recruiterLoginResetField({ field, value: "" }))
-      })
-    }
-   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      const status = error.response?.status;
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    try {
+      const response = await auth.recruiterLoginHandler();
+      
+      if (response.status === 200) {
+        setShowAlert(true);
+        setTitle("Welcome Recruiter");
+        setMessage("Successfully logged in");
+        setIsSuccess(true);
 
-    if (status === 400) {
-        setShowAlert(true);
-        putTitle("Error");
-        putMessage(
-          "Kindly check the data you entered. There is some issue in the data you provided"
-        );
-        setIsSuccess(false);
-      } 
-      else if(status===404){
-        setShowAlert(true);
-        putTitle("Error");
-        putMessage(
-          "Recruiter with such credentials do not exists"
-        );
-        setIsSuccess(false);
-      }   else if(status===401){
-        setShowAlert(true);
-        putTitle("Error");
-        putMessage(
-          "Incorrect Password"
-        );
-        setIsSuccess(false);
+        formFields.forEach((field) => {
+          dispatch(recruiterLoginResetField({ field, value: "" }));
+        });
+
+        setTimeout(() => nav("/JobPosting"), 1500);
       }
-      else {
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status;
+        const errorTitle = "Error";
+        let errorMessage = "Something went wrong";
+
+        switch (status) {
+          case 400:
+            errorMessage = "Invalid data entered";
+            break;
+          case 404:
+            errorMessage = "Recruiter credentials not found";
+            break;
+          case 401:
+            errorMessage = "Incorrect Password";
+            break;
+        }
+
         setShowAlert(true);
-        putTitle("Error Occurred");
-        putMessage("Something went wrong. Please try again later.");
+        setTitle(errorTitle);
+        setMessage(errorMessage);
         setIsSuccess(false);
+      } else {
+        console.error("Non-Axios error:", error);
       }
-    }else{
-      console.error("Non-Axios error:", error);
     }
-   }
+  };
 
-  
-  }
+  const getFieldType = (field: FieldName): string =>
+    field === "password" ? "password" : "email";
 
-  // Helper function to get field type
-  const getFieldType = (field: FieldName): string => 
-    field === 'password' ? 'password' : 'email'
-
-  // Helper function to get field label
   const getFieldLabel = (field: FieldName): string =>
-    field.charAt(0).toUpperCase() + field.slice(1)
+    field.charAt(0).toUpperCase() + field.slice(1);
 
   return (
     <>
-    <Navbar/>
-    <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
-      <Card className="w-full max-w-md shadow-lg">
-        <CardHeader>
-          <CardTitle className="text-center">Login</CardTitle>
-          <CardDescription className="text-center">
-            Recruiter needs to login here
-          </CardDescription>
-        </CardHeader>
-        
-        <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
-            {formFields.map((field) => (
-              <div key={field} className="space-y-2">
-                <Label htmlFor={field}>{getFieldLabel(field)}</Label>
-                <Input
-                  id={field}
-                  type={getFieldType(field)}
-                  name={field}
-                  value={formData[field]}
-                  onChange={handleInputChange}
-                  placeholder={`Enter your ${getFieldLabel(field)}`}
-                  required
-                />
-              </div>
-            ))}
-          </CardContent>
-          
-          <CardFooter>
-            <Button 
-              type="submit" 
-              className="w-full" 
-              disabled={!formComplete}
-            >
-              {formComplete ? "Login" : "Complete all fields"}
-            </Button>
-          </CardFooter>
-        </form>
-      </Card>
-    </div>
-    {showAlert && (
+      <Navbar />
+      <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
+        <Card className="w-full max-w-md shadow-lg">
+          <CardHeader>
+            <CardTitle className="text-center">Recruiter Login</CardTitle>
+            <CardDescription className="text-center">
+              Enter your credentials
+            </CardDescription>
+          </CardHeader>
+
+          <form onSubmit={handleSubmit}>
+            <CardContent className="space-y-4">
+              {formFields.map((field) => (
+                <div key={field} className="space-y-2">
+                  <Label htmlFor={field}>{getFieldLabel(field)}</Label>
+                  <Input
+                    id={field}
+                    type={getFieldType(field)}
+                    name={field}
+                    value={formData[field]}
+                    onChange={handleInputChange}
+                    placeholder={`Enter your ${getFieldLabel(field)}`}
+                    required
+                  />
+                </div>
+              ))}
+            </CardContent>
+
+            <CardFooter>
+              <Button type="submit" className="w-full" disabled={!formComplete}>
+                {formComplete ? "Login" : "Complete all fields"}
+              </Button>
+            </CardFooter>
+          </form>
+        </Card>
+      </div>
+
+      {showAlert && (
         <AlertDialogDemo
           title={title}
           message={message}
           onClose={() => setShowAlert(false)}
-          nextPage={()=>nav('/CandidateLogin')}
+          nextPage={() => nav("/dashboard")}
           setIsSuccess={setIsSuccess}
           isSuccess={isSuccess}
         />
       )}
     </>
-  )
+  );
 }
 
-export default RecruiterLogin
+export default RecruiterLogin;

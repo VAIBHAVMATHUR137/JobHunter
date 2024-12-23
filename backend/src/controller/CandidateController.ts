@@ -172,7 +172,7 @@ export const candidateLogin = expressAsyncHandler(
           },
         },
         SECRET_ACCESS_TOKEN,
-        { expiresIn: "15m" }
+        { expiresIn: "3m" }
       );
 
       // Return the token and user information

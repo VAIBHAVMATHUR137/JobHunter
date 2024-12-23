@@ -1,10 +1,11 @@
 import Recruiter from "../schema/RecruiterSchema";
-
-import { Request, Response } from "express";
+import { client } from "../index";
+import { Request, Response, NextFunction } from "express";
 import expressAsyncHandler from "express-async-handler";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { Console } from "console";
 dotenv.config();
 const SECRET_ACCESS_TOKEN = process.env.SECRET_ACCESS_TOKEN;
 
@@ -88,25 +89,23 @@ export const recruiterLogin = expressAsyncHandler(
 
     // Input validation
     if (!email || !password) {
-      res
-        .status(400)
-        .json({ message: "All fields are mandatory for recruiter to login" });
-      return; // Ensure no further execution
+      res.status(401);
+      throw new Error("All fields are mandatory");
     }
 
     const recruiter = await Recruiter.findOne({ email });
     if (!recruiter) {
-      res.status(404).json({ message: "Recruiter not found" });
-      return;
+      res.status(404);
+      throw new Error("Recruiter not found");
     }
 
     const isPasswordValid = await bcrypt.compare(password, recruiter.password);
     if (!isPasswordValid) {
-      res.status(401).json({ message: "Invalid email or password" });
-      return;
+      res.status(401);
+      throw new Error("Invalid credentials");
     }
 
-    // Generate tokens
+    // Generate access and refresh tokens
     const accessToken = jwt.sign(
       {
         recruiter: {
@@ -116,7 +115,7 @@ export const recruiterLogin = expressAsyncHandler(
         },
       },
       process.env.SECRET_ACCESS_TOKEN!,
-      { expiresIn: "15m" }
+      { expiresIn: "3m" }
     );
 
     const refreshToken = jwt.sign(
@@ -124,19 +123,11 @@ export const recruiterLogin = expressAsyncHandler(
       process.env.SECRET_REFRESH_TOKEN!,
       { expiresIn: "30d" }
     );
-    // const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
 
+    await client.set(`${recruiter.email}_Refresh Token`, refreshToken);
+    await client.set(`${recruiter.email}_Access Token`, accessToken);
 
-
-    
-    // recruiter.refreshToken = hashedRefreshToken;
-    // await recruiter.save();
-
-
-    recruiter.refreshToken = refreshToken;
-    await recruiter.save();
-
-    // Send response
+    // Send tokens in the response body only
     res.status(200).json({
       accessToken,
       refreshToken,
@@ -146,63 +137,71 @@ export const recruiterLogin = expressAsyncHandler(
         role: "recruiter",
       },
     });
-    console.log(refreshToken)
-
-    return; // Explicitly return to match the expected type
+    console.log(accessToken, refreshToken);
   }
 );
 
-export const refreshToken = expressAsyncHandler(async (req: Request, res: Response) => {
-  const { refreshToken } = req.body; 
+export const refreshAccessToken = expressAsyncHandler(
+  async (req: Request, res: Response) => {
+    const { refreshToken } = req.body; 
 
-  if (!refreshToken) {
-     res.status(400).json({ message: "Refresh token is required" });
-     return;
-  }
+    if (!refreshToken) {
+      res.status(401);
+      throw new Error("Refresh token not provided");
+    }
 
-  // Check if the refresh token exists in the database
-  const recruiter = await Recruiter.findOne({ refreshToken });
-  if (!recruiter) {
-   res.status(403).json({ message: "Invalid refresh token" });
-   return;
-  }
+    try {
+      // Verify refresh token
+      const decoded = jwt.verify(
+        refreshToken,
+        process.env.SECRET_REFRESH_TOKEN!
+      ) as { email: string; id: string };
 
-  // Verify the refresh token
-  try {
-    const decoded = jwt.verify(refreshToken, process.env.SECRET_REFRESH_TOKEN!) as { id: string };
+      // Check if recruiter exists in DB
+      const recruiter = await Recruiter.findOne({ email: decoded.email });
+      if (!recruiter) {
+        res.status(403);
+        throw new Error("No such recruiter exists");
+      }
+      //Check if such refresh token exists in redis
+      const existingRefreshToken = await client.get(`${recruiter.email}_Refresh Token`);
+      if (existingRefreshToken !== refreshToken) {
+        res.status(403);
+        throw new Error("Invalid refresh token");
+      }
 
-    // Generate a new access token
-    const newAccessToken = jwt.sign(
-      {
-        recruiter: {
-          id: recruiter.id,
-          email: recruiter.email,
-          role: "recruiter",
+      // Generate new access token
+      const newAccessToken = jwt.sign(
+        {
+          recruiter: {
+            email: recruiter.email,
+            id: recruiter.id,
+            role: "recruiter",
+          },
         },
-      },
-      process.env.SECRET_ACCESS_TOKEN!,
-      { expiresIn: "15m" }
-    );
+        process.env.SECRET_ACCESS_TOKEN!,
+        { expiresIn: "3m" }
+      );
 
-    // Optional: Rotate the refresh token for security
-    const newRefreshToken = jwt.sign(
-      { id: recruiter.id, email: recruiter.email },
-      process.env.SECRET_REFRESH_TOKEN!,
-      { expiresIn: "7d" }
-    );
+      // Optionally generate a new refresh token
+      const newRefreshToken = jwt.sign(
+        { email: recruiter.email, id: recruiter.id },
+        process.env.SECRET_REFRESH_TOKEN!,
+        { expiresIn: "30d" }
+      );
 
-    // Save the new refresh token in the database
-    recruiter.refreshToken = newRefreshToken;
-    await recruiter.save();
+      // Save the new refresh token in DB (optional rotation)
+      await client.set(`${recruiter.email}_Refresh Token`, newRefreshToken);
+      await client.set(`${recruiter.email}_Access Token`, newAccessToken);
 
-    // Respond with new tokens
-    res.status(200).json({
-      accessToken: newAccessToken,
-      refreshToken: newRefreshToken, // Send this only if you're rotating tokens
-    });
-    console.log(newRefreshToken)
-  } catch (error) {
-    res.status(403).json({ message: "Invalid or expired refresh token" });
+      // Send tokens in the response
+      res.status(200).json({
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken, // Optional for rotation
+      });
+    } catch (error) {
+      console.error("Error refreshing token:", error);
+      res.status(403).json({ message: "Invalid or expired refresh token" });
+    }
   }
-});
-
+);

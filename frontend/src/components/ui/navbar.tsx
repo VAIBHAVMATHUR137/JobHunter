@@ -23,6 +23,7 @@ export default function Navbar() {
             <Link to="/CommonAuthentication">Find Jobs</Link>
             <Link to="/CommonAuthentication">Companies</Link>
             <Link to="/CommonAuthentication">Resources</Link>
+           <Link to="/JobPosting">Post a job</Link>
           </nav>
         </div>
         <Sheet>
@@ -41,6 +42,7 @@ export default function Navbar() {
               <Link to="/CommonAuthentication">Find Jobs</Link>
               <Link to="/CommonAuthentication">Companies</Link>
               <Link to="/CommonAuthentication">Resources</Link>
+              <Link to="/JobPosting">Post a job</Link>
             </nav>
           </SheetContent>
         </Sheet>
