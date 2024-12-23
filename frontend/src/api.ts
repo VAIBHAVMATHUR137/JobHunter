@@ -1,22 +1,78 @@
-import axios from 'axios';
+import axios from "axios";
 
 const api = axios.create({
-  baseURL: 'http://localhost:5000'
+  baseURL: "http://localhost:5000",
 });
 
+// Function to decode the token and extract expiration time
+const getTokenExpirationTime = (token: string): number | null => {
+  if (!token) return null;
+  const payload = JSON.parse(atob(token.split(".")[1])); // Decode JWT
+  return payload.exp * 1000; // Convert to milliseconds
+};
+
+// Function to schedule token refresh
+const scheduleTokenRefresh = () => {
+  const accessToken = localStorage.getItem("accessToken");
+  const refreshToken = localStorage.getItem("refreshToken");
+
+  if (!accessToken || !refreshToken) return;
+
+  const expirationTime = getTokenExpirationTime(accessToken);
+  const currentTime = Date.now();
+
+  if (expirationTime) {
+    const timeLeft = expirationTime - currentTime;
+
+    // Schedule a refresh slightly before the token expires
+    const refreshTime = timeLeft - 60000; // Refresh 1 minute before expiry
+
+    if (refreshTime > 0) {
+      setTimeout(async () => {
+        try {
+          const response = await axios.post(
+            "http://localhost:5000/recruiter/refresh-token",
+            {
+              refreshToken,
+            }
+          );
+
+          const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
+            response.data;
+
+          // Store the new tokens
+          localStorage.setItem("accessToken", newAccessToken);
+          localStorage.setItem("refreshToken", newRefreshToken);
+
+          // Reschedule the next refresh
+          scheduleTokenRefresh();
+        } catch (error) {
+          console.error("Failed to refresh token:", error);
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+          window.location.href = "/RecruiterLogin";
+        }
+      }, refreshTime);
+    }
+  }
+};
+
+// Schedule refresh when the app starts
+scheduleTokenRefresh();
+
+// Axios Request Interceptor
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('accessToken');
+    const token = localStorage.getItem("accessToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
+// Axios Response Interceptor
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -27,23 +83,23 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        // Get the refresh token
-        const refreshToken = localStorage.getItem('refreshToken');
-        
+        const refreshToken = localStorage.getItem("refreshToken");
+
         if (!refreshToken) {
-          throw new Error('No refresh token available');
+          throw new Error("No refresh token available");
         }
 
-        // Call the refresh token endpoint
-        const response = await axios.post('http://localhost:5000/recruiter/refresh-token', {
-          refreshToken
-        });
+        const response = await axios.post(
+          "http://localhost:5000/recruiter/refresh-token",
+          {
+            refreshToken,
+          }
+        );
 
         const { accessToken, refreshToken: newRefreshToken } = response.data;
 
-        // Store the new tokens
-        localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('refreshToken', newRefreshToken);
+        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("refreshToken", newRefreshToken);
 
         // Update the authorization header
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
@@ -51,10 +107,9 @@ api.interceptors.response.use(
         // Retry the original request
         return api(originalRequest);
       } catch (refreshError) {
-        // If refresh token is invalid, redirect to login
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        window.location.href = '/RecruiterLogin';
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        window.location.href = "/RecruiterLogin";
         return Promise.reject(refreshError);
       }
     }
