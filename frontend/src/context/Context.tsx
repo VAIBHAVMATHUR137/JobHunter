@@ -15,6 +15,8 @@ interface LoginResponse {
     email: string;
     id: string;
     role: string;
+    name:string;
+    photo:string
   };
 }
 
@@ -22,8 +24,7 @@ interface AuthContextType {
   accessToken: string | null;
   setAccessToken: (token: string | null) => void;
   recruiterLoginHandler: () => Promise<AxiosResponse<LoginResponse>>;
-  isAuthenticated: boolean;
-  recruiterEmail: string | null;
+  isAuthenticated: boolean
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -33,17 +34,16 @@ export const AuthContext = createContext<AuthContextType | undefined>(
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [accessToken, setAccessToken] = useState<string | null>(
     localStorage.getItem("accessToken")
+    
   );
-  const [recruiterEmail, setRecruiterEmail] = useState<string | null>(null);
+
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
-    const email = localStorage.getItem("recruiterEmail"); 
+
     if (token) {
       setAccessToken(token);
     }
-    if (email) {
-      setRecruiterEmail(email);
-    }
+    
   }, []);
 
   const recruiterLoginFormData = useSelector<RootState, RecruiterLoginFormData>(
@@ -62,10 +62,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setAccessToken(response.data.accessToken);
       localStorage.setItem("accessToken", response.data.accessToken);
       localStorage.setItem("refreshToken", response.data.refreshToken);
-      setRecruiterEmail(response.data.recruiter.email);
-      if (recruiterEmail) {
-        localStorage.setItem("Recruiter Email Address", recruiterEmail);
-      }
+      localStorage.setItem("jobRole",response.data.recruiter.role);
+      localStorage.setItem("id",response.data.recruiter.id);
+      localStorage.setItem("email",response.data.recruiter.email)
+      localStorage.setItem("name",response.data.recruiter.name);
+      localStorage.setItem("photo",response.data.recruiter.photo)
+  
+    
     }
 
     return response;
@@ -80,7 +83,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setAccessToken,
         recruiterLoginHandler,
         isAuthenticated,
-        recruiterEmail,
+       
       }}
     >
       {children}

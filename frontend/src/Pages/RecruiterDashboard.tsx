@@ -7,16 +7,15 @@ import { useDispatch, useSelector } from "react-redux"
 import axios from "axios"
 import { RootState } from "@/Slice/Store"
 import { recruiterRegistrationUpdate } from "@/Slice/Slice"
-
-
-
 export default function RecruiterDashboard() {
   const dispatch=useDispatch();
   const recruiterDetails=useSelector((state:RootState)=>state.recruiterRegister)
 useEffect(()=>{
   const fetchRecruiter=async ()=>{
     try {
-      const response=await axios.get("http://localhost:5000/recruiter/fetchRecruiter/6740864d7859a5483cd7b93c");
+      const id=localStorage.getItem("id");
+      if(id){
+      const response=await axios.get(`http://localhost:5000/recruiter/fetchRecruiter/${id}`);
       if(response.data){
         dispatch(recruiterRegistrationUpdate({
           field:"photo",
@@ -44,7 +43,8 @@ useEffect(()=>{
           field:"location",
           value:response.data.location
         }))
-      }
+      }}
+     
     } catch (error) {
       console.log(error)
     }

@@ -77,7 +77,7 @@ function RecruiterLogin() {
           dispatch(recruiterLoginResetField({ field, value: "" }));
         });
 
-        setTimeout(() => nav("/JobPosting"), 1500);
+        setTimeout(() => nav("/RecruiterDashboard"), 1500);
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {

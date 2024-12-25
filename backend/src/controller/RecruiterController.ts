@@ -5,7 +5,7 @@ import expressAsyncHandler from "express-async-handler";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { Console } from "console";
+
 dotenv.config();
 const SECRET_ACCESS_TOKEN = process.env.SECRET_ACCESS_TOKEN;
 
@@ -135,6 +135,8 @@ export const recruiterLogin = expressAsyncHandler(
         email: recruiter.email,
         id: recruiter.id,
         role: "recruiter",
+        name:recruiter.name,
+        photo:recruiter.photo
       },
     });
     console.log(accessToken, refreshToken);

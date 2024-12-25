@@ -5,8 +5,7 @@ import { ChangeEvent, FormEvent, useState, useEffect } from "react";
 import { AlertDialogDemo } from "@/components/ui/AlertDialogDemo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { AuthContext } from "@/context/Context";
-import { useContext } from "react";
+
 import {
   Card,
   CardContent,
@@ -48,20 +47,16 @@ function JobPosting() {
   const nav = useNavigate();
   const putTitle = (heading: string) => setTitle(heading);
   const putMessage = (message: string) => setMessage(message);
-  //This function is for the conversion of skills into array so that skills can be easily stored into backend
-  const auth = useContext(AuthContext);
-
-  if (!auth) {
-    throw new Error("JobPosting must be used within an AuthProvider");
-  }
+const accessToken=localStorage.getItem("accessToken")
+const recruiterEmail=localStorage.getItem("recruiterEmail")
   useEffect(() => {
-    if (!auth.isAuthenticated) {
+    if (!accessToken) {
       setShowAlert(true);
       putTitle("Authentication Required");
       putMessage("Please login as a recruiter to post jobs");
       setTimeout(() => nav("/RecruiterLogin"), 1500);
     }
-  }, [auth.isAuthenticated, nav]);
+  }, [accessToken, nav]);
   const formatSkillsForBackend = () => {
     const skills = Object.values(jobData.skills_required).filter(
       (skill) => skill.trim() !== ""
@@ -111,7 +106,7 @@ function JobPosting() {
       }
       const formattedData = {
         ...formatSkillsForBackend(),
-        recruiter_email: auth.recruiterEmail
+        recruiter_email: recruiterEmail
       };
       const response = await api.post("/job/create", formattedData);
       console.log(response);

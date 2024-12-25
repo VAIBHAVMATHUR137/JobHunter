@@ -182,6 +182,8 @@ export const candidateLogin = expressAsyncHandler(
           email: candidate.email,
           id: candidate.id,
           role: "candidate",
+          name:candidate.name,
+          photo:candidate.photo
         },
       });
     } else {
