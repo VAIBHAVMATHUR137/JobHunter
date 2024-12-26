@@ -5,7 +5,9 @@ import mongoose, { Document, Schema } from "mongoose";
 const mobileNumberRegex: RegExp = /^(\+\d{1,3}[- ]?)?\d{10}$/;
 
 interface IRecruiter extends Document {
-  name: string;
+  firstName:string,
+  
+  lastName:string
   number: number;
   email: string;
   password: string;
@@ -14,7 +16,12 @@ interface IRecruiter extends Document {
   photo: string;
 }
 const recruiterSchema: Schema = new mongoose.Schema({
-  name: {
+  firstName: {
+    type: String,
+    required: true,
+  },
+
+  lastName: {
     type: String,
     required: true,
   },

@@ -23,10 +23,11 @@ export const fetchIndividualRecruiter = expressAsyncHandler(
 //Registartion by a recruiter at portal
 export const createRecruiter = expressAsyncHandler(
   async (req: Request, res: Response) => {
-    const { name, number, email, password, company, location, photo } =
+    const { firstName,lastName, number, email, password, company, location, photo } =
       req.body;
     if (
-      !name ||
+      !firstName||
+      !lastName||
       !number ||
       !email ||
       !password ||
@@ -50,7 +51,8 @@ export const createRecruiter = expressAsyncHandler(
     const hashedPassword = await bcrypt.hash(password, 8);
     console.log("Hashed Password", hashedPassword);
     const recruiter = await Recruiter.create({
-      name,
+      firstName,
+      lastName,
       number,
       email,
       password: hashedPassword,
@@ -78,7 +80,7 @@ export const deleteRecruiter = expressAsyncHandler(
       throw new Error("No such recruiter exists you wanna delete");
     }
     await Recruiter.deleteOne({ _id: recruiter._id });
-    res.status(200).json(`Recruiter ${recruiter.name} has been deleted`);
+    res.status(200).json(`Recruiter ${recruiter.firstName} has been deleted`);
   }
 );
 //login feature for recruiter with refresh token
@@ -135,7 +137,8 @@ export const recruiterLogin = expressAsyncHandler(
         email: recruiter.email,
         id: recruiter.id,
         role: "recruiter",
-        name:recruiter.name,
+        firstName:recruiter.firstName,
+        lastName:recruiter.lastName,
         photo:recruiter.photo
       },
     });

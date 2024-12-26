@@ -24,7 +24,8 @@ import { useNavigate } from "react-router-dom";
 
 // Existing constants from your original component
 const basicFormFields = [
-  "name",
+  "firstName",
+  "lastName",
   "email",
   "number",
   "password",

@@ -1,11 +1,9 @@
 import mongoose, { Document, Schema } from 'mongoose';
-
-
 const mobileNumberRegex: RegExp = /^(\+\d{1,3}[- ]?)?\d{10}$/;
-
 // Define the interface for the schema
 interface ICandidate extends Document {
-  name: string;
+  firstName:string,
+  lastName:string,
   email: string;
   number: number;
   password: string;
@@ -27,9 +25,13 @@ interface ICandidate extends Document {
 
 // Create the candidate schema
 const candidateSchema: Schema = new mongoose.Schema({
-  name: {
+  firstName: {
     type: String,
     required: true,
+  },
+  lastName:{
+    type:String,
+    required:true
   },
   email: {
     type: String,

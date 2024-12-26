@@ -15,7 +15,8 @@ interface LoginResponse {
     email: string;
     id: string;
     role: string;
-    name:string;
+    firstName:string,
+    lastName:string,
     photo:string
   };
 }
@@ -65,7 +66,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       localStorage.setItem("jobRole",response.data.recruiter.role);
       localStorage.setItem("id",response.data.recruiter.id);
       localStorage.setItem("email",response.data.recruiter.email)
-      localStorage.setItem("name",response.data.recruiter.name);
+      localStorage.setItem("firstName",response.data.recruiter.firstName);
+      localStorage.setItem("lastName",response.data.recruiter.lastName);
       localStorage.setItem("photo",response.data.recruiter.photo)
   
     

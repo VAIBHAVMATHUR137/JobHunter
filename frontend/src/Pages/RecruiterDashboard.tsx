@@ -22,8 +22,12 @@ useEffect(()=>{
           value:response.data.photo
         }))
         dispatch(recruiterRegistrationUpdate({
-          field:"name",
-          value:response.data.name
+          field:"firstName",
+          value:response.data.firstName
+        }))
+        dispatch(recruiterRegistrationUpdate({
+          field:"lastName",
+          value:response.data.lastName
         }))
         dispatch(recruiterRegistrationUpdate({
           field:"number",
@@ -64,10 +68,10 @@ useEffect(()=>{
           </CardHeader>
           <CardContent className="flex flex-col items-center">
             <Avatar className="w-32 h-32 mb-4">
-              <AvatarImage src={recruiterDetails.photo} alt={recruiterDetails.name} />
-              <AvatarFallback>{recruiterDetails.name.charAt(0)}</AvatarFallback>
+              <AvatarImage src={recruiterDetails.photo} alt={recruiterDetails.firstName} />
+              <AvatarFallback>{recruiterDetails.firstName.charAt(0)}</AvatarFallback>
             </Avatar>
-            <h2 className="text-2xl font-semibold mb-2">{recruiterDetails.name}</h2>
+            <h2 className="text-2xl font-semibold mb-2">{recruiterDetails.firstName}</h2>
             <p className="text-muted-foreground">{recruiterDetails.company}</p>
           </CardContent>
         </Card>
@@ -80,8 +84,9 @@ useEffect(()=>{
               <li className="flex items-center">
                 <User className="mr-2 h-5 w-5" />
                 <span className="font-medium mr-2">Name:</span>
-                {recruiterDetails.name}
+                {recruiterDetails.firstName} {recruiterDetails.lastName}
               </li>
+            
               <li className="flex items-center">
                 <Mail className="mr-2 h-5 w-5" />
                 <span className="font-medium mr-2">Email:</span>

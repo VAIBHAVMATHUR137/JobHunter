@@ -35,7 +35,8 @@ export const fetchIndividualCandidate = expressAsyncHandler(
 export const postCandidate = expressAsyncHandler(
   async (req: Request, res: Response) => {
     const {
-      name,
+      firstName,
+      lastName,
       email,
       number,
       password,
@@ -55,7 +56,8 @@ export const postCandidate = expressAsyncHandler(
       resume,
     } = req.body;
     if (
-      !name ||
+      !firstName ||
+      !lastName ||
       !email ||
       !number ||
       !password ||
@@ -91,7 +93,8 @@ export const postCandidate = expressAsyncHandler(
     console.log("Hashed Password", hashedPassword);
 
     const candidate = await Candidate.create({
-      name,
+      firstName,
+      lastName,
       email,
       number,
       password: hashedPassword,
@@ -117,7 +120,9 @@ export const postCandidate = expressAsyncHandler(
       res.status(201).json(candidate);
       console.log(`Here we created a candidate with id: ${candidate._id}`);
     } else {
-      res.status(400).json({"Message":"Data entered by candidate is not valid"});
+      res
+        .status(400)
+        .json({ Message: "Data entered by candidate is not valid" });
       return;
     }
   }
@@ -131,7 +136,11 @@ export const deleteCandidate = expressAsyncHandler(
       throw new Error("Such candidate do not exists in our database");
     }
     await Candidate.deleteOne({ _id: candidate._id });
-    res.status(200).json(`Candidate ${candidate.name} has been deleted`);
+    res
+      .status(200)
+      .json(
+        `Candidate ${candidate.firstName} ${candidate.lastName} has been deleted`
+      );
   }
 );
 //Login feature for candidate
@@ -146,11 +155,10 @@ export const candidateLogin = expressAsyncHandler(
       throw new Error("All fields are mandatory for job seeker to login");
     }
 
-
     // Find candidate by email
     const candidate = await Candidate.findOne({ email });
-     
-    if(!candidate){
+
+    if (!candidate) {
       res.status(404).json({ Message: "Candidate not found" });
     }
     // Check password
@@ -182,12 +190,13 @@ export const candidateLogin = expressAsyncHandler(
           email: candidate.email,
           id: candidate.id,
           role: "candidate",
-          name:candidate.name,
-          photo:candidate.photo
+          firstName: candidate.firstName,
+          lastName: candidate.lastName,
+          photo: candidate.photo,
         },
       });
     } else {
-      res.status(401).json({"Message":"Invalid email or pass"});
+      res.status(401).json({ Message: "Invalid email or pass" });
       return;
     }
   }

@@ -22,7 +22,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
 import Navbar from "@/components/ui/navbar";
 const formFields = [
-  "name",
+  "firstName",
+  "lastName",
   "number",
   "email",
   "password",
@@ -90,9 +91,10 @@ function RecruiterRegistration() {
   }, [photoPreview]);
 
   useEffect(() => {
-    const isComplete = formFields.every(
-      (field) => formData[field].trim() !== ""
-    );
+    const isComplete = formFields.every((field) => {
+      const value = formData[field];
+      return typeof value === 'string' && value.trim() !== '';
+    });
     setIsFormComplete(isComplete);
   }, [formData]);
 

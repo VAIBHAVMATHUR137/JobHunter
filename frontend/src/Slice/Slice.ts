@@ -33,7 +33,8 @@ interface loginFormState {
 
 //interface for first time registration/signin by the candidate
 interface candidateAuthentication {
-  name: string;
+  firstName:string,
+  lastName:string,
   email: string;
   number: string;
   password: string;
@@ -54,7 +55,8 @@ interface candidateAuthentication {
 }
 //interface for first time registration/signin by the recruiter
 interface recruiterAuthentication {
-  name: string;
+  firstName:string,
+  lastName:string,
   number: string;
   email: string;
   password: string;
@@ -122,7 +124,8 @@ const initialRecruiterLoginState: loginFormState = {
 };
 //initial state of candidate during first time registration
 const initialCandidateRegisterState: candidateAuthentication = {
-  name: "",
+  firstName:"",
+  lastName:"",
   email: "",
   number: "",
   password: "",
@@ -143,7 +146,8 @@ const initialCandidateRegisterState: candidateAuthentication = {
 };
 //initial state of recruiter during first time registration
 const initialRecruiterRegisterState: recruiterAuthentication = {
-  name: "",
+  firstName:" ",
+  lastName:" ",
   number: "",
   email: "",
   password: "",

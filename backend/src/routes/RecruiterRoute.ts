@@ -1,6 +1,6 @@
 import express from 'express'
 import { fetchIndividualRecruiter,createRecruiter,deleteRecruiter,recruiterLogin,refreshAccessToken} from '../controller/RecruiterController'
-import validateToken from '../middleware/validateToken';
+
 const router=express.Router();
 router.get('/fetchRecruiter/:id',fetchIndividualRecruiter);
 router.post('/createRecruiter',createRecruiter);

@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
 import { Briefcase, Menu } from "lucide-react";
-import { Avatar,  AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export default function Navbar() {
-  const userImage=localStorage.getItem("photo");
+  const userImage = localStorage.getItem("photo");
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center justify-center">
@@ -45,10 +45,10 @@ export default function Navbar() {
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
           <div className="w-full flex-1 md:w-auto md:flex-none">
             {userImage ? (
-              <Avatar >
-                <Link to="/RecruiterDashboard"><AvatarImage src={userImage}/></Link>
-                
-
+              <Avatar>
+                <Link to="/RecruiterDashboard">
+                  <AvatarImage src={userImage} />
+                </Link>
               </Avatar>
             ) : (
               <Button
