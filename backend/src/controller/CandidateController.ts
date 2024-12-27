@@ -54,6 +54,7 @@ export const postCandidate = expressAsyncHandler(
       portfolio,
       photo,
       resume,
+      username
     } = req.body;
     if (
       !firstName ||
@@ -72,7 +73,8 @@ export const postCandidate = expressAsyncHandler(
       !github ||
       !linkedin ||
       !photo ||
-      !resume
+      !resume||
+      !username
     ) {
       res.status(400).json({ Message: "All fields are mandatory" });
       return;
@@ -112,6 +114,7 @@ export const postCandidate = expressAsyncHandler(
       portfolio,
       photo,
       resume,
+      username
     });
 
     console.log(`Here we created a candidate ${candidate}`);
@@ -177,6 +180,7 @@ export const candidateLogin = expressAsyncHandler(
             email: candidate.email,
             id: candidate.id,
             role: "candidate",
+            
           },
         },
         SECRET_ACCESS_TOKEN,
@@ -193,6 +197,7 @@ export const candidateLogin = expressAsyncHandler(
           firstName: candidate.firstName,
           lastName: candidate.lastName,
           photo: candidate.photo,
+          username:candidate.username
         },
       });
     } else {

@@ -61,15 +61,32 @@ export default function CandidateRegistration() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [showAlert, setShowAlert] = useState(false); // Add state for alert visibility
-  const[title,setTitle]=useState<string|"">('');
-  const[message,setMessage]=useState<string|" ">('');
+  const [title, setTitle] = useState<string | "">("");
+  const [message, setMessage] = useState<string | " ">("");
   const dispatch = useDispatch();
   const formData = useSelector((state: RootState) => state.candidateRegister);
+
   const [formComplete, setIsFormComplete] = useState(false);
-  const nav=useNavigate();
-  const putTitle=(heading:string)=>setTitle(heading)
-  const putMessage=(message:string)=>setMessage(message)
-  // Existing helper functions from your original component
+  const nav = useNavigate();
+  const putTitle = (heading: string) => setTitle(heading);
+  const putMessage = (message: string) => setMessage(message);
+  const firstName = useSelector(
+    (state: RootState) => state.candidateRegister.firstName
+  );
+  const lastName = useSelector(
+    (state: RootState) => state.candidateRegister.lastName
+  );
+  const username = useSelector(
+    (state: RootState) => state.candidateRegister.username
+  );
+  const firstNameLength: number = firstName.length;
+  const lastNameLength: number = lastName.length;
+  const permittedUserNameLength: number = Math.trunc(
+    (firstNameLength + lastNameLength) / 2 + 3
+  );
+  const userNameLength: number = username.length;
+
+  // Existing helper functions from original component
   const formatDataForBackend = () => {
     const skills = Object.values(formData.skills);
     const preferred_locations = Object.values(formData.preferred_location);
@@ -146,6 +163,12 @@ export default function CandidateRegistration() {
       candidateRegistartionUpdate({ field: name as BasicFieldName, value })
     );
   };
+  const handleUserNameInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    dispatch(
+      candidateRegistartionUpdate({ field: name as BasicFieldName, value })
+    );
+  };
 
   const handleSkillChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -187,8 +210,10 @@ export default function CandidateRegistration() {
       if (response.status === 201) {
         setShowAlert(true);
         putTitle("Welcome Candidate");
-        putMessage("You have been registered successfully! Kindly navigate to Login Page");
-        setIsSuccess(true)
+        putMessage(
+          "You have been registered successfully! Kindly navigate to Login Page"
+        );
+        setIsSuccess(true);
         basicFormFields.forEach((field) => {
           dispatch(candidateRegistartionReset({ field, value: "" }));
         });
@@ -220,7 +245,12 @@ export default function CandidateRegistration() {
             value: emptyLocations,
           })
         );
-
+        dispatch(
+          candidateRegistartionReset({
+            field: "username",
+            value: "",
+          })
+        );
         dispatch(
           candidateRegistartionReset({
             field: "resume",
@@ -233,7 +263,6 @@ export default function CandidateRegistration() {
         console.log("data not success");
       }
     } catch (error) {
-
       if (axios.isAxiosError(error)) {
         const status = error.response?.status;
 
@@ -334,6 +363,29 @@ export default function CandidateRegistration() {
                   />
                 </div>
               ))}
+              {/* Username field */}
+              <div className="space-y-4">
+                <Label className="font-bold"> Generate unique username</Label>
+                <div>
+                  <Label>Username</Label>
+                  {!firstNameLength && !lastNameLength ? (
+                    <></>
+                  ) : (
+                    <div>{`you are allowed username of ${permittedUserNameLength} characters`}</div>
+                  )}
+                  <div>
+                    {!firstNameLength && !lastNameLength ? (<></>) : (<div>{`now you can enter ${permittedUserNameLength - userNameLength} characters`}</div>)}
+                  </div>
+                  <Input
+                    type="username"
+                    name="username"
+                    value={formData.username}
+                    placeholder="Enter username"
+                    onChange={handleUserNameInputChange}
+                    required
+                  />
+                </div>
+              </div>
 
               {/* Skills Fields */}
               <div className="space-y-4">
@@ -402,7 +454,7 @@ export default function CandidateRegistration() {
           title={title}
           message={message}
           onClose={() => setShowAlert(false)}
-          nextPage={()=>nav('/CandidateLogin')}
+          nextPage={() => nav("/CandidateLogin")}
           setIsSuccess={setIsSuccess}
           isSuccess={isSuccess}
         />

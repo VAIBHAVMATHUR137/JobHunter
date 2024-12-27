@@ -6,7 +6,6 @@ const mobileNumberRegex: RegExp = /^(\+\d{1,3}[- ]?)?\d{10}$/;
 
 interface IRecruiter extends Document {
   firstName:string,
-  
   lastName:string
   number: number;
   email: string;
@@ -14,6 +13,7 @@ interface IRecruiter extends Document {
   company: string;
   location: string;
   photo: string;
+  username:string,
 }
 const recruiterSchema: Schema = new mongoose.Schema({
   firstName: {
@@ -56,6 +56,10 @@ const recruiterSchema: Schema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  username:{
+    type:String,
+    required:true
+  }
 });
 const Recruiter = mongoose.model<IRecruiter>("Recruiter", recruiterSchema);
 export default Recruiter;

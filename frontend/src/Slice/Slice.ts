@@ -52,6 +52,7 @@ interface candidateAuthentication {
   portfolio?: string;
   photo: string;
   resume: string;
+  username:string
 }
 //interface for first time registration/signin by the recruiter
 interface recruiterAuthentication {
@@ -63,6 +64,7 @@ interface recruiterAuthentication {
   company: string;
   location: string;
   photo: string;
+  username:string
 }
 //interface for the job posting form
 interface jobPosting {
@@ -143,6 +145,7 @@ const initialCandidateRegisterState: candidateAuthentication = {
   portfolio: "",
   photo: "",
   resume: "",
+  username:" "
 };
 //initial state of recruiter during first time registration
 const initialRecruiterRegisterState: recruiterAuthentication = {
@@ -154,6 +157,7 @@ const initialRecruiterRegisterState: recruiterAuthentication = {
   company: "",
   location: "",
   photo: "",
+  username:" "
 };
 //common reducer to update the field
 const loginUpdateField = <T extends keyof loginFormState>(

@@ -21,6 +21,7 @@ interface ICandidate extends Document {
   portfolio?: string;    
   photo: string;
   resume: string;
+  username:string
 }
 
 // Create the candidate schema
@@ -126,6 +127,10 @@ const candidateSchema: Schema = new mongoose.Schema({
       message: 'Please provide a valid Google Drive link for your resume.',
     },
   },
+  username:{
+    type:String,
+    required:true
+  }
 
 });
 

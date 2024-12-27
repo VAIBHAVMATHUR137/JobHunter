@@ -23,7 +23,7 @@ export const fetchIndividualRecruiter = expressAsyncHandler(
 //Registartion by a recruiter at portal
 export const createRecruiter = expressAsyncHandler(
   async (req: Request, res: Response) => {
-    const { firstName,lastName, number, email, password, company, location, photo } =
+    const { firstName,lastName, number, email, password, company, location, photo,username } =
       req.body;
     if (
       !firstName||
@@ -33,7 +33,8 @@ export const createRecruiter = expressAsyncHandler(
       !password ||
       !company ||
       !location ||
-      !photo
+      !photo||
+      !username
     ) {
       res.status(400).json({ Message: "All fields are mandatory" });
     }
@@ -59,6 +60,7 @@ export const createRecruiter = expressAsyncHandler(
       company,
       location,
       photo,
+      username
     });
 
     if (recruiter) {
@@ -139,7 +141,8 @@ export const recruiterLogin = expressAsyncHandler(
         role: "recruiter",
         firstName:recruiter.firstName,
         lastName:recruiter.lastName,
-        photo:recruiter.photo
+        photo:recruiter.photo,
+        username:recruiter.username
       },
     });
     console.log(accessToken, refreshToken);
