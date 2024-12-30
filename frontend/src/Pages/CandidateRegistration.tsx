@@ -79,12 +79,12 @@ export default function CandidateRegistration() {
   const username = useSelector(
     (state: RootState) => state.candidateRegister.username
   );
-  const firstNameLength: number = firstName.length;
-  const lastNameLength: number = lastName.length;
+  const firstNameLength: number = firstName.split(" ").join("").trim().length;
+  const lastNameLength: number = lastName.split(" ").join("").trim().length;
   const permittedUserNameLength: number = Math.trunc(
     (firstNameLength + lastNameLength) / 2 + 3
   );
-  const userNameLength: number = username.length;
+  const userNameLength: number = username.split(" ").join("").trim().length;
 
   // Existing helper functions from original component
   const formatDataForBackend = () => {

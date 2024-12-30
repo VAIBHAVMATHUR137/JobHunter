@@ -5,6 +5,7 @@ import expressAsyncHandler from "express-async-handler";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { timeStamp } from "console";
 
 dotenv.config();
 const SECRET_ACCESS_TOKEN = process.env.SECRET_ACCESS_TOKEN;
@@ -200,7 +201,9 @@ export const refreshAccessToken = expressAsyncHandler(
 
       // Save the new refresh token in DB (optional rotation)
       await client.set(`${recruiter.email}_Refresh Token`, newRefreshToken);
+     
       await client.set(`${recruiter.email}_Access Token`, newAccessToken);
+     
 
       // Send tokens in the response
       res.status(200).json({
