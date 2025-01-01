@@ -70,6 +70,7 @@ export default function CandidateRegistration() {
   const nav = useNavigate();
   const putTitle = (heading: string) => setTitle(heading);
   const putMessage = (message: string) => setMessage(message);
+  //Process to count first name, last name and username characters
   const firstName = useSelector(
     (state: RootState) => state.candidateRegister.firstName
   );
@@ -163,12 +164,6 @@ export default function CandidateRegistration() {
       candidateRegistartionUpdate({ field: name as BasicFieldName, value })
     );
   };
-  const handleUserNameInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    dispatch(
-      candidateRegistartionUpdate({ field: name as BasicFieldName, value })
-    );
-  };
 
   const handleSkillChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -202,65 +197,72 @@ export default function CandidateRegistration() {
     event.preventDefault();
     try {
       const formattedData = formatDataForBackend();
-      const response = await axios.post(
-        "http://localhost:5000/candidate/createCandidate",
-        formattedData
+      const userNameEntry = await axios.post(
+        "http://localhost:5000/UserName/create",
+        { username: formData.username }
       );
 
-      if (response.status === 201) {
-        setShowAlert(true);
-        putTitle("Welcome Candidate");
-        putMessage(
-          "You have been registered successfully! Kindly navigate to Login Page"
-        );
-        setIsSuccess(true);
-        basicFormFields.forEach((field) => {
-          dispatch(candidateRegistartionReset({ field, value: "" }));
-        });
-
-        const emptySkills = {
-          skillOne: "",
-          skillTwo: "",
-          skillThree: "",
-          skillFour: "",
-          skillFive: "",
-        };
-
-        dispatch(
-          candidateRegistartionReset({
-            field: "skills",
-            value: emptySkills,
-          })
+      if (userNameEntry.status === 201) {
+        const response = await axios.post(
+          "http://localhost:5000/candidate/createCandidate",
+          formattedData
         );
 
-        const emptyLocations = {
-          firstPreferrence: "",
-          secondPreferrence: "",
-          thirdPreferrence: "",
-        };
+        if (response.status === 201) {
+          setShowAlert(true);
+          putTitle("Welcome Candidate");
+          putMessage(
+            "You have been registered successfully! Kindly navigate to Login Page"
+          );
+          setIsSuccess(true);
+          basicFormFields.forEach((field) => {
+            dispatch(candidateRegistartionReset({ field, value: "" }));
+          });
 
-        dispatch(
-          candidateRegistartionReset({
-            field: "preferred_location",
-            value: emptyLocations,
-          })
-        );
-        dispatch(
-          candidateRegistartionReset({
-            field: "username",
-            value: "",
-          })
-        );
-        dispatch(
-          candidateRegistartionReset({
-            field: "resume",
-            value: "",
-          })
-        );
+          const emptySkills = {
+            skillOne: "",
+            skillTwo: "",
+            skillThree: "",
+            skillFour: "",
+            skillFive: "",
+          };
 
-        setPhotoPreview(null);
-      } else {
-        console.log("data not success");
+          dispatch(
+            candidateRegistartionReset({
+              field: "skills",
+              value: emptySkills,
+            })
+          );
+
+          const emptyLocations = {
+            firstPreferrence: "",
+            secondPreferrence: "",
+            thirdPreferrence: "",
+          };
+
+          dispatch(
+            candidateRegistartionReset({
+              field: "preferred_location",
+              value: emptyLocations,
+            })
+          );
+          dispatch(
+            candidateRegistartionReset({
+              field: "username",
+              value: "",
+            })
+          );
+          dispatch(
+            candidateRegistartionReset({
+              field: "resume",
+              value: "",
+            })
+          );
+
+          setPhotoPreview(null);
+        } else {
+          console.log("data not success");
+        }
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -289,10 +291,52 @@ export default function CandidateRegistration() {
       }
     }
   };
+  const handleUserNameInputChange = async (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    const { name, value } = event.target;
+    dispatch(
+      candidateRegistartionUpdate({ field: name as BasicFieldName, value })
+    );
+    console.log("Permitted username length is " + permittedUserNameLength);
+    console.log("current username length is " + userNameLength);
+    if (value.length === permittedUserNameLength) {
+      usernameVerificationHandler(value);
+    }
+  };
+
+  const usernameVerificationHandler = async (username: string) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/UserName/check",
+        { username }
+      );
+
+      if (response.status === 200) {
+        setShowAlert(true);
+        putTitle("Username Available");
+        putMessage("This username can be allotted to you");
+        setIsSuccess(true);
+      } else {
+        throw new Error("Unexpected response status");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status;
+        if (status === 409) {
+          setShowAlert(true);
+          putTitle("Username Unavailable");
+          putMessage("This username cannot be allotted to you");
+          setIsSuccess(false);
+        }
+      }
+    }
+  };
 
   const getFieldType = (field: string): string => {
     if (field.includes("email")) return "email";
     if (field.includes("password")) return "password";
+    if (field.includes("username")) return "username";
     if (
       field.includes("number") ||
       field.includes("period") ||
@@ -374,7 +418,13 @@ export default function CandidateRegistration() {
                     <div>{`you are allowed username of ${permittedUserNameLength} characters`}</div>
                   )}
                   <div>
-                    {!firstNameLength && !lastNameLength ? (<></>) : (<div>{`now you can enter ${permittedUserNameLength - userNameLength} characters`}</div>)}
+                    {!firstNameLength && !lastNameLength ? (
+                      <></>
+                    ) : (
+                      <div>{`now you can enter ${
+                        permittedUserNameLength - userNameLength
+                      } characters`}</div>
+                    )}
                   </div>
                   <Input
                     type="username"
@@ -383,6 +433,7 @@ export default function CandidateRegistration() {
                     placeholder="Enter username"
                     onChange={handleUserNameInputChange}
                     required
+                    maxLength={permittedUserNameLength}
                   />
                 </div>
               </div>

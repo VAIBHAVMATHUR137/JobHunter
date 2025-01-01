@@ -145,7 +145,7 @@ const initialCandidateRegisterState: candidateAuthentication = {
   portfolio: "",
   photo: "",
   resume: "",
-  username:" "
+  username:""
 };
 //initial state of recruiter during first time registration
 const initialRecruiterRegisterState: recruiterAuthentication = {
