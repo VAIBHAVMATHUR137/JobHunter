@@ -58,7 +58,8 @@ const recruiterSchema: Schema = new mongoose.Schema({
   },
   username:{
     type:String,
-    required:true
+    required:true,
+    
   }
 });
 const Recruiter = mongoose.model<IRecruiter>("Recruiter", recruiterSchema);

@@ -29,7 +29,6 @@ const formFields = [
   "password",
   "company",
   "location",
-  "username",
 ] as const;
 
 import { AlertDialogDemo } from "@/components/ui/AlertDialogDemo";
@@ -125,22 +124,29 @@ function RecruiterRegistration() {
     event.preventDefault();
 
     try {
-      const response = await axios.post(
-        "http://localhost:5000/recruiter/createRecruiter",
-        formData
+      const userNameEntry = await axios.post(
+        "http://localhost:5000/UserName/create",
+        { username: formData.username }
       );
-
-      if (response.status === 201) {
-        setShowAlert(true);
-        putTitle("Welcome Recruiter");
-        putMessage(
-          "You have been registered successfully! Kindly navigate to Login Page"
+      if (userNameEntry.status === 201) {
+        const response = await axios.post(
+          "http://localhost:5000/recruiter/createRecruiter",
+          formData
         );
-        setIsSuccess(true);
-        formFields.forEach((field) => {
-          dispatch(recruiterRegistrationReset({ field, value: "" }));
-        });
-        setPhotoPreview(null);
+        
+        if (response.status === 201) {
+          setShowAlert(true);
+          putTitle("Welcome Recruiter");
+          putMessage(
+            "You have been registered successfully! Kindly navigate to Login Page"
+          );
+          setIsSuccess(true);
+          formFields.forEach((field) => {
+            dispatch(recruiterRegistrationReset({ field, value: "" }));
+          });
+          dispatch(recruiterRegistrationReset({field:"username",value:""}))
+          setPhotoPreview(null);
+        }
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -211,6 +217,7 @@ function RecruiterRegistration() {
     if (field === "email") return "email";
     if (field === "password") return "password";
     if (field === "number") return "tel";
+
     return "text";
   };
 

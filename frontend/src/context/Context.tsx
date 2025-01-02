@@ -17,7 +17,8 @@ interface LoginResponse {
     role: string;
     firstName:string,
     lastName:string,
-    photo:string
+    photo:string,
+    username:string
   };
 }
 
@@ -69,6 +70,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       localStorage.setItem("firstName",response.data.recruiter.firstName);
       localStorage.setItem("lastName",response.data.recruiter.lastName);
       localStorage.setItem("photo",response.data.recruiter.photo)
+      localStorage.setItem("username",response.data.recruiter.username)
+    
   
     
     }

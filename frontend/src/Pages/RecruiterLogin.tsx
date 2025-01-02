@@ -77,7 +77,10 @@ function RecruiterLogin() {
           dispatch(recruiterLoginResetField({ field, value: "" }));
         });
 
-        setTimeout(() => nav("/RecruiterDashboard"), 1500);
+        const username = localStorage.getItem("username");
+        if (username) {
+          setTimeout(() => nav(`/RecruiterDashboard/${username}`), 1500);
+        }
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {

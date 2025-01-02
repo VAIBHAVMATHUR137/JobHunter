@@ -6,14 +6,19 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
-
 dotenv.config();
 const SECRET_ACCESS_TOKEN = process.env.SECRET_ACCESS_TOKEN;
 
 //Fetching a particular recruiter, registered at the portal
 export const fetchIndividualRecruiter = expressAsyncHandler(
   async (req: Request, res: Response) => {
-    const recruiter = await Recruiter.findById(req.params.id);
+    const { username } = req.params; // Get username from request parameters
+
+    if (!username) {
+      res.status(400).json({ message: "Username is required" });
+      return;
+    }
+    const recruiter = await Recruiter.findOne({ username });
     if (!recruiter) {
       res.status(404).json({ message: "Recruiter not found" });
       return;
@@ -24,17 +29,26 @@ export const fetchIndividualRecruiter = expressAsyncHandler(
 //Registartion by a recruiter at portal
 export const createRecruiter = expressAsyncHandler(
   async (req: Request, res: Response) => {
-    const { firstName,lastName, number, email, password, company, location, photo,username } =
-      req.body;
+    const {
+      firstName,
+      lastName,
+      number,
+      email,
+      password,
+      company,
+      location,
+      photo,
+      username,
+    } = req.body;
     if (
-      !firstName||
-      !lastName||
+      !firstName ||
+      !lastName ||
       !number ||
       !email ||
       !password ||
       !company ||
       !location ||
-      !photo||
+      !photo ||
       !username
     ) {
       res.status(400).json({ Message: "All fields are mandatory" });
@@ -61,7 +75,7 @@ export const createRecruiter = expressAsyncHandler(
       company,
       location,
       photo,
-      username
+      username,
     });
 
     if (recruiter) {
@@ -140,19 +154,19 @@ export const recruiterLogin = expressAsyncHandler(
         email: recruiter.email,
         id: recruiter.id,
         role: "recruiter",
-        firstName:recruiter.firstName,
-        lastName:recruiter.lastName,
-        photo:recruiter.photo,
-        username:recruiter.username
+        firstName: recruiter.firstName,
+        lastName: recruiter.lastName,
+        photo: recruiter.photo,
+        username: recruiter.username
       },
     });
-    console.log(accessToken, refreshToken);
+    console.log(accessToken, refreshToken,recruiter.username);
   }
 );
 
 export const refreshAccessToken = expressAsyncHandler(
   async (req: Request, res: Response) => {
-    const { refreshToken } = req.body; 
+    const { refreshToken } = req.body;
 
     if (!refreshToken) {
       res.status(401);
@@ -173,7 +187,9 @@ export const refreshAccessToken = expressAsyncHandler(
         throw new Error("No such recruiter exists");
       }
       //Check if such refresh token exists in redis
-      const existingRefreshToken = await client.get(`${recruiter.email}_Refresh Token`);
+      const existingRefreshToken = await client.get(
+        `${recruiter.email}_Refresh Token`
+      );
       if (existingRefreshToken !== refreshToken) {
         res.status(403);
         throw new Error("Invalid refresh token");
@@ -201,9 +217,8 @@ export const refreshAccessToken = expressAsyncHandler(
 
       // Save the new refresh token in DB (optional rotation)
       await client.set(`${recruiter.email}_Refresh Token`, newRefreshToken);
-     
+
       await client.set(`${recruiter.email}_Access Token`, newAccessToken);
-     
 
       // Send tokens in the response
       res.status(200).json({
