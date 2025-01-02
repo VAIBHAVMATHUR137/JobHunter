@@ -33,8 +33,8 @@ interface loginFormState {
 
 //interface for first time registration/signin by the candidate
 interface candidateAuthentication {
-  firstName:string,
-  lastName:string,
+  firstName: string;
+  lastName: string;
   email: string;
   number: string;
   password: string;
@@ -52,19 +52,19 @@ interface candidateAuthentication {
   portfolio?: string;
   photo: string;
   resume: string;
-  username:string
+  username: string;
 }
 //interface for first time registration/signin by the recruiter
 interface recruiterAuthentication {
-  firstName:string,
-  lastName:string,
+  firstName: string;
+  lastName: string;
   number: string;
   email: string;
   password: string;
   company: string;
   location: string;
   photo: string;
-  username:string
+  username: string;
 }
 //interface for the job posting form
 interface jobPosting {
@@ -81,24 +81,24 @@ interface jobPosting {
   recruiter_email: string;
 }
 const initialSkillsForJob: skillsRequired = {
-  skillRequiredOne: " ",
-  skillRequiredTwo: " ",
-  skillRequiredThree: " ",
-  skillRequiredFour: " ",
-  skillRequiredFive: " ",
+  skillRequiredOne: "",
+  skillRequiredTwo: "",
+  skillRequiredThree: "",
+  skillRequiredFour: "",
+  skillRequiredFive: "",
 };
 const initialJobPosting: jobPosting = {
-  job_role: " ",
+  job_role: "",
   CTC: 0,
-  experience_required: " ",
+  experience_required: "",
   years_of_experience_required: 0,
-  degree_required: " ",
-  bond: " ",
-  job_location: " ",
-  company: " ",
+  degree_required: "",
+  bond: "",
+  job_location: "",
+  company: "",
   skills_required: initialSkillsForJob,
-  recruiterId: " ",
-  recruiter_email: " ",
+  recruiterId: "",
+  recruiter_email: "",
 };
 //initial skills of candidate
 const initialSkills: candidateSkills = {
@@ -126,8 +126,8 @@ const initialRecruiterLoginState: loginFormState = {
 };
 //initial state of candidate during first time registration
 const initialCandidateRegisterState: candidateAuthentication = {
-  firstName:"",
-  lastName:"",
+  firstName: "",
+  lastName: "",
   email: "",
   number: "",
   password: "",
@@ -145,19 +145,19 @@ const initialCandidateRegisterState: candidateAuthentication = {
   portfolio: "",
   photo: "",
   resume: "",
-  username:""
+  username: "",
 };
 //initial state of recruiter during first time registration
 const initialRecruiterRegisterState: recruiterAuthentication = {
-  firstName:" ",
-  lastName:" ",
+  firstName: "",
+  lastName: "",
   number: "",
   email: "",
   password: "",
   company: "",
   location: "",
   photo: "",
-  username:" "
+  username: "",
 };
 //common reducer to update the field
 const loginUpdateField = <T extends keyof loginFormState>(
@@ -321,10 +321,10 @@ export const { candidateRegistartionReset, candidateRegistartionUpdate } =
 //Actions for recruiter registration fields
 export const { recruiterRegistrationReset, recruiterRegistrationUpdate } =
   recruiterRegistrationSlice.actions;
-  //Actions for job posting field
+//Actions for job posting field
 export const { jobPostingUpdate, jobPostingReset } = jobpostingSlice.actions;
 export const candidateLoginReducer = candidateLoginSlice.reducer;
 export const recruiterLoginReducer = recruiterLoginSlice.reducer;
 export const candidateRegistrationReducer = candidateRegistrationSlice.reducer;
 export const recruiterRegistrationReducer = recruiterRegistrationSlice.reducer;
-export const jobPostingReducer=jobpostingSlice.reducer;
+export const jobPostingReducer = jobpostingSlice.reducer;

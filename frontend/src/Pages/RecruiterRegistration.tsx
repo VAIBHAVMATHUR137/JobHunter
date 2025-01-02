@@ -29,6 +29,7 @@ const formFields = [
   "password",
   "company",
   "location",
+  "username",
 ] as const;
 
 import { AlertDialogDemo } from "@/components/ui/AlertDialogDemo";
@@ -47,6 +48,23 @@ function RecruiterRegistration() {
   const nav = useNavigate();
   const putTitle = (heading: string) => setTitle(heading);
   const putMessage = (message: string) => setMessage(message);
+  //Process to count first name, last name and username characters
+  const firstName = useSelector(
+    (state: RootState) => state.recruiterRegister.firstName
+  );
+  const lastName = useSelector(
+    (state: RootState) => state.recruiterRegister.lastName
+  );
+  const username = useSelector(
+    (state: RootState) => state.recruiterRegister.username
+  );
+  const firstNameLength: number = firstName.split(" ").join("").trim().length;
+  const lastNameLength: number = lastName.split(" ").join("").trim().length;
+  const permittedUserNameLength: number = Math.trunc(
+    (firstNameLength + lastNameLength) / 2 + 3
+  );
+  const userNameLength: number = username.split(" ").join("").trim().length;
+
   const handlePhotoUpload = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -93,7 +111,7 @@ function RecruiterRegistration() {
   useEffect(() => {
     const isComplete = formFields.every((field) => {
       const value = formData[field];
-      return typeof value === 'string' && value.trim() !== '';
+      return typeof value === "string" && value.trim() !== "";
     });
     setIsFormComplete(isComplete);
   }, [formData]);
@@ -151,7 +169,44 @@ function RecruiterRegistration() {
       }
     }
   };
+  const handleUserNameInputChange = async (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    const { name, value } = event.target;
+    dispatch(recruiterRegistrationUpdate({ field: name as FieldName, value }));
 
+    if (value.length === permittedUserNameLength) {
+      usernameVerificationHandler(value);
+    }
+  };
+
+  const usernameVerificationHandler = async (username: string) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/UserName/check",
+        { username }
+      );
+
+      if (response.status === 200) {
+        setShowAlert(true);
+        putTitle("Username Available");
+        putMessage("This username can be allotted to you");
+        setIsSuccess(true);
+      } else {
+        throw new Error("Unexpected response status");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status;
+        if (status === 409) {
+          setShowAlert(true);
+          putTitle("Username Unavailable");
+          putMessage("This username cannot be allotted to you");
+          setIsSuccess(false);
+        }
+      }
+    }
+  };
   const getFieldType = (field: FieldName): string => {
     if (field === "email") return "email";
     if (field === "password") return "password";
@@ -159,8 +214,11 @@ function RecruiterRegistration() {
     return "text";
   };
 
-  const getFieldLabel = (field: FieldName): string =>
-    field.charAt(0).toUpperCase() + field.slice(1);
+  const getFieldLabel = (field: string): string =>
+    field
+      .split(/(?=[A-Z])|_/)
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ");
 
   return (
     <>
@@ -216,6 +274,36 @@ function RecruiterRegistration() {
                   />
                 </div>
               ))}
+              {/* Username field */}
+              <div className="space-y-4">
+                <Label className="font-bold"> Generate unique username</Label>
+                <div>
+                  <Label>Username</Label>
+                  {!firstNameLength && !lastNameLength ? (
+                    <></>
+                  ) : (
+                    <div>{`you are allowed username of ${permittedUserNameLength} characters`}</div>
+                  )}
+                  <div>
+                    {!firstNameLength && !lastNameLength ? (
+                      <></>
+                    ) : (
+                      <div>{`now you can enter ${
+                        permittedUserNameLength - userNameLength
+                      } characters`}</div>
+                    )}
+                  </div>
+                  <Input
+                    type="username"
+                    name="username"
+                    value={formData.username}
+                    placeholder="Enter username"
+                    onChange={handleUserNameInputChange}
+                    required
+                    maxLength={permittedUserNameLength}
+                  />
+                </div>
+              </div>
             </CardContent>
 
             <CardFooter>

@@ -298,8 +298,7 @@ export default function CandidateRegistration() {
     dispatch(
       candidateRegistartionUpdate({ field: name as BasicFieldName, value })
     );
-    console.log("Permitted username length is " + permittedUserNameLength);
-    console.log("current username length is " + userNameLength);
+
     if (value.length === permittedUserNameLength) {
       usernameVerificationHandler(value);
     }
@@ -402,7 +401,7 @@ export default function CandidateRegistration() {
                     name={field}
                     value={formData[field] || ""}
                     onChange={handleBasicInputChange}
-                    placeholder={getFieldLabel(field)}
+                    placeholder={`Enter your ${getFieldLabel(field)}`}
                     required
                   />
                 </div>
@@ -449,7 +448,7 @@ export default function CandidateRegistration() {
                       name={skill}
                       value={formData.skills[skill] || ""}
                       onChange={handleSkillChange}
-                      placeholder={getFieldLabel(skill)}
+                      placeholder={`Enter ${getFieldLabel(skill)}`}
                       required
                     />
                   </div>
@@ -467,7 +466,9 @@ export default function CandidateRegistration() {
                       name={location}
                       value={formData.preferred_location[location] || ""}
                       onChange={handleLocationChange}
-                      placeholder={getFieldLabel(location)}
+                      placeholder={`Enter ${getFieldLabel(
+                        location
+                      )} for the job location`}
                       required
                     />
                   </div>
