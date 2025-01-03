@@ -5,6 +5,7 @@ import expressAsyncHandler from "express-async-handler";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import UserName from "../schema/UserNameSchema";
 
 dotenv.config();
 const SECRET_ACCESS_TOKEN = process.env.SECRET_ACCESS_TOKEN;
@@ -91,13 +92,30 @@ export const createRecruiter = expressAsyncHandler(
 //deleting a recruiter at portal
 export const deleteRecruiter = expressAsyncHandler(
   async (req: Request, res: Response) => {
-    const recruiter = await Recruiter.findById(req.params.id);
+    const { username } = req.params;
+    const recruiter = await Recruiter.findOne({ username });
+    const recruiterUsername = await UserName.findOne({ username });
     if (!recruiter) {
-      res.status(400);
-      throw new Error("No such recruiter exists you wanna delete");
+      res
+        .status(400)
+        .json({ Message: "No such recruiter exists in our database" });
+      return;
     }
-    await Recruiter.deleteOne({ _id: recruiter._id });
-    res.status(200).json(`Recruiter ${recruiter.firstName} has been deleted`);
+    if (!recruiterUsername) {
+      res
+        .status(400)
+        .json({ Message: "No such username exists in our database" });
+      return;
+    }
+
+    await Promise.all([
+      Recruiter.deleteOne({ username: recruiter.username }),
+      UserName.deleteOne({ username: recruiterUsername.username }),
+    ]);
+
+    res.status(200).json({
+      message: `Recruiter ${username} has been deleted from both collections`,
+    });
   }
 );
 //login feature for recruiter with refresh token
@@ -157,10 +175,10 @@ export const recruiterLogin = expressAsyncHandler(
         firstName: recruiter.firstName,
         lastName: recruiter.lastName,
         photo: recruiter.photo,
-        username: recruiter.username
+        username: recruiter.username,
       },
     });
-    console.log(accessToken, refreshToken,recruiter.username);
+    console.log(accessToken, refreshToken, recruiter.username);
   }
 );
 

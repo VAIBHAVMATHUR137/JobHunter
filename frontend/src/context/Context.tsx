@@ -15,10 +15,10 @@ interface LoginResponse {
     email: string;
     id: string;
     role: string;
-    firstName:string,
-    lastName:string,
-    photo:string,
-    username:string
+    firstName: string;
+    lastName: string;
+    photo: string;
+    username: string;
   };
 }
 
@@ -26,7 +26,7 @@ interface AuthContextType {
   accessToken: string | null;
   setAccessToken: (token: string | null) => void;
   recruiterLoginHandler: () => Promise<AxiosResponse<LoginResponse>>;
-  isAuthenticated: boolean
+  isAuthenticated: boolean;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -36,7 +36,6 @@ export const AuthContext = createContext<AuthContextType | undefined>(
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [accessToken, setAccessToken] = useState<string | null>(
     localStorage.getItem("accessToken")
-    
   );
 
   useEffect(() => {
@@ -45,7 +44,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (token) {
       setAccessToken(token);
     }
-    
   }, []);
 
   const recruiterLoginFormData = useSelector<RootState, RecruiterLoginFormData>(
@@ -64,16 +62,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setAccessToken(response.data.accessToken);
       localStorage.setItem("accessToken", response.data.accessToken);
       localStorage.setItem("refreshToken", response.data.refreshToken);
-      localStorage.setItem("jobRole",response.data.recruiter.role);
-      localStorage.setItem("id",response.data.recruiter.id);
-      localStorage.setItem("email",response.data.recruiter.email)
-      localStorage.setItem("firstName",response.data.recruiter.firstName);
-      localStorage.setItem("lastName",response.data.recruiter.lastName);
-      localStorage.setItem("photo",response.data.recruiter.photo)
-      localStorage.setItem("username",response.data.recruiter.username)
-    
-  
-    
+      localStorage.setItem("jobRole", response.data.recruiter.role);
+      localStorage.setItem("username", response.data.recruiter.username);
+      localStorage.setItem("photo", response.data.recruiter.photo);
     }
 
     return response;
@@ -88,7 +79,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setAccessToken,
         recruiterLoginHandler,
         isAuthenticated,
-       
       }}
     >
       {children}

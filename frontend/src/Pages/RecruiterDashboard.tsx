@@ -1,14 +1,20 @@
 import Navbar from "@/components/ui/navbar";
+import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Building2, Mail, MapPin, Phone, User } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { RootState } from "@/Slice/Store";
 import { recruiterRegistrationUpdate } from "@/Slice/Slice";
+import { AlertDialogDemo } from "@/components/ui/AlertDialogDemo";
 export default function RecruiterDashboard() {
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [title, setTitle] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { username: urlUsername } = useParams();
@@ -93,7 +99,29 @@ export default function RecruiterDashboard() {
     };
     fetchRecruiter();
   }, [dispatch, urlUsername, navigate]);
+  const deleteRecruiterProfile = async () => {
+    if (urlUsername) {
+      const response = await axios.delete(
+        `http://localhost:5000/recruiter/deleteRecruiter/${urlUsername}`
+      );
+      if (response.status === 200) {
+        setShowAlert(true);
+        setTitle("Deleted");
+        setMessage("The recruiter has been deleted");
+        setIsSuccess(false);
+        setTimeout(() => {
+          navigate("/");
+        }, 1500);
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
 
+        localStorage.removeItem("jobRole");
+
+        localStorage.removeItem("photo");
+        localStorage.removeItem("username");
+      }
+    }
+  };
   return (
     <>
       <Navbar />
@@ -118,6 +146,9 @@ export default function RecruiterDashboard() {
                 {recruiterDetails.firstName}
               </h2>
               <p className="text-muted-foreground">{`@${recruiterDetails.username}`}</p>
+              <Button className="m-4" onClick={deleteRecruiterProfile}>
+                Delete Account
+              </Button>
             </CardContent>
           </Card>
           <Card>
@@ -157,6 +188,16 @@ export default function RecruiterDashboard() {
           </Card>
         </div>
       </div>
+      {showAlert && (
+        <AlertDialogDemo
+          title={title}
+          message={message}
+          onClose={() => setShowAlert(false)}
+          nextPage={() => navigate("/")}
+          setIsSuccess={setIsSuccess}
+          isSuccess={isSuccess}
+        />
+      )}
     </>
   );
 }
