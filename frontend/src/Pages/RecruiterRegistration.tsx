@@ -197,7 +197,7 @@ function RecruiterRegistration() {
         setShowAlert(true);
         putTitle("Username Available");
         putMessage("This username can be allotted to you");
-        setIsSuccess(true);
+        setIsSuccess(false);
       } else {
         throw new Error("Unexpected response status");
       }

@@ -1,5 +1,6 @@
 import Navbar from "@/components/ui/navbar";
 import { Button } from "@/components/ui/button";
+import WarningDialog from "@/components/ui/WarningDialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Building2, Mail, MapPin, Phone, User } from "lucide-react";
@@ -13,6 +14,7 @@ import { AlertDialogDemo } from "@/components/ui/AlertDialogDemo";
 export default function RecruiterDashboard() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [showWarning, setShowWarning] = useState(false);
   const [title, setTitle] = useState<string>("");
   const [message, setMessage] = useState<string>("");
   const dispatch = useDispatch();
@@ -106,6 +108,7 @@ export default function RecruiterDashboard() {
       );
       if (response.status === 200) {
         setShowAlert(true);
+
         setTitle("Deleted");
         setMessage("The recruiter has been deleted");
         setIsSuccess(false);
@@ -146,7 +149,17 @@ export default function RecruiterDashboard() {
                 {recruiterDetails.firstName}
               </h2>
               <p className="text-muted-foreground">{`@${recruiterDetails.username}`}</p>
-              <Button className="m-4" onClick={deleteRecruiterProfile}>
+              <Button
+                className="m-4"
+                onClick={() => {
+                  setShowWarning(true);
+                  setTitle("Are you Sure");
+                  setMessage(
+                    "Your Account and all the concerned information be deleted forever"
+                  );
+                }}
+              >
+                {" "}
                 Delete Account
               </Button>
             </CardContent>
@@ -196,6 +209,16 @@ export default function RecruiterDashboard() {
           nextPage={() => navigate("/")}
           setIsSuccess={setIsSuccess}
           isSuccess={isSuccess}
+        />
+      )}
+      {showWarning && (
+        <WarningDialog
+          title={title}
+          message={message}
+          yes={() => {
+            deleteRecruiterProfile();
+          }}
+          no={() => setShowWarning(false)}
         />
       )}
     </>

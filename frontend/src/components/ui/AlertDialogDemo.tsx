@@ -21,6 +21,7 @@ export function AlertDialogDemo({
 
   const handleCloseButtonOne = () => {
     setIsOpen(false);
+
     onClose();
   };
 
