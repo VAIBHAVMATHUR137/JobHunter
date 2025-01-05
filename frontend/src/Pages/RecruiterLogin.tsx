@@ -27,7 +27,7 @@ import { AuthContext } from "@/context/Context";
 
 
 
-const formFields = ["email", "password"] as const;
+const formFields = ["username", "password"] as const;
 type FieldName = (typeof formFields)[number];
 
 
@@ -111,7 +111,7 @@ function RecruiterLogin() {
   };
 
   const getFieldType = (field: FieldName): string =>
-    field === "password" ? "password" : "email";
+    field === "password" ? "password" : "username";
 
   const getFieldLabel = (field: FieldName): string =>
     field.charAt(0).toUpperCase() + field.slice(1);

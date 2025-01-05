@@ -53,10 +53,11 @@ export const createRecruiter = expressAsyncHandler(
       !username
     ) {
       res.status(400).json({ Message: "All fields are mandatory" });
+      return;
     }
     // Check if a recruiter with the same email or number already exists
     const existingRecruiter = await Recruiter.findOne({
-      $or: [{ email }, { number }],
+     username
     });
 
     if (existingRecruiter) {
@@ -122,31 +123,33 @@ export const deleteRecruiter = expressAsyncHandler(
 
 export const recruiterLogin = expressAsyncHandler(
   async (req: Request, res: Response) => {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
     // Input validation
-    if (!email || !password) {
-      res.status(401);
-      throw new Error("All fields are mandatory");
+    if (!username || !password) {
+      res.status(401).json({"Message":"All fields are mandatory"});
+      return;
+     
     }
 
-    const recruiter = await Recruiter.findOne({ email });
+    const recruiter = await Recruiter.findOne({ username });
     if (!recruiter) {
-      res.status(404);
-      throw new Error("Recruiter not found");
+      res.status(404).json({"Message":"Recruiter not found"});
+      return;
+    
     }
 
     const isPasswordValid = await bcrypt.compare(password, recruiter.password);
     if (!isPasswordValid) {
-      res.status(401);
-      throw new Error("Invalid credentials");
+      res.status(401).json({"Message":"Invalid Password"});
+     return;
     }
 
     // Generate access and refresh tokens
     const accessToken = jwt.sign(
       {
         recruiter: {
-          email: recruiter.email,
+          username: recruiter.username,
           id: recruiter.id,
           role: "recruiter",
         },
@@ -156,13 +159,13 @@ export const recruiterLogin = expressAsyncHandler(
     );
 
     const refreshToken = jwt.sign(
-      { email: recruiter.email, id: recruiter.id },
+      {username: recruiter.username, id: recruiter.id },
       process.env.SECRET_REFRESH_TOKEN!,
       { expiresIn: "30d" }
     );
 
-    await client.set(`${recruiter.email}_Refresh Token`, refreshToken);
-    await client.set(`${recruiter.email}_Access Token`, accessToken);
+    await client.set(`${recruiter.username}_Refresh Token`, refreshToken);
+    await client.set(`${recruiter.username}_Access Token`, accessToken);
 
     // Send tokens in the response body only
     res.status(200).json({
@@ -196,17 +199,17 @@ export const refreshAccessToken = expressAsyncHandler(
       const decoded = jwt.verify(
         refreshToken,
         process.env.SECRET_REFRESH_TOKEN!
-      ) as { email: string; id: string };
+      ) as { username: string; id: string };
 
       // Check if recruiter exists in DB
-      const recruiter = await Recruiter.findOne({ email: decoded.email });
+      const recruiter = await Recruiter.findOne({ username: decoded.username });
       if (!recruiter) {
         res.status(403);
         throw new Error("No such recruiter exists");
       }
       //Check if such refresh token exists in redis
       const existingRefreshToken = await client.get(
-        `${recruiter.email}_Refresh Token`
+        `${recruiter.username}_Refresh Token`
       );
       if (existingRefreshToken !== refreshToken) {
         res.status(403);
@@ -217,7 +220,7 @@ export const refreshAccessToken = expressAsyncHandler(
       const newAccessToken = jwt.sign(
         {
           recruiter: {
-            email: recruiter.email,
+            username: recruiter.username,
             id: recruiter.id,
             role: "recruiter",
           },
@@ -228,15 +231,15 @@ export const refreshAccessToken = expressAsyncHandler(
 
       // Optionally generate a new refresh token
       const newRefreshToken = jwt.sign(
-        { email: recruiter.email, id: recruiter.id },
+        { username: recruiter.username, id: recruiter.id },
         process.env.SECRET_REFRESH_TOKEN!,
         { expiresIn: "30d" }
       );
 
       // Save the new refresh token in DB (optional rotation)
-      await client.set(`${recruiter.email}_Refresh Token`, newRefreshToken);
+      await client.set(`${recruiter.username}_Refresh Token`, newRefreshToken);
 
-      await client.set(`${recruiter.email}_Access Token`, newAccessToken);
+      await client.set(`${recruiter.username}_Access Token`, newAccessToken);
 
       // Send tokens in the response
       res.status(200).json({

@@ -27,7 +27,7 @@ type skillsRequired = {
 
 //Common login interface declaration for both candidate and recruiter
 interface loginFormState {
-  email: string;
+  username: string;
   password: string;
 }
 
@@ -116,12 +116,12 @@ const initialPreferredLocations: candidatePreferredLocation = {
 };
 //initial state of candidate during login
 const initialCandidateLoginState: loginFormState = {
-  email: "",
+ username: "",
   password: "",
 };
 //initial state of recruiter during login
 const initialRecruiterLoginState: loginFormState = {
-  email: "",
+  username: "",
   password: "",
 };
 //initial state of candidate during first time registration
