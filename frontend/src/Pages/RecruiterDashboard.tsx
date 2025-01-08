@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { RootState } from "@/Slice/Store";
-import { recruiterRegistrationUpdate } from "@/Slice/Slice";
+import { recruiterRegistrationUpdate } from "@/Slice/CandidateSlice";
 import { AlertDialogDemo } from "@/components/ui/AlertDialogDemo";
 export default function RecruiterDashboard() {
   const [isSuccess, setIsSuccess] = useState(false);

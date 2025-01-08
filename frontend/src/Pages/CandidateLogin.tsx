@@ -4,7 +4,7 @@ import { ChangeEvent, FormEvent, useState, useEffect } from "react";
 import {
   candidateLoginUpdateField,
   candidateLoginResetField,
-} from "../Slice/Slice";
+} from "../Slice/CandidateSlice";
 import { AlertDialogDemo } from "@/components/ui/AlertDialogDemo";
 import Navbar from "../components/ui/navbar";
 import { Button } from "@/components/ui/button";

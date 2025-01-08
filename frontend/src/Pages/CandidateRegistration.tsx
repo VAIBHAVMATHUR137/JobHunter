@@ -5,7 +5,7 @@ import { RootState } from "../Slice/Store";
 import {
   candidateRegistartionUpdate,
   candidateRegistartionReset,
-} from "../Slice/Slice";
+} from "../Slice/CandidateSlice";
 import { AlertDialogDemo } from "@/components/ui/AlertDialogDemo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

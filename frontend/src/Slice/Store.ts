@@ -1,5 +1,6 @@
 import {configureStore} from '@reduxjs/toolkit'
-import { candidateLoginReducer,recruiterLoginReducer,candidateRegistrationReducer,recruiterRegistrationReducer,jobPostingReducer } from './Slice';
+import { candidateLoginReducer,candidateRegistrationReducer,jobPostingReducer } from './CandidateSlice';
+import { recruiterLoginReducer,recruiterRegistrationReducer } from "./RecruiterSlice"
 const store=configureStore({
     reducer:{
         candidateLogin:candidateLoginReducer,

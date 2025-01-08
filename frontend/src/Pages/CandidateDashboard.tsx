@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { RootState } from "@/Slice/Store";
-import { candidateRegistartionUpdate } from "@/Slice/Slice";
+import { candidateRegistartionUpdate } from "@/Slice/CandidateSlice";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import {

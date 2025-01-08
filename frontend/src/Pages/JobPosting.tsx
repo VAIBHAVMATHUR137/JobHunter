@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/Slice/Store";
-import { jobPostingUpdate, jobPostingReset } from "@/Slice/Slice";
+import { jobPostingUpdate, jobPostingReset } from "@/Slice/CandidateSlice";
 import { ChangeEvent, FormEvent, useState, useEffect } from "react";
 import { AlertDialogDemo } from "@/components/ui/AlertDialogDemo";
 import { Button } from "@/components/ui/button";

@@ -54,18 +54,7 @@ interface candidateAuthentication {
   resume: string;
   username: string;
 }
-//interface for first time registration/signin by the recruiter
-interface recruiterAuthentication {
-  firstName: string;
-  lastName: string;
-  number: string;
-  email: string;
-  password: string;
-  company: string;
-  location: string;
-  photo: string;
-  username: string;
-}
+
 //interface for the job posting form
 interface jobPosting {
   job_role: string;
@@ -116,14 +105,10 @@ const initialPreferredLocations: candidatePreferredLocation = {
 };
 //initial state of candidate during login
 const initialCandidateLoginState: loginFormState = {
- username: "",
-  password: "",
-};
-//initial state of recruiter during login
-const initialRecruiterLoginState: loginFormState = {
   username: "",
   password: "",
 };
+
 //initial state of candidate during first time registration
 const initialCandidateRegisterState: candidateAuthentication = {
   firstName: "",
@@ -147,18 +132,7 @@ const initialCandidateRegisterState: candidateAuthentication = {
   resume: "",
   username: "",
 };
-//initial state of recruiter during first time registration
-const initialRecruiterRegisterState: recruiterAuthentication = {
-  firstName: "",
-  lastName: "",
-  number: "",
-  email: "",
-  password: "",
-  company: "",
-  location: "",
-  photo: "",
-  username: "",
-};
+
 //common reducer to update the field
 const loginUpdateField = <T extends keyof loginFormState>(
   state: loginFormState,
@@ -218,26 +192,6 @@ const candidateRegistrationResetField = <
   }
 };
 
-//Update the recruiter registration field
-const recruiterRegistrationUpdateField = <
-  T extends keyof recruiterAuthentication
->(
-  state: recruiterAuthentication,
-  action: PayloadAction<{ field: T; value: recruiterAuthentication[T] }>
-) => {
-  const { field, value } = action.payload;
-  state[field] = value;
-};
-//RESET the recruiter registration field
-const recruiterRegistartionResetField = <
-  T extends keyof recruiterAuthentication
->(
-  state: recruiterAuthentication,
-  action: PayloadAction<{ field: T; value: recruiterAuthentication[T] }>
-) => {
-  const { field } = action.payload;
-  state[field] = "";
-};
 //Common reducer to update the job posting field
 const jobPostingUpdateField = <T extends keyof jobPosting>(
   state: jobPosting,
@@ -273,15 +227,7 @@ const candidateLoginSlice = createSlice({
     candidateLoginResetField: loginResetField,
   },
 });
-//seperate slice for recruiter to Login
-const recruiterLoginSlice = createSlice({
-  name: "recruiterLoginState",
-  initialState: initialRecruiterLoginState,
-  reducers: {
-    recruiterLoginUpdateField: loginUpdateField,
-    recruiterLoginResetField: loginResetField,
-  },
-});
+
 //seperate slice for candidate to Register first time
 const candidateRegistrationSlice = createSlice({
   name: "candidateRegistrationSlice",
@@ -291,15 +237,7 @@ const candidateRegistrationSlice = createSlice({
     candidateRegistartionReset: candidateRegistrationResetField,
   },
 });
-//Seperate slice for Recruiter to Register first time
-const recruiterRegistrationSlice = createSlice({
-  name: "recruiterRegistrationSlice",
-  initialState: initialRecruiterRegisterState,
-  reducers: {
-    recruiterRegistrationUpdate: recruiterRegistrationUpdateField,
-    recruiterRegistrationReset: recruiterRegistartionResetField,
-  },
-});
+
 //Slice for posting a job by the recruiter
 const jobpostingSlice = createSlice({
   name: "jobPostingSlice",
@@ -312,19 +250,15 @@ const jobpostingSlice = createSlice({
 //Actions for candidate login fields
 export const { candidateLoginUpdateField, candidateLoginResetField } =
   candidateLoginSlice.actions;
-//Actions for recruiter login fields
-export const { recruiterLoginUpdateField, recruiterLoginResetField } =
-  recruiterLoginSlice.actions;
+
 //Actions for candidate registration fields
 export const { candidateRegistartionReset, candidateRegistartionUpdate } =
   candidateRegistrationSlice.actions;
-//Actions for recruiter registration fields
-export const { recruiterRegistrationReset, recruiterRegistrationUpdate } =
-  recruiterRegistrationSlice.actions;
+
 //Actions for job posting field
 export const { jobPostingUpdate, jobPostingReset } = jobpostingSlice.actions;
 export const candidateLoginReducer = candidateLoginSlice.reducer;
-export const recruiterLoginReducer = recruiterLoginSlice.reducer;
+
 export const candidateRegistrationReducer = candidateRegistrationSlice.reducer;
-export const recruiterRegistrationReducer = recruiterRegistrationSlice.reducer;
+
 export const jobPostingReducer = jobpostingSlice.reducer;

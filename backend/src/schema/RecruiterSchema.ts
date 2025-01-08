@@ -4,7 +4,7 @@ import mongoose, { Document, Schema } from "mongoose";
 const mobileNumberRegex: RegExp = /^(\+\d{1,3}[- ]?)?\d{10}$/;
 type Gender = "male" | "female" | "transgender";
 
-// Define interfaces for nested objects
+// Define interfaces for School Education
 interface SchoolEducation {
   school_name: string;
   percentage_obtained: number,
@@ -28,7 +28,7 @@ interface CurrentJob {
 interface IRecruiter extends Document {
   firstName: string;
   lastName: string;
-  number: number;
+  number: string;
   date_of_birth: Date;
   email: string;
   username: string;
@@ -80,7 +80,7 @@ const recruiterSchema: Schema = new mongoose.Schema({
     }
   },
   number: {
-    type: Number,
+    type: String,
     required: [true, "Mobile number is required"],
     unique: true,
     validate: {
