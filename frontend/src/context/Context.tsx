@@ -4,7 +4,7 @@ import { RootState } from "@/Slice/Store";
 import axios, { AxiosResponse } from "axios";
 
 interface RecruiterLoginFormData {
-  email: string;
+ username: string;
   password: string;
 }
 
@@ -12,7 +12,7 @@ interface LoginResponse {
   accessToken: string;
   refreshToken: string;
   recruiter: {
-    email: string;
+  
     id: string;
     role: string;
     firstName: string;

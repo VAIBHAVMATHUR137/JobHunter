@@ -35,26 +35,24 @@ export const createRecruiter = expressAsyncHandler(
       lastName,
       number,
       email,
+      date_of_birth,
       password,
-      company,
-      location,
-      photo,
       username,
+      gender,
+      introduction,
+      photo,
+      tenth_standard_education,
+      twelth_standard_education,
+      college_education,
+      internship_experience,
+      work_experience,
+      core_skills,
+      current_job,
+      current_location,
+      linkedin,
+      X
     } = req.body;
-    if (
-      !firstName ||
-      !lastName ||
-      !number ||
-      !email ||
-      !password ||
-      !company ||
-      !location ||
-      !photo ||
-      !username
-    ) {
-      res.status(400).json({ Message: "All fields are mandatory" });
-      return;
-    }
+
     // Check if a recruiter with the same email or number already exists
     const existingRecruiter = await Recruiter.findOne({
      username
@@ -73,11 +71,23 @@ export const createRecruiter = expressAsyncHandler(
       lastName,
       number,
       email,
+      date_of_birth,
       password: hashedPassword,
-      company,
-      location,
       photo,
       username,
+      gender,
+      introduction,
+      tenth_standard_education,
+      twelth_standard_education,
+      college_education,
+      internship_experience,
+      work_experience,
+      core_skills,
+      current_job,
+      current_location,
+      linkedin,
+      X
+
     });
 
     if (recruiter) {
