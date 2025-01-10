@@ -50,7 +50,9 @@ export const createRecruiter = expressAsyncHandler(
       current_job,
       current_location,
       linkedin,
-      X
+     
+      X,
+      years_of_experience
     } = req.body;
 
     // Check if a recruiter with the same email or number already exists
@@ -86,7 +88,8 @@ export const createRecruiter = expressAsyncHandler(
       current_job,
       current_location,
       linkedin,
-      X
+      X,
+      years_of_experience
 
     });
 

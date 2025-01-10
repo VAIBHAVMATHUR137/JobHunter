@@ -46,6 +46,7 @@ interface IRecruiter extends Document {
   current_location: string;
   linkedin: string;
   X: string;
+  years_of_experience:number
 }
 
 const recruiterSchema: Schema = new mongoose.Schema({
@@ -60,24 +61,7 @@ const recruiterSchema: Schema = new mongoose.Schema({
   date_of_birth:{
     type: Date,
     required: true,
-    validate: {
-      validator: function(value: Date): boolean {
-        if (!(value instanceof Date)) {
-          return false;
-        }
-        const today = new Date();
-        const age = today.getFullYear() - value.getFullYear();
-        console.log(age);
-        const monthDiff = today.getMonth() - value.getMonth();
-        
-        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < value.getDate())) {
-          return age - 1 >= 18 && age - 1 <= 100;
-        }
-        
-        return age >= 18 && age <= 100;
-      },
-      message: "Invalid date of birth. Must be 18-100 years old and not in the future"
-    }
+
   },
   number: {
     type: String,
@@ -160,28 +144,15 @@ const recruiterSchema: Schema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  
-},
-{
-  toJSON: { virtuals: true },
-  toObject: { virtuals: true }
-}
-);
-// Define virtual property with proper this typing
-recruiterSchema.virtual('age').get(function(this: { date_of_birth: Date }) {
-  if (!this.date_of_birth) return null;
-  
-  const today = new Date();
-  const birthDate = this.date_of_birth;
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const monthDiff = today.getMonth() - birthDate.getMonth();
-  
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-    age--;
+  years_of_experience: {
+    type:Number,
+    required:true
   }
   
-  return age;
-});
+},
+
+);
+
 
 const Recruiter = mongoose.model<IRecruiter>("Recruiter", recruiterSchema);
 export default Recruiter;

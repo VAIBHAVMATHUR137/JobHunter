@@ -21,50 +21,57 @@ interface loginFormState {
   password: string;
 }
 //College Education
-interface Education {
+interface CollegeEducation {
   programme_name: string;
   specialization: string;
   college_name: string;
-  CGPA: number;
+  cgpa: number;
   passout_year: number;
 }
-interface CollegeEducation {
-  degree: Education[];
-}
-const initialEducation: Education = {
+
+const initialCollegeEducation: CollegeEducation = {
   programme_name: "",
   specialization: "",
   college_name: "",
-  CGPA: 0,
+  cgpa: 0,
   passout_year: 0,
 };
-const initialCollegeEducation: CollegeEducation = {
-  degree: [initialEducation],
-};
+
 //Internship Experience
-interface internship {
+interface individual_internship {
   company: string;
   duration: string;
   roles_and_responsibilities: string;
   stipend: string;
 }
-interface InternshipExperience {
-  internship: internship[];
-}
-const initialInternship: internship = {
+
+const initialInternship: individual_internship = {
   company: "",
   duration: "",
   roles_and_responsibilities: "",
   stipend: "",
 };
-const initialInternshipExperience: InternshipExperience = {
-  internship: [initialInternship],
-};
+
 //Job Experience
-type JobExperience = [];
-const initialJobExperience: JobExperience = [];
+interface individual_job_experience {
+  company:string,
+  start_date:Date,
+  end_date:Date,
+  position:string,
+  job_description:string,
+  annual_ctc:number,
+  
+}
+const initial_job_experience:individual_job_experience={
+  company:"",
+  start_date:new Date(),
+  end_date:new Date(),
+  position:"",
+  job_description:"",
+  annual_ctc:0
+}
 //Skills
-type coreSkills = [];
+type coreSkills = string[];
 const initialSkills: coreSkills = [];
 //Current Job
 interface CurrentJob {
@@ -95,13 +102,14 @@ interface recruiterAuthentication {
   tenth_standard_education: SchoolEducation;
   twelth_standard_education: SchoolEducation;
   college_education: CollegeEducation[];
-  internship_experience: InternshipExperience[];
-  work_experience: JobExperience[];
+  internship_experience: individual_internship[],
+  work_experience: individual_job_experience[],
   core_skills: coreSkills;
   current_job: CurrentJob;
   current_location: string;
   linkedin: string;
   X: string;
+  years_of_experience:number
 }
 const initialRecruiterRegisterState: recruiterAuthentication = {
   firstName: "",
@@ -117,13 +125,14 @@ const initialRecruiterRegisterState: recruiterAuthentication = {
   tenth_standard_education: initialSchoolEducation,
   twelth_standard_education: initialSchoolEducation,
   college_education: [initialCollegeEducation],
-  internship_experience: [initialInternshipExperience],
-  work_experience: initialJobExperience,
+  internship_experience: [initialInternship],
+  work_experience: [initial_job_experience],
   core_skills: initialSkills,
   current_job: initialCurrentJob,
   current_location: "",
   linkedin: "",
   X: "",
+  years_of_experience:0
 };
 //common reducer to update the field
 const loginUpdateField = <T extends keyof loginFormState>(
