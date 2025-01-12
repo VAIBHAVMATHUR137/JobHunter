@@ -20,6 +20,10 @@ interface loginFormState {
   username: string;
   password: string;
 }
+const initialLoginState:loginFormState={
+  username:"",
+  password:""
+}
 //College Education
 interface CollegeEducation {
   programme_name: string;
@@ -54,36 +58,52 @@ const initialInternship: individual_internship = {
 
 //Job Experience
 interface individual_job_experience {
-  company:string,
-  start_date:Date,
-  end_date:Date,
-  position:string,
-  job_description:string,
-  annual_ctc:number,
-  
+  company: string;
+  start_date: Date;
+  end_date: Date;
+  position: string;
+  job_description: string;
+  annual_ctc: number;
 }
-const initial_job_experience:individual_job_experience={
-  company:"",
-  start_date:new Date(),
-  end_date:new Date(),
-  position:"",
-  job_description:"",
-  annual_ctc:0
-}
+const initial_job_experience: individual_job_experience = {
+  company: "",
+  start_date: new Date(),
+  end_date: new Date(),
+  position: "",
+  job_description: "",
+  annual_ctc: 0,
+};
 //Skills
 type coreSkills = string[];
 const initialSkills: coreSkills = [];
+//Certificate
+interface certificate{
+  platform_name:string,
+  mentor_names:string[],
+  title:string,
+  learning_description:string,
+  from:Date,
+  to:Date,
+}
+const initialCertificateState:certificate={
+  platform_name:"",
+  mentor_names:[],
+  title:"",
+  learning_description:"",
+  from:new Date(),
+  to:new Date()
+}
 //Current Job
 interface CurrentJob {
   company: string;
   job_description: string;
-  since_when: string;
+  since_when: Date;
   current_role: string;
 }
 const initialCurrentJob: CurrentJob = {
   company: "",
   job_description: "",
-  since_when: "",
+  since_when: new Date(),
   current_role: "",
 };
 
@@ -102,14 +122,15 @@ interface recruiterAuthentication {
   tenth_standard_education: SchoolEducation;
   twelth_standard_education: SchoolEducation;
   college_education: CollegeEducation[];
-  internship_experience: individual_internship[],
-  work_experience: individual_job_experience[],
+  internship_experience: individual_internship[];
+  work_experience: individual_job_experience[];
   core_skills: coreSkills;
+  certificate_courses:certificate[];
   current_job: CurrentJob;
   current_location: string;
   linkedin: string;
   X: string;
-  years_of_experience:number
+  years_of_experience: number;
 }
 const initialRecruiterRegisterState: recruiterAuthentication = {
   firstName: "",
@@ -128,11 +149,12 @@ const initialRecruiterRegisterState: recruiterAuthentication = {
   internship_experience: [initialInternship],
   work_experience: [initial_job_experience],
   core_skills: initialSkills,
+  certificate_courses:[initialCertificateState],
   current_job: initialCurrentJob,
   current_location: "",
   linkedin: "",
   X: "",
-  years_of_experience:0
+  years_of_experience: 0,
 };
 //common reducer to update the field
 const loginUpdateField = <T extends keyof loginFormState>(
@@ -140,7 +162,10 @@ const loginUpdateField = <T extends keyof loginFormState>(
   action: PayloadAction<{ field: T; value: loginFormState[T] }>
 ) => {
   const { field, value } = action.payload;
-  state[field] = value;
+  return{
+    ...state,
+    [field]:value
+  }
 };
 
 //common reducer to reset the field
@@ -148,8 +173,10 @@ const loginResetField = <T extends keyof loginFormState>(
   state: loginFormState,
   action: PayloadAction<{ field: T; value: loginFormState[T] }>
 ) => {
-  const { field } = action.payload;
-  state[field] = "";
+  return {
+    ...state,
+    [action.payload.field]: initialLoginState[action.payload.field],
+  };
 };
 //Update the recruiter registration field
 const recruiterRegistrationUpdateField = <
@@ -159,20 +186,27 @@ const recruiterRegistrationUpdateField = <
   action: PayloadAction<{ field: T; value: recruiterAuthentication[T] }>
 ) => {
   const { field, value } = action.payload;
-  state[field] = value;
+  return {
+    ...state,
+    [field]: value,
+  };
 };
 //RESET the recruiter registration field
-const recruiterRegistartionResetField = <T, K extends keyof T>(
-  state: T,
-  action: PayloadAction<{ field: K; value: T[K] }>
+const recruiterRegistartionResetField = <
+  T extends keyof recruiterAuthentication
+>(
+  state: recruiterAuthentication,
+  action: PayloadAction<{ field: T }>
 ) => {
-  const { field, value } = action.payload;
-  state[field] = value;
+  return {
+    ...state,
+    [action.payload.field]: initialRecruiterRegisterState[action.payload.field],
+  };
 };
 //seperate slice for recruiter to Login
 const recruiterLoginSlice = createSlice({
   name: "recruiterLoginState",
-  initialState: initialRecruiterRegisterState,
+  initialState: initialLoginState,
   reducers: {
     recruiterLoginUpdateField: loginUpdateField,
     recruiterLoginResetField: loginResetField,

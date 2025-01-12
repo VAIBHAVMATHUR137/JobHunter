@@ -21,7 +21,7 @@ type JobExperience=[];
 interface CurrentJob {
   company: string;
   job_description:string,
-  since_when: string;
+  since_when: Date,
   current_role:string
 }
 
@@ -136,7 +136,7 @@ const recruiterSchema: Schema = new mongoose.Schema({
   },
   current_job: [{
     company: String,
-    since_when: String,
+    since_when: Date(),
     job_location: String,
     current_role:String
   }],

@@ -169,27 +169,8 @@ const candidateRegistrationResetField = <
   state: candidateAuthentication,
   action: PayloadAction<{ field: T; value: candidateAuthentication[T] }>
 ) => {
-  const { field } = action.payload;
-
-  if (field === "skills") {
-    state.skills = {
-      skillOne: "",
-      skillTwo: "",
-      skillThree: "",
-      skillFour: "",
-      skillFive: "",
-    };
-  } else if (field === "preferred_location") {
-    state.preferred_location = {
-      firstPreferrence: "",
-      secondPreferrence: "",
-      thirdPreferrence: "",
-    };
-  } else if (field === "resume") {
-    state.resume = "";
-  } else if (typeof state[field] === "string") {
-    state[field] = "" as candidateAuthentication[T];
-  }
+ 
+    state[action.payload.field]=initialCandidateRegisterState[action.payload.field]
 };
 
 //Common reducer to update the job posting field
@@ -206,17 +187,7 @@ const jobPostingResetField = <T extends keyof jobPosting>(
   state: jobPosting,
   action: PayloadAction<{ field: T; value: jobPosting[T] }>
 ) => {
-  const { field } = action.payload;
-
-  if (field === "skills_required") {
-    state.skills_required = {
-      skillRequiredOne: "",
-      skillRequiredTwo: "",
-      skillRequiredThree: "",
-      skillRequiredFour: "",
-      skillRequiredFive: "",
-    };
-  }
+state[action.payload.field]=initialJobPosting[action.payload.field]
 };
 //Seperate slice for candidate to Login
 const candidateLoginSlice = createSlice({
