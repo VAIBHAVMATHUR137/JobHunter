@@ -153,6 +153,7 @@ function RecruiterLogin() {
             </CardFooter>
           </form>
         </Card>
+
       </div>
 
       {showAlert && (

@@ -3,13 +3,13 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 type SchoolEducation = {
   school_name: string;
   percentage_obtained: number;
-  year_of_passing: number;
+  year_of_passing: string;
   school_board: string;
 };
 const initialSchoolEducation: SchoolEducation = {
   school_name: "",
   percentage_obtained: 0,
-  year_of_passing: 0,
+  year_of_passing: "",
   school_board: "",
 };
 //Male or female
@@ -29,29 +29,39 @@ interface CollegeEducation {
   programme_name: string;
   specialization: string;
   college_name: string;
+  university_name:string,
   cgpa: number;
-  passout_year: number;
+  duration:number;
+  year_of_commencement:string,
+  passout_year: string;
 }
 
 const initialCollegeEducation: CollegeEducation = {
   programme_name: "",
   specialization: "",
   college_name: "",
+  university_name:"",
   cgpa: 0,
-  passout_year: 0,
+  duration:0,
+  year_of_commencement:"",
+  passout_year: "",
 };
 
 //Internship Experience
 interface individual_internship {
+  date_of_commencement:string,
+  date_of_conclusion:string,
   company: string;
-  duration: string;
+  duration: number;
   roles_and_responsibilities: string;
   stipend: string;
 }
 
 const initialInternship: individual_internship = {
+  date_of_commencement:"",
+  date_of_conclusion:"",
   company: "",
-  duration: "",
+  duration: 0,
   roles_and_responsibilities: "",
   stipend: "",
 };
@@ -59,16 +69,18 @@ const initialInternship: individual_internship = {
 //Job Experience
 interface individual_job_experience {
   company: string;
-  start_date: Date;
-  end_date: Date;
+  date_of_commencement: string;
+  date_of_conclusion: string;
+  duration_of_service:number;
   position: string;
   job_description: string;
   annual_ctc: number;
 }
 const initial_job_experience: individual_job_experience = {
   company: "",
-  start_date: new Date(),
-  end_date: new Date(),
+  date_of_commencement: "",
+  date_of_conclusion: "",
+  duration_of_service:0,
   position: "",
   job_description: "",
   annual_ctc: 0,
@@ -80,30 +92,30 @@ const initialSkills: coreSkills = [];
 interface certificate{
   platform_name:string,
   mentor_names:string[],
-  title:string,
+  title_of_course:string,
   learning_description:string,
-  from:Date,
-  to:Date,
+  date_of_commencement: string;
+  date_of_conclusion: string;
 }
 const initialCertificateState:certificate={
   platform_name:"",
   mentor_names:[],
-  title:"",
+  title_of_course:"",
   learning_description:"",
-  from:new Date(),
-  to:new Date()
+  date_of_commencement:"",
+  date_of_conclusion:""
 }
 //Current Job
 interface CurrentJob {
   company: string;
   job_description: string;
-  since_when: Date;
+  date_of_commencement:string;
   current_role: string;
 }
 const initialCurrentJob: CurrentJob = {
   company: "",
   job_description: "",
-  since_when: new Date(),
+  date_of_commencement: "",
   current_role: "",
 };
 
@@ -111,8 +123,10 @@ const initialCurrentJob: CurrentJob = {
 interface recruiterAuthentication {
   firstName: string;
   lastName: string;
+  title:string,
+  one_liner_intro:string,
   number: number;
-  date_of_birth: Date;
+  date_of_birth: string;
   email: string;
   username: string;
   password: string;
@@ -135,11 +149,13 @@ interface recruiterAuthentication {
 const initialRecruiterRegisterState: recruiterAuthentication = {
   firstName: "",
   lastName: "",
+  title:"",
+  one_liner_intro:"",
   number: 0,
   email: "",
   username: "",
   password: "",
-  date_of_birth: new Date(),
+  date_of_birth: "",
   gender: intialGender,
   introduction: "",
   photo: "",
