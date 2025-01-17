@@ -1,244 +1,408 @@
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Plus, Minus, GraduationCap, School } from 'lucide-react';
-import { recruiterRegistrationUpdate } from "../Slice/RecruiterSlice"
-import { RootState } from '@/Slice/Store';
-import Navbar from '@/components/ui/navbar';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardDescription,
+} from "@/components/ui/card";
+import { Plus, Minus } from "lucide-react";
+import { recruiterRegistrationUpdate } from "../Slice/RecruiterSlice";
+import { RootState } from "@/Slice/Store";
+import { Label } from "@/components/ui/label";
 
 const RecruiterEducationForm = () => {
   const dispatch = useDispatch();
   const educationData = useSelector((state: RootState) => ({
     tenth: state.recruiterRegister.tenth_standard_education,
     twelth: state.recruiterRegister.twelth_standard_education,
-    college: state.recruiterRegister.college_education
+    college: state.recruiterRegister.college_education,
   }));
 
-  const handleSchoolChange = (level: 'tenth' | 'twelth', field: string, value: string | number) => {
-    dispatch(recruiterRegistrationUpdate({
-      field: `${level}_standard_education`,
-      value: {
-        ...educationData[level],
-        [field]: value
-      }
-    }));
+  const handleSchoolChange = (
+    level: "tenth" | "twelth",
+    field: string,
+    value: string | number
+  ) => {
+    dispatch(
+      recruiterRegistrationUpdate({
+        field: `${level}_standard_education`,
+        value: {
+          ...educationData[level],
+          [field]: value,
+        },
+      })
+    );
   };
 
-  const handleCollegeChange = (index: number, field: string, value: string | number) => {
+  const handleCollegeChange = (
+    index: number,
+    field: string,
+    value: string | number
+  ) => {
     const updatedCollegeEducation = [...educationData.college];
     updatedCollegeEducation[index] = {
       ...updatedCollegeEducation[index],
-      [field]: value
+      [field]: value,
     };
-    
-    dispatch(recruiterRegistrationUpdate({
-      field: 'college_education',
-      value: updatedCollegeEducation
-    }));
+
+    dispatch(
+      recruiterRegistrationUpdate({
+        field: "college_education",
+        value: updatedCollegeEducation,
+      })
+    );
   };
 
   const addCollegeEducation = () => {
-    const updatedCollegeEducation = [...educationData.college, {
-      programme_name: "",
-      specialization: "",
-      college_name: "",
-      university_name: "",
-      cgpa: 0,
-      duration: 0,
-      year_of_commencement: "",
-      passout_year: ""
-    }];
-    
-    dispatch(recruiterRegistrationUpdate({
-      field: 'college_education',
-      value: updatedCollegeEducation
-    }));
+    const updatedCollegeEducation = [
+      ...educationData.college,
+      {
+        programme_name: "",
+        specialization: "",
+        college_name: "",
+        university_name: "",
+        cgpa: 0,
+        duration: 0,
+        year_of_commencement: "",
+        passout_year: "",
+      },
+    ];
+
+    dispatch(
+      recruiterRegistrationUpdate({
+        field: "college_education",
+        value: updatedCollegeEducation,
+      })
+    );
   };
 
   const removeCollegeEducation = (index: number) => {
     if (educationData.college.length > 1) {
-      const updatedCollegeEducation = educationData.college.filter((_: any, i: number) => i !== index);
-      dispatch(recruiterRegistrationUpdate({
-        field: 'college_education',
-        value: updatedCollegeEducation
-      }));
+      const updatedCollegeEducation = educationData.college.filter(
+        (_: any, i: number) => i !== index
+      );
+      dispatch(
+        recruiterRegistrationUpdate({
+          field: "college_education",
+          value: updatedCollegeEducation,
+        })
+      );
     }
   };
 
   return (
-    <>
-    <Navbar/>
-    <div className="max-w-4xl mx-auto space-y-8 p-6 bg-gray-50 rounded-xl shadow-lg">
-      <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">Educational Background</h1>
-      
-      {/* 10th Standard Education */}
-      <Card className="border-t-4 border-blue-500">
-        <CardHeader className="bg-gray-100">
-          <CardTitle className="flex items-center text-xl text-blue-700">
-            <School className="mr-2" />
-            10th Standard Education
-          </CardTitle>
+    <div className="flex justify-center items-center min-h-screen bg-gray-100 p-6">
+      <Card className="w-full max-w-4xl shadow-lg">
+        <CardHeader>
+          <CardTitle className="text-center">Educational Background</CardTitle>
+          <CardDescription className="text-center">
+            Please provide your educational details
+          </CardDescription>
         </CardHeader>
-        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6">
-          <Input
-            placeholder="School Name"
-            value={educationData.tenth.school_name}
-            onChange={(e) => handleSchoolChange('tenth', 'school_name', e.target.value)}
-            className="border-gray-300"
-          />
-          <Input
-            type="number"
-            placeholder="Percentage Obtained"
-            value={educationData.tenth.percentage_obtained}
-            onChange={(e) => handleSchoolChange('tenth', 'percentage_obtained', parseFloat(e.target.value))}
-            className="border-gray-300"
-          />
-          <Input
-            placeholder="Year of Passing"
-            value={educationData.tenth.year_of_passing}
-            onChange={(e) => handleSchoolChange('tenth', 'year_of_passing', e.target.value)}
-            className="border-gray-300"
-          />
-          <Input
-            placeholder="School Board"
-            value={educationData.tenth.school_board}
-            onChange={(e) => handleSchoolChange('tenth', 'school_board', e.target.value)}
-            className="border-gray-300"
-          />
-        </CardContent>
-      </Card>
+        <CardContent className="space-y-6">
+          {/* 10th Standard Education */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">10th Standard Education</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="tenth-school-name">School Name</Label>
 
-      {/* 12th Standard Education */}
-      <Card className="border-t-4 border-green-500">
-        <CardHeader className="bg-gray-100">
-          <CardTitle className="flex items-center text-xl text-green-700">
-            <School className="mr-2" />
-            12th Standard Education
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6">
-          <Input
-            placeholder="School Name"
-            value={educationData.twelth.school_name}
-            onChange={(e) => handleSchoolChange('twelth', 'school_name', e.target.value)}
-            className="border-gray-300"
-          />
-          <Input
-            type="number"
-            placeholder="Percentage Obtained"
-            value={educationData.twelth.percentage_obtained}
-            onChange={(e) => handleSchoolChange('twelth', 'percentage_obtained', parseFloat(e.target.value))}
-            className="border-gray-300"
-          />
-          <Input
-            placeholder="Year of Passing"
-            value={educationData.twelth.year_of_passing}
-            onChange={(e) => handleSchoolChange('twelth', 'year_of_passing', e.target.value)}
-            className="border-gray-300"
-          />
-          <Input
-            placeholder="School Board"
-            value={educationData.twelth.school_board}
-            onChange={(e) => handleSchoolChange('twelth', 'school_board', e.target.value)}
-            className="border-gray-300"
-          />
-        </CardContent>
-      </Card>
-
-      {/* College Education */}
-      <Card className="border-t-4 border-purple-500">
-        <CardHeader className="bg-gray-100 flex flex-row items-center justify-between">
-          <CardTitle className="flex items-center text-xl text-purple-700">
-            <GraduationCap className="mr-2" />
-            College Education
-          </CardTitle>
-          <Button 
-            onClick={addCollegeEducation}
-            className="bg-purple-600 hover:bg-purple-700 text-white"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Degree
-          </Button>
-        </CardHeader>
-        <CardContent className="space-y-6 pt-6">
-          {educationData.college.map((edu: any, index: number) => (
-            <div key={index} className="p-4 border rounded-lg bg-white shadow-sm">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold text-purple-700">Degree {index + 1}</h3>
-                {educationData.college.length > 1 && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => removeCollegeEducation(index)}
-                    className="text-red-600 border-red-600 hover:bg-red-50"
-                  >
-                    <Minus className="w-4 h-4 mr-2" />
-                    Remove
-                  </Button>
-                )}
+                <Input
+                  id="tenth-school-name"
+                  value={educationData.tenth.school_name}
+                  onChange={(e) =>
+                    handleSchoolChange("tenth", "school_name", e.target.value)
+                  }
+                  placeholder="Enter school name"
+                />
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="tenth-percentage">Percentage Obtained</Label>
                 <Input
-                  placeholder="Programme Name"
-                  value={edu.programme_name}
-                  onChange={(e) => handleCollegeChange(index, 'programme_name', e.target.value)}
-                  className="border-gray-300"
-                />
-                <Input
-                  placeholder="Specialization"
-                  value={edu.specialization}
-                  onChange={(e) => handleCollegeChange(index, 'specialization', e.target.value)}
-                  className="border-gray-300"
-                />
-                <Input
-                  placeholder="College Name"
-                  value={edu.college_name}
-                  onChange={(e) => handleCollegeChange(index, 'college_name', e.target.value)}
-                  className="border-gray-300"
-                />
-                <Input
-                  placeholder="University Name"
-                  value={edu.university_name}
-                  onChange={(e) => handleCollegeChange(index, 'university_name', e.target.value)}
-                  className="border-gray-300"
-                />
-                <Input
+                  id="tenth-percentage"
                   type="number"
-                  placeholder="CGPA"
-                  value={edu.cgpa}
-                  onChange={(e) => handleCollegeChange(index, 'cgpa', parseFloat(e.target.value))}
-                  className="border-gray-300"
+                  value={educationData.tenth.percentage_obtained}
+                  onChange={(e) =>
+                    handleSchoolChange(
+                      "tenth",
+                      "percentage_obtained",
+                      parseFloat(e.target.value)
+                    )
+                  }
+                  placeholder="Enter percentage"
                 />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="tenth-year">Year of Passing</Label>
                 <Input
-                  type="number"
-                  placeholder="Duration (in years)"
-                  value={edu.duration}
-                  onChange={(e) => handleCollegeChange(index, 'duration', parseInt(e.target.value))}
-                  className="border-gray-300"
+                  id="tenth-year"
+                  type="date"
+                  value={educationData.tenth.year_of_passing}
+                  onChange={(e) =>
+                    handleSchoolChange(
+                      "tenth",
+                      "year_of_passing",
+                      e.target.value
+                    )
+                  }
+                  placeholder="Enter year of passing"
                 />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="tenth-board">School Board</Label>
                 <Input
-                  placeholder="Year of Commencement"
-                  value={edu.year_of_commencement}
-                  onChange={(e) => handleCollegeChange(index, 'year_of_commencement', e.target.value)}
-                  className="border-gray-300"
-                />
-                <Input
-                  placeholder="Year of Passing"
-                  value={edu.passout_year}
-                  onChange={(e) => handleCollegeChange(index, 'passout_year', e.target.value)}
-                  className="border-gray-300"
+                  id="tenth-board"
+                  value={educationData.tenth.school_board}
+                  onChange={(e) =>
+                    handleSchoolChange("tenth", "school_board", e.target.value)
+                  }
+                  placeholder="Enter school board"
                 />
               </div>
             </div>
-          ))}
+          </div>
+
+          {/* 12th Standard Education */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">12th Standard Education</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="twelth-school-name">School Name</Label>
+                <Input
+                  id="twelth-school-name"
+                  value={educationData.twelth.school_name}
+                  onChange={(e) =>
+                    handleSchoolChange("twelth", "school_name", e.target.value)
+                  }
+                  placeholder="Enter school name"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="twelth-percentage">Percentage Obtained</Label>
+                <Input
+                  id="twelth-percentage"
+                  type="number"
+                  value={educationData.twelth.percentage_obtained}
+                  onChange={(e) =>
+                    handleSchoolChange(
+                      "twelth",
+                      "percentage_obtained",
+                      parseFloat(e.target.value)
+                    )
+                  }
+                  placeholder="Enter percentage"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="twelth-year">Year of Passing</Label>
+                <Input
+                  id="twelth-year"
+                  type="date"
+                  value={educationData.twelth.year_of_passing}
+                  onChange={(e) =>
+                    handleSchoolChange(
+                      "twelth",
+                      "year_of_passing",
+                      e.target.value
+                    )
+                  }
+                  placeholder="Enter year of passing"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="twelth-board">School Board</Label>
+                <Input
+                  id="twelth-board"
+                  value={educationData.twelth.school_board}
+                  onChange={(e) =>
+                    handleSchoolChange("twelth", "school_board", e.target.value)
+                  }
+                  placeholder="Enter school board"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* College Education */}
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold">College Education</h3>
+              <Button
+                onClick={addCollegeEducation}
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add Degree
+              </Button>
+            </div>
+            {educationData.college.map((edu: any, index: number) => (
+              <Card key={index} className="p-4">
+                <CardContent className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <h4 className="font-semibold">Degree {index + 1}</h4>
+                    {educationData.college.length > 1 && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => removeCollegeEducation(index)}
+                        className="text-destructive border-destructive hover:bg-destructive/90 hover:text-destructive-foreground"
+                      >
+                        <Minus className="w-4 h-4 mr-2" />
+                        Remove
+                      </Button>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor={`programme-name-${index}`}>
+                        Programme Name
+                      </Label>
+                      <Input
+                        id={`programme-name-${index}`}
+                        value={edu.programme_name}
+                        onChange={(e) =>
+                          handleCollegeChange(
+                            index,
+                            "programme_name",
+                            e.target.value
+                          )
+                        }
+                        placeholder="Enter programme name"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor={`specialization-${index}`}>
+                        Specialization
+                      </Label>
+                      <Input
+                        id={`specialization-${index}`}
+                        value={edu.specialization}
+                        onChange={(e) =>
+                          handleCollegeChange(
+                            index,
+                            "specialization",
+                            e.target.value
+                          )
+                        }
+                        placeholder="Enter specialization"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor={`college-name-${index}`}>
+                        College Name
+                      </Label>
+                      <Input
+                        id={`college-name-${index}`}
+                        value={edu.college_name}
+                        onChange={(e) =>
+                          handleCollegeChange(
+                            index,
+                            "college_name",
+                            e.target.value
+                          )
+                        }
+                        placeholder="Enter college name"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor={`university-name-${index}`}>
+                        University Name
+                      </Label>
+                      <Input
+                        id={`university-name-${index}`}
+                        value={edu.university_name}
+                        onChange={(e) =>
+                          handleCollegeChange(
+                            index,
+                            "university_name",
+                            e.target.value
+                          )
+                        }
+                        placeholder="Enter university name"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor={`cgpa-${index}`}>CGPA</Label>
+                      <Input
+                        id={`cgpa-${index}`}
+                        type="number"
+                        value={edu.cgpa}
+                        onChange={(e) =>
+                          handleCollegeChange(
+                            index,
+                            "cgpa",
+                            parseFloat(e.target.value)
+                          )
+                        }
+                        placeholder="Enter CGPA"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor={`duration-${index}`}>
+                        Duration (in years)
+                      </Label>
+                      <Input
+                        id={`duration-${index}`}
+                        type="number"
+                        value={edu.duration}
+                        onChange={(e) =>
+                          handleCollegeChange(
+                            index,
+                            "duration",
+                            parseInt(e.target.value)
+                          )
+                        }
+                        placeholder="Enter duration"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor={`year-of-commencement-${index}`}>
+                        Year of Commencement
+                      </Label>
+                      <Input
+                        type="date"
+                        id={`year-of-commencement-${index}`}
+                        value={edu.year_of_commencement}
+                        onChange={(e) =>
+                          handleCollegeChange(
+                            index,
+                            "year_of_commencement",
+                            e.target.value
+                          )
+                        }
+                        placeholder="Enter year of commencement"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor={`passout-year-${index}`}>
+                        Year of Passing
+                      </Label>
+                      <Input
+                        type="date"
+                        id={`passout-year-${index}`}
+                        value={edu.passout_year}
+                        onChange={(e) =>
+                          handleCollegeChange(
+                            index,
+                            "passout_year",
+                            e.target.value
+                          )
+                        }
+                        placeholder="Enter year of passing"
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </CardContent>
       </Card>
     </div>
-    </>
   );
 };
 
 export default RecruiterEducationForm;
-
