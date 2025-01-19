@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+
 import {
   Card,
   CardHeader,
@@ -15,27 +16,34 @@ import { Label } from "@/components/ui/label";
 
 const RecruiterEducationForm = () => {
   const dispatch = useDispatch();
+  type SchoolLevel = "tenth" | "twelth";
+
+  interface SchoolFormField {
+    id: string;
+    label: string;
+    type: "text" | "number" | "date";
+  }
+
+  const SCHOOL_FORM_FIELDS: SchoolFormField[] = [
+    { id: "school_name", label: "School Name", type: "text" },
+    { id: "school_board", label: "School Board", type: "text" },
+    { id: "percentage_obtained", label: "Percentage", type: "number" },
+    { id: "year_of_passing", label: "Year of Passing", type: "date" },
+  ];
+
+  const SCHOOL_LEVELS: { id: SchoolLevel; label: string }[] = [
+    { id: "tenth", label: "Tenth Standard Education" },
+    { id: "twelth", label: "Twelth Standard Education" },
+  ];
   const educationData = useSelector((state: RootState) => ({
     tenth: state.recruiterRegister.tenth_standard_education,
     twelth: state.recruiterRegister.twelth_standard_education,
     college: state.recruiterRegister.college_education,
   }));
-
-  const handleSchoolChange = (
-    level: "tenth" | "twelth",
-    field: string,
-    value: string | number
-  ) => {
-    dispatch(
-      recruiterRegistrationUpdate({
-        field: `${level}_standard_education`,
-        value: {
-          ...educationData[level],
-          [field]: value,
-        },
-      })
-    );
-  };
+  const schoolEducationData = useSelector((state: RootState) => ({
+    tenth: state.recruiterRegister.tenth_standard_education,
+    twelth: state.recruiterRegister.twelth_standard_education,
+  }));
 
   const handleCollegeChange = (
     index: number,
@@ -93,6 +101,23 @@ const RecruiterEducationForm = () => {
     }
   };
 
+  const handleInputChange = (
+    level: SchoolLevel,
+    fieldId: string,
+    value: string | number
+  ) => {
+    const standardKey = `${level}_standard_education` as const;
+    dispatch(
+      recruiterRegistrationUpdate({
+        field: standardKey,
+        value: {
+          ...schoolEducationData[level],
+          [fieldId]: value,
+        },
+      })
+    );
+  };
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 p-6">
       <Card className="w-full max-w-4xl shadow-lg">
@@ -103,127 +128,40 @@ const RecruiterEducationForm = () => {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* 10th Standard Education */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">10th Standard Education</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="tenth-school-name">School Name</Label>
-
-                <Input
-                  id="tenth-school-name"
-                  value={educationData.tenth.school_name}
-                  onChange={(e) =>
-                    handleSchoolChange("tenth", "school_name", e.target.value)
-                  }
-                  placeholder="Enter school name"
-                />
+          {/* Complete school education */}
+          <div className="space-y-8">
+            {SCHOOL_LEVELS.map(({ id: level, label }) => (
+              <div key={level} className="space-y-4">
+                <h3 className="text-lg font-semibold">{label}</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {SCHOOL_FORM_FIELDS.map(({ id, label, type }) => (
+                    <div key={`${level}-${id}`} className="space-y-2">
+                      <Label htmlFor={`${level}-${id}`}>{label}</Label>
+                      <Input
+                        id={`${level}-${id}`}
+                        name={`${level}-${id}`}
+                        type={type}
+                        value={
+                          schoolEducationData[level][
+                            id as keyof (typeof schoolEducationData)[typeof level]
+                          ] || ""
+                        }
+                        onChange={(e) =>
+                          handleInputChange(
+                            level,
+                            id,
+                            type === "number"
+                              ? parseFloat(e.target.value)
+                              : e.target.value
+                          )
+                        }
+                        className="w-full"
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="tenth-percentage">Percentage Obtained</Label>
-                <Input
-                  id="tenth-percentage"
-                  type="number"
-                  value={educationData.tenth.percentage_obtained}
-                  onChange={(e) =>
-                    handleSchoolChange(
-                      "tenth",
-                      "percentage_obtained",
-                      parseFloat(e.target.value)
-                    )
-                  }
-                  placeholder="Enter percentage"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="tenth-year">Year of Passing</Label>
-                <Input
-                  id="tenth-year"
-                  type="date"
-                  value={educationData.tenth.year_of_passing}
-                  onChange={(e) =>
-                    handleSchoolChange(
-                      "tenth",
-                      "year_of_passing",
-                      e.target.value
-                    )
-                  }
-                  placeholder="Enter year of passing"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="tenth-board">School Board</Label>
-                <Input
-                  id="tenth-board"
-                  value={educationData.tenth.school_board}
-                  onChange={(e) =>
-                    handleSchoolChange("tenth", "school_board", e.target.value)
-                  }
-                  placeholder="Enter school board"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* 12th Standard Education */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">12th Standard Education</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="twelth-school-name">School Name</Label>
-                <Input
-                  id="twelth-school-name"
-                  value={educationData.twelth.school_name}
-                  onChange={(e) =>
-                    handleSchoolChange("twelth", "school_name", e.target.value)
-                  }
-                  placeholder="Enter school name"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="twelth-percentage">Percentage Obtained</Label>
-                <Input
-                  id="twelth-percentage"
-                  type="number"
-                  value={educationData.twelth.percentage_obtained}
-                  onChange={(e) =>
-                    handleSchoolChange(
-                      "twelth",
-                      "percentage_obtained",
-                      parseFloat(e.target.value)
-                    )
-                  }
-                  placeholder="Enter percentage"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="twelth-year">Year of Passing</Label>
-                <Input
-                  id="twelth-year"
-                  type="date"
-                  value={educationData.twelth.year_of_passing}
-                  onChange={(e) =>
-                    handleSchoolChange(
-                      "twelth",
-                      "year_of_passing",
-                      e.target.value
-                    )
-                  }
-                  placeholder="Enter year of passing"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="twelth-board">School Board</Label>
-                <Input
-                  id="twelth-board"
-                  value={educationData.twelth.school_board}
-                  onChange={(e) =>
-                    handleSchoolChange("twelth", "school_board", e.target.value)
-                  }
-                  placeholder="Enter school board"
-                />
-              </div>
-            </div>
+            ))}
           </div>
 
           {/* College Education */}
