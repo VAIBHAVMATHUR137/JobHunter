@@ -16,6 +16,7 @@ import CommonAuthentication from "./Pages/CommonAuthentication";
 // import RecruiterDashboard from "./Pages/RecruiterDashboard";
 import JobPosting from "./Pages/JobPosting";
 import { AuthProvider } from "./context/Context";
+import RecruiterSkillsAndExperience from "./Recruiter/RecruiterSkillsAndExperience";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -30,6 +31,11 @@ const router = createBrowserRouter([
   {
     path:"/RecruiterConventionalEducation",
     element:<RecruiterConventionalEducation/>,
+    errorElement:<Error/>
+  },
+  {
+    path:"/RecruiterSkillsAndExperience",
+    element:<RecruiterSkillsAndExperience/>,
     errorElement:<Error/>
   },
   // {

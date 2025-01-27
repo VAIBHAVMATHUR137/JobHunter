@@ -26,19 +26,19 @@ const RecruiterEducationForm = () => {
   }
 
   const SCHOOL_FORM_FIELDS: EducationFormField[] = [
-    { id: "school_name", label: "School Name", type: "text" },
-    { id: "school_board", label: "School Board", type: "text" },
-    { id: "percentage_obtained", label: "Percentage", type: "number" },
-    { id: "year_of_passing", label: "Year of Passing", type: "date" },
+    { id: "school_name", label: "Enter your School Name", type: "text" },
+    { id: "school_board", label: "Enter your School Board", type: "text" },
+    { id: "percentage_obtained", label: "Enter Percentage", type: "number" },
+    { id: "year_of_passing", label: "Enter Year of Passing", type: "date" },
   ];
 
   const COLLEGE_FORM_FIELD: EducationFormField[] = [
-    { id: "programme_name", label: "Programme Name", type: "text" },
-    { id: "specialization", label: "Specialization", type: "text" },
-    { id: "college_name", label: "College Name", type: "text" },
-    { id: "university_name", label: "University Name", type: "text" },
-    { id: "cgpa", label: "CGPA", type: "number" },
-    { id: "duration", label: "Duration", type: "number" },
+    { id: "programme_name", label: "Enter Programme Name", type: "text" },
+    { id: "specialization", label: "Enter Specialization", type: "text" },
+    { id: "college_name", label: "Enter College Name", type: "text" },
+    { id: "university_name", label: "Enter University Name", type: "text" },
+    { id: "cgpa", label: "Enter CGPA you scored", type: "number" },
+    { id: "duration", label: "Enter the Course Duration", type: "number" },
     { id: "year_of_commencement", label: "Year Of Commencement", type: "date" },
     { id: "year_of_passing", label: "Year Of Passing", type: "date" },
   ];
@@ -46,12 +46,14 @@ const RecruiterEducationForm = () => {
     { id: "tenth", label: "Tenth Standard Education" },
     { id: "twelth", label: "Twelth Standard Education" },
   ];
+
   const schoolEducationData = useSelector((state: RootState) => ({
     tenth: state.recruiterRegister.tenth_standard_education,
     twelth: state.recruiterRegister.twelth_standard_education,
   }));
   const collegeEducationData = useSelector((state: RootState) => ({
     college: state.recruiterRegister.college_education,
+
   }));
 
   const handleCollegeChange = (
@@ -72,12 +74,6 @@ const RecruiterEducationForm = () => {
       })
     );
   };
-
-  const getFieldLabel = (field: string): string =>
-    field
-      .split(/(?=[A-Z])|_/)
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join("");
 
   const addCollegeEducation = () => {
     const updatedCollegeEducation = [
@@ -165,7 +161,7 @@ const RecruiterEducationForm = () => {
                               id as keyof (typeof schoolEducationData)[typeof level]
                             ] || ""
                           }
-                          placeholder={`Enter your ${getFieldLabel(label)}`}
+                          placeholder={label}
                           onChange={(e) =>
                             handleInputChange(
                               level,
@@ -221,13 +217,17 @@ const RecruiterEducationForm = () => {
                           <Input
                             id={`${id}-${index}`}
                             type={type}
-                            value={edu[id as keyof typeof edu]||""}
+                            value={edu[id as keyof typeof edu] ?? ""}
                             onChange={(e) =>
-                              handleCollegeChange(index, id, 
-                                type === 'number' ? parseFloat(e.target.value) : e.target.value
+                              handleCollegeChange(
+                                index,
+                                id,
+                                type === "number"
+                                  ? parseFloat(e.target.value)
+                                  : e.target.value
                               )
                             }
-                            placeholder={`Enter your ${getFieldLabel(label)}`}
+                            placeholder={label}
                           />
                         </div>
                       ))}
