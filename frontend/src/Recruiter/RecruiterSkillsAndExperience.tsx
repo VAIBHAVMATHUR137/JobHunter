@@ -1,7 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
 import {
   Card,
   CardHeader,
@@ -25,12 +24,12 @@ function RecruiterSkillsAndExperience() {
   const INTERNSHIP_FORM_FIELDS: Experience[] = [
     {
       id: "date_of_commencement",
-      label: "Enter Date of Commencement",
+      label: "Enter date of commencement",
       type: "date",
     },
     {
       id: "date_of_conclusion",
-      label: "Enter Date of Conclusion",
+      label: "Enter date of commencement",
       type: "date",
     },
     { id: "company", label: "Enter Company Name", type: "text" },
@@ -42,15 +41,51 @@ function RecruiterSkillsAndExperience() {
     },
     { id: "stipend", label: "Stipend you received", type: "text" },
   ];
-  const internshipExperience = useSelector((state: RootState) => ({
-    internship: state.recruiterRegister.internship_experience,
+  const CERTIFICATE_FORM_FIELDS: Experience[] = [
+    {
+      id: "platform_name",
+      label: "Enter name of the platform",
+      type: "text",
+    },
+    {
+      id: "mentor_names",
+      label: "Enter name of your mentor",
+      type: "text",
+    },
+    {
+      id: "title_of_course",
+      label: "Enter course name",
+      type: "text",
+    },
+    {
+      id: "learning_description",
+      label: "Enter description of what you learnt",
+      type: "text",
+    },
+    {
+      id: "date_of_commencement",
+      label: "Enter Date of Commencement",
+      type: "date",
+    },
+    {
+      id: "date_of_conclusion",
+      label: "Enter Date of Conclusion",
+      type: "date",
+    },
+  ];
+
+  const states = useSelector((state: RootState) => ({
+    internshipExperience: state.recruiterRegister.internship_experience,
+    certificateCourses: state.recruiterRegister.certificate_courses,
+    workExperience: state.recruiterRegister.work_experience,
+    coreSkills: state.recruiterRegister.core_skills,
   }));
   const handleInternshipInputChange = (
     index: number,
     field: string,
     value: string | number
   ) => {
-    const updatedInternshipExperience = [...internshipExperience.internship];
+    const updatedInternshipExperience = [...states.internshipExperience];
     updatedInternshipExperience[index] = {
       ...updatedInternshipExperience[index],
       [field]: value,
@@ -62,9 +97,26 @@ function RecruiterSkillsAndExperience() {
       })
     );
   };
+  const handleCertificateInputChange = (
+    index: number,
+    field: string,
+    value: string | number
+  ) => {
+    const updatedCertificate = [...states.certificateCourses];
+    updatedCertificate[index] = {
+      ...updatedCertificate[index],
+      [field]: value,
+    };
+    dispatch(
+      recruiterRegistrationUpdate({
+        field: "certificate_courses",
+        value: updatedCertificate,
+      })
+    );
+  };
   const addInternship = () => {
     const updatedInternship = [
-      ...internshipExperience.internship,
+      ...states.internshipExperience,
       {
         date_of_commencement: "",
         date_of_conclusion: "",
@@ -81,10 +133,30 @@ function RecruiterSkillsAndExperience() {
       })
     );
   };
+  const addCertificate = () => {
+    const updatedCertificate = [
+      ...states.certificateCourses,
+      {
+        platform_name: "",
+        mentor_name: "",
+        title_of_course: "",
+        learning_description: "",
+        date_of_commencement: "",
+        date_of_conclusion: "",
+      },
+    ];
+    dispatch(
+      recruiterRegistrationUpdate({
+        field: "certificate_courses",
+        value: updatedCertificate,
+      })
+    );
+  };
+
   const removeInternship = (index: number) => {
     let updatedInternship;
-    if (internshipExperience.internship.length > 1) {
-      updatedInternship = internshipExperience.internship.filter(
+    if (states.internshipExperience.length > 1) {
+      updatedInternship = states.internshipExperience.filter(
         (_: any, i: number) => i !== index
       );
 
@@ -92,6 +164,21 @@ function RecruiterSkillsAndExperience() {
         recruiterRegistrationUpdate({
           field: "internship_experience",
           value: updatedInternship,
+        })
+      );
+    }
+  };
+
+  const removeCertificate = (index: number) => {
+    let updatedCertificate;
+    if (states.certificateCourses.length > 1) {
+      updatedCertificate = states.certificateCourses.filter(
+        (_: any, i: number) => i !== index
+      );
+      dispatch(
+        recruiterRegistrationUpdate({
+          field: "certificate_courses",
+          value: updatedCertificate,
         })
       );
     }
@@ -120,7 +207,7 @@ function RecruiterSkillsAndExperience() {
                   Add More Internships
                 </Button>
               </div>
-              {internshipExperience.internship.map(
+              {states.internshipExperience.map(
                 (internship: any, index: number) => (
                   <Card key={index} className="space-y-4">
                     <CardContent className="space-y-4">
@@ -128,7 +215,7 @@ function RecruiterSkillsAndExperience() {
                         <h4 className="font-semibold">
                           Internship {index + 1}
                         </h4>
-                        {internshipExperience.internship.length > 1 && (
+                        {states.internshipExperience.length > 1 && (
                           <Button
                             variant="outline"
                             size="sm"
@@ -160,6 +247,71 @@ function RecruiterSkillsAndExperience() {
                                     : e.target.value
                                 )
                               }
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )
+              )}
+            </div>
+            {/* Certificates related achievements */}
+            <div className="space-y-8">
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold">
+                  Certificate Related Achievements
+                </h3>
+                <Button
+                  className="bg-primary text-primary-foreground hover:bg-primary/90"
+                  onClick={addCertificate}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add More Certificates
+                </Button>
+              </div>
+              {states.certificateCourses.map(
+                (certificate: any, index: number) => (
+                  <Card key={index} className="space-y-4">
+                    <CardContent className="space-y-4">
+                      <div className="flex-between justify-center">
+                        <h4 className="font-semibold">
+                          {" "}
+                          Certificate {index + 1}
+                        </h4>
+                        {states.certificateCourses.length > 1 && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-destructive border-destructive hover:bg-destructive/90 hover:text-destructive-foreground"
+                            onClick={() => removeCertificate(index)}
+                          >
+                            <Minus className="w-4 h-4 mr-2" />
+                            Remove Certificate
+                          </Button>
+                        )}
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {CERTIFICATE_FORM_FIELDS.map(({ id, label, type }) => (
+                          <div key={id} className="space-y-2">
+                            <Label htmlFor={`${id}-${index}`}>{label}</Label>
+                            <Input
+                              type={type}
+                              id={`${id}-${index}`}
+                              onChange={(e) =>
+                                handleCertificateInputChange(
+                                  index,
+                                  id,
+                                  type === "number"
+                                    ? parseFloat(e.target.value)
+                                    : e.target.value
+                                )
+                              }
+                              value={
+                                certificate[id as keyof typeof certificate] ??
+                                ""
+                              }
+                              placeholder={label}
                             />
                           </div>
                         ))}

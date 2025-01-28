@@ -91,7 +91,7 @@ const initialSkills: coreSkills = [];
 //Certificate
 interface certificate{
   platform_name:string,
-  mentor_names:string[],
+  mentor_name:string,
   title_of_course:string,
   learning_description:string,
   date_of_commencement: string;
@@ -99,7 +99,7 @@ interface certificate{
 }
 const initialCertificateState:certificate={
   platform_name:"",
-  mentor_names:[],
+  mentor_name:"",
   title_of_course:"",
   learning_description:"",
   date_of_commencement:"",
