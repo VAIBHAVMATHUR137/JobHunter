@@ -73,6 +73,27 @@ function RecruiterSkillsAndExperience() {
       type: "date",
     },
   ];
+  const WORKEX_FORM_FIELDS: Experience[] = [
+    { id: "company", label: "Enter Company you served", type: "text" },
+    { id: "designation", label: "Enter Job Title", type: "text" },
+    {
+      id: "date_of_commencement",
+      label: "Enter date of commencement",
+      type: "date",
+    },
+    {
+      id: "date_of_resignation",
+      label: "Enter date of resignation",
+      type: "date",
+    },
+    {
+      id: "duration_of_service",
+      label: "Enter duration of service",
+      type: "number",
+    },
+    { id: "job_description", label: "Enter Job Description", type: "text" },
+    { id: "annual_ctc", label: "Enter Annual CTC (in USD)", type: "number" },
+  ];
 
   const states = useSelector((state: RootState) => ({
     internshipExperience: state.recruiterRegister.internship_experience,
@@ -111,6 +132,23 @@ function RecruiterSkillsAndExperience() {
       recruiterRegistrationUpdate({
         field: "certificate_courses",
         value: updatedCertificate,
+      })
+    );
+  };
+  const handleWorkExInputChange = (
+    index: number,
+    field: string,
+    value: string | number
+  ) => {
+    const updatedWorkEx = [...states.workExperience];
+    updatedWorkEx[index] = {
+      ...updatedWorkEx[index],
+      [field]: value,
+    };
+    dispatch(
+      recruiterRegistrationUpdate({
+        field: "work_experience",
+        value: updatedWorkEx,
       })
     );
   };
@@ -153,6 +191,27 @@ function RecruiterSkillsAndExperience() {
     );
   };
 
+  const addWorkEx = () => {
+    const updatedWorkEx = [
+      ...states.workExperience,
+      {
+        company: "",
+        designation: "",
+        date_of_commencement: "",
+        date_of_resignation: "",
+        duration_of_service: 0,
+        job_description: "",
+        annual_ctc: 0,
+      },
+    ];
+    dispatch(
+      recruiterRegistrationUpdate({
+        field: "work_experience",
+        value: updatedWorkEx,
+      })
+    );
+  };
+
   const removeInternship = (index: number) => {
     let updatedInternship;
     if (states.internshipExperience.length > 1) {
@@ -179,6 +238,20 @@ function RecruiterSkillsAndExperience() {
         recruiterRegistrationUpdate({
           field: "certificate_courses",
           value: updatedCertificate,
+        })
+      );
+    }
+  };
+  const removeWorkEx = (index: number) => {
+    let updatedWorkEx;
+    if (states.workExperience.length > 1) {
+      updatedWorkEx = states.workExperience.filter(
+        (_: any, i: number) => i !== index
+      );
+      dispatch(
+        recruiterRegistrationUpdate({
+          field: "work_experience",
+          value: updatedWorkEx,
         })
       );
     }
@@ -320,6 +393,63 @@ function RecruiterSkillsAndExperience() {
                   </Card>
                 )
               )}
+            </div>
+            {/* Work Ex related forms */}
+            <div className="space-y-8">
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold">Work Experience</h3>
+                <Button
+                  className="bg-primary text-primary-foreground hover:bg-primary/90"
+                  onClick={addWorkEx}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add more work experiences
+                </Button>
+              </div>
+              {states.workExperience.map((workex: any, index: number) => (
+                <Card key={index} className="space-y-4">
+                  <CardContent className="space-y-4">
+                    <div className="flex-between justify-center">
+                      <h4 className="font-semibold">
+                        Work Experience {index + 1}
+                      </h4>
+                      {states.workExperience.length > 1 && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-destructive border-destructive hover:bg-destructive/90 hover:text-destructive-foreground"
+                          onClick={() => removeWorkEx(index)}
+                        >
+                          <Minus className="w-4 h-4 mr-2" />
+                          Remove Work Ex
+                        </Button>
+                      )}
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {WORKEX_FORM_FIELDS.map(({ id, label, type }) => (
+                        <div key={id} className="space-y-2">
+                          <Label htmlFor={`${id}-${index}`}>{label}</Label>
+                          <Input
+                            placeholder={label}
+                            id={`${id}-${index}`}
+                            type={type}
+                            value={workex[id as keyof typeof workex]}
+                            onChange={(e) =>
+                              handleWorkExInputChange(
+                                index,
+                                id,
+                                e.type === "number"
+                                  ? parseFloat(e.target.value)
+                                  : e.target.value
+                              )
+                            }
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </CardContent>
         </Card>

@@ -20,19 +20,19 @@ interface loginFormState {
   username: string;
   password: string;
 }
-const initialLoginState:loginFormState={
-  username:"",
-  password:""
-}
+const initialLoginState: loginFormState = {
+  username: "",
+  password: "",
+};
 //College Education
 interface CollegeEducation {
   programme_name: string;
   specialization: string;
   college_name: string;
-  university_name:string,
+  university_name: string;
   cgpa: number;
-  duration:number;
-  year_of_commencement:string,
+  duration: number;
+  year_of_commencement: string;
   passout_year: string;
 }
 
@@ -40,17 +40,17 @@ const initialCollegeEducation: CollegeEducation = {
   programme_name: "",
   specialization: "",
   college_name: "",
-  university_name:"",
+  university_name: "",
   cgpa: 0,
-  duration:0,
-  year_of_commencement:"",
+  duration: 0,
+  year_of_commencement: "",
   passout_year: "",
 };
 
 //Internship Experience
 interface individual_internship {
-  date_of_commencement:string,
-  date_of_conclusion:string,
+  date_of_commencement: string;
+  date_of_conclusion: string;
   company: string;
   duration: number;
   roles_and_responsibilities: string;
@@ -58,8 +58,8 @@ interface individual_internship {
 }
 
 const initialInternship: individual_internship = {
-  date_of_commencement:"",
-  date_of_conclusion:"",
+  date_of_commencement: "",
+  date_of_conclusion: "",
   company: "",
   duration: 0,
   roles_and_responsibilities: "",
@@ -69,19 +69,21 @@ const initialInternship: individual_internship = {
 //Job Experience
 interface individual_job_experience {
   company: string;
+  designation: string;
   date_of_commencement: string;
-  date_of_conclusion: string;
-  duration_of_service:number;
-  position: string;
+  date_of_resignation: string;
+  duration_of_service: number;
+
   job_description: string;
   annual_ctc: number;
 }
 const initial_job_experience: individual_job_experience = {
   company: "",
+  designation: "",
   date_of_commencement: "",
-  date_of_conclusion: "",
-  duration_of_service:0,
-  position: "",
+  date_of_resignation: "",
+  duration_of_service: 0,
+
   job_description: "",
   annual_ctc: 0,
 };
@@ -89,27 +91,27 @@ const initial_job_experience: individual_job_experience = {
 type coreSkills = string[];
 const initialSkills: coreSkills = [];
 //Certificate
-interface certificate{
-  platform_name:string,
-  mentor_name:string,
-  title_of_course:string,
-  learning_description:string,
+interface certificate {
+  platform_name: string;
+  mentor_name: string;
+  title_of_course: string;
+  learning_description: string;
   date_of_commencement: string;
   date_of_conclusion: string;
 }
-const initialCertificateState:certificate={
-  platform_name:"",
-  mentor_name:"",
-  title_of_course:"",
-  learning_description:"",
-  date_of_commencement:"",
-  date_of_conclusion:""
-}
+const initialCertificateState: certificate = {
+  platform_name: "",
+  mentor_name: "",
+  title_of_course: "",
+  learning_description: "",
+  date_of_commencement: "",
+  date_of_conclusion: "",
+};
 //Current Job
 interface CurrentJob {
   company: string;
   job_description: string;
-  date_of_commencement:string;
+  date_of_commencement: string;
   current_role: string;
 }
 const initialCurrentJob: CurrentJob = {
@@ -123,8 +125,8 @@ const initialCurrentJob: CurrentJob = {
 interface recruiterAuthentication {
   firstName: string;
   lastName: string;
-  title:string,
-  one_liner_intro:string,
+  title: string;
+  one_liner_intro: string;
   number: number;
   date_of_birth: string;
   email: string;
@@ -139,7 +141,7 @@ interface recruiterAuthentication {
   internship_experience: individual_internship[];
   work_experience: individual_job_experience[];
   core_skills: coreSkills;
-  certificate_courses:certificate[];
+  certificate_courses: certificate[];
   current_job: CurrentJob;
   current_location: string;
   linkedin: string;
@@ -149,8 +151,8 @@ interface recruiterAuthentication {
 const initialRecruiterRegisterState: recruiterAuthentication = {
   firstName: "",
   lastName: "",
-  title:"",
-  one_liner_intro:"",
+  title: "",
+  one_liner_intro: "",
   number: 0,
   email: "",
   username: "",
@@ -165,7 +167,7 @@ const initialRecruiterRegisterState: recruiterAuthentication = {
   internship_experience: [initialInternship],
   work_experience: [initial_job_experience],
   core_skills: initialSkills,
-  certificate_courses:[initialCertificateState],
+  certificate_courses: [initialCertificateState],
   current_job: initialCurrentJob,
   current_location: "",
   linkedin: "",
@@ -178,10 +180,10 @@ const loginUpdateField = <T extends keyof loginFormState>(
   action: PayloadAction<{ field: T; value: loginFormState[T] }>
 ) => {
   const { field, value } = action.payload;
-  return{
+  return {
     ...state,
-    [field]:value
-  }
+    [field]: value,
+  };
 };
 
 //common reducer to reset the field
