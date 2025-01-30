@@ -73,7 +73,6 @@ interface individual_job_experience {
   date_of_commencement: string;
   date_of_resignation: string;
   duration_of_service: number;
-
   job_description: string;
   annual_ctc: number;
 }
@@ -113,12 +112,14 @@ interface CurrentJob {
   job_description: string;
   date_of_commencement: string;
   current_role: string;
+  years_of_experience:number
 }
 const initialCurrentJob: CurrentJob = {
   company: "",
   job_description: "",
   date_of_commencement: "",
   current_role: "",
+  years_of_experience:0
 };
 
 //interface for first time registration/signin by the recruiter
@@ -144,9 +145,8 @@ interface recruiterAuthentication {
   certificate_courses: certificate[];
   current_job: CurrentJob;
   current_location: string;
-  linkedin: string;
-  X: string;
-  years_of_experience: number;
+
+
 }
 const initialRecruiterRegisterState: recruiterAuthentication = {
   firstName: "",
@@ -170,9 +170,8 @@ const initialRecruiterRegisterState: recruiterAuthentication = {
   certificate_courses: [initialCertificateState],
   current_job: initialCurrentJob,
   current_location: "",
-  linkedin: "",
-  X: "",
-  years_of_experience: 0,
+
+
 };
 //common reducer to update the field
 const loginUpdateField = <T extends keyof loginFormState>(
