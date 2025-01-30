@@ -21,6 +21,7 @@ function RecruiterSkillsAndExperience() {
     label: string;
     type: "text" | "number" | "date";
   }
+  const skill_set = [];
   const INTERNSHIP_FORM_FIELDS: Experience[] = [
     {
       id: "date_of_commencement",
@@ -152,6 +153,16 @@ function RecruiterSkillsAndExperience() {
       })
     );
   };
+  const handleSkillChange = (value: string, index: number) => {
+    const updatedSkills = [...states.coreSkills];
+    updatedSkills[index] = value;
+    dispatch(
+      recruiterRegistrationUpdate({
+        field: "core_skills",
+        value: updatedSkills,
+      })
+    );
+  };
   const addInternship = () => {
     const updatedInternship = [
       ...states.internshipExperience,
@@ -211,7 +222,15 @@ function RecruiterSkillsAndExperience() {
       })
     );
   };
-
+  const addSkill = () => {
+    const updatedSkills = [...states.coreSkills, ""];
+    dispatch(
+      recruiterRegistrationUpdate({
+        field: "core_skills",
+        value: updatedSkills,
+      })
+    );
+  };
   const removeInternship = (index: number) => {
     let updatedInternship;
     if (states.internshipExperience.length > 1) {
@@ -252,6 +271,17 @@ function RecruiterSkillsAndExperience() {
         recruiterRegistrationUpdate({
           field: "work_experience",
           value: updatedWorkEx,
+        })
+      );
+    }
+  };
+  const removeSkill = (index: number) => {
+    if (states.coreSkills.length > 1) {
+      const updatedSkills = states.coreSkills.filter((_, i) => i !== index);
+      dispatch(
+        recruiterRegistrationUpdate({
+          field: "core_skills",
+          value: updatedSkills,
         })
       );
     }
@@ -451,6 +481,43 @@ function RecruiterSkillsAndExperience() {
                 </Card>
               ))}
             </div>
+            {/* Skill based UI*/}
+            <div className="space-y-8">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold">Skill Set</h3>
+              <Button
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
+                onClick={addSkill}
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add More Skills
+              </Button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {states.coreSkills.map((skill: string, index: number) => (
+                <Card key={index} className="p-4">
+                  <div className="flex items-center space-x-2">
+                    <Input
+                      placeholder="Enter skill"
+                      value={skill}
+                      onChange={(e) => handleSkillChange(e.target.value, index)}
+                      className="flex-1"
+                    />
+                    {states.coreSkills.length > 1 && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-destructive border-destructive hover:bg-destructive/90 hover:text-destructive-foreground"
+                        onClick={() => removeSkill(index)}
+                      >
+                        <Minus className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
           </CardContent>
         </Card>
       </div>
