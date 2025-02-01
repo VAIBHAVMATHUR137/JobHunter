@@ -1,26 +1,23 @@
-import { useDispatch, useSelector } from "react-redux";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardDescription,
-} from "@/components/ui/card";
-import { Plus, Minus } from "lucide-react";
-import { recruiterRegistrationUpdate } from "../Slice/RecruiterSlice";
-import { RootState } from "@/Slice/Store";
-import { Label } from "@/components/ui/label";
-import Navbar from "@/components/ui/navbar";
+import { useDispatch, useSelector } from "react-redux"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+
+import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from "@/components/ui/card"
+import { Plus, Minus } from "lucide-react"
+import { recruiterRegistrationUpdate } from "../Slice/RecruiterSlice"
+import type { RootState } from "@/Slice/Store"
+import { Label } from "@/components/ui/label"
+import Navbar from "@/components/ui/navbar"
+import RecruiterRegistrationPagination from "./RecruiterRegistrationPagination"
 
 function RecruiterSkillsAndExperience() {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
   interface Experience {
-    id: string;
-    label: string;
-    type: "text" | "number" | "date";
+    id: string
+    label: string
+    type: "text" | "number" | "date"
   }
+
 
   const INTERNSHIP_FORM_FIELDS: Experience[] = [
     {
@@ -41,7 +38,7 @@ function RecruiterSkillsAndExperience() {
       type: "text",
     },
     { id: "stipend", label: "Stipend you received", type: "text" },
-  ];
+  ]
   const CERTIFICATE_FORM_FIELDS: Experience[] = [
     {
       id: "platform_name",
@@ -73,7 +70,7 @@ function RecruiterSkillsAndExperience() {
       label: "Enter Date of Conclusion",
       type: "date",
     },
-  ];
+  ]
   const WORKEX_FORM_FIELDS: Experience[] = [
     { id: "company", label: "Enter Company you served", type: "text" },
     { id: "designation", label: "Enter Job Title", type: "text" },
@@ -94,75 +91,63 @@ function RecruiterSkillsAndExperience() {
     },
     { id: "job_description", label: "Enter Job Description", type: "text" },
     { id: "annual_ctc", label: "Enter Annual CTC (in USD)", type: "number" },
-  ];
+  ]
 
   const states = useSelector((state: RootState) => ({
     internshipExperience: state.recruiterRegister.internship_experience,
     certificateCourses: state.recruiterRegister.certificate_courses,
     workExperience: state.recruiterRegister.work_experience,
     coreSkills: state.recruiterRegister.core_skills,
-  }));
-  const handleInternshipInputChange = (
-    index: number,
-    field: string,
-    value: string | number
-  ) => {
-    const updatedInternshipExperience = [...states.internshipExperience];
+  }))
+  const handleInternshipInputChange = (index: number, field: string, value: string | number) => {
+    const updatedInternshipExperience = [...states.internshipExperience]
     updatedInternshipExperience[index] = {
       ...updatedInternshipExperience[index],
       [field]: value,
-    };
+    }
     dispatch(
       recruiterRegistrationUpdate({
         field: "internship_experience",
         value: updatedInternshipExperience,
-      })
-    );
-  };
-  const handleCertificateInputChange = (
-    index: number,
-    field: string,
-    value: string | number
-  ) => {
-    const updatedCertificate = [...states.certificateCourses];
+      }),
+    )
+  }
+  const handleCertificateInputChange = (index: number, field: string, value: string | number) => {
+    const updatedCertificate = [...states.certificateCourses]
     updatedCertificate[index] = {
       ...updatedCertificate[index],
       [field]: value,
-    };
+    }
     dispatch(
       recruiterRegistrationUpdate({
         field: "certificate_courses",
         value: updatedCertificate,
-      })
-    );
-  };
-  const handleWorkExInputChange = (
-    index: number,
-    field: string,
-    value: string | number
-  ) => {
-    const updatedWorkEx = [...states.workExperience];
+      }),
+    )
+  }
+  const handleWorkExInputChange = (index: number, field: string, value: string | number) => {
+    const updatedWorkEx = [...states.workExperience]
     updatedWorkEx[index] = {
       ...updatedWorkEx[index],
       [field]: value,
-    };
+    }
     dispatch(
       recruiterRegistrationUpdate({
         field: "work_experience",
         value: updatedWorkEx,
-      })
-    );
-  };
+      }),
+    )
+  }
   const handleSkillChange = (value: string, index: number) => {
-    const updatedSkills = [...states.coreSkills];
-    updatedSkills[index] = value;
+    const updatedSkills = [...states.coreSkills]
+    updatedSkills[index] = value
     dispatch(
       recruiterRegistrationUpdate({
         field: "core_skills",
         value: updatedSkills,
-      })
-    );
-  };
+      }),
+    )
+  }
   const addInternship = () => {
     const updatedInternship = [
       ...states.internshipExperience,
@@ -174,14 +159,14 @@ function RecruiterSkillsAndExperience() {
         roles_and_responsibilities: "",
         stipend: "",
       },
-    ];
+    ]
     dispatch(
       recruiterRegistrationUpdate({
         field: "internship_experience",
         value: updatedInternship,
-      })
-    );
-  };
+      }),
+    )
+  }
   const addCertificate = () => {
     const updatedCertificate = [
       ...states.certificateCourses,
@@ -193,14 +178,14 @@ function RecruiterSkillsAndExperience() {
         date_of_commencement: "",
         date_of_conclusion: "",
       },
-    ];
+    ]
     dispatch(
       recruiterRegistrationUpdate({
         field: "certificate_courses",
         value: updatedCertificate,
-      })
-    );
-  };
+      }),
+    )
+  }
 
   const addWorkEx = () => {
     const updatedWorkEx = [
@@ -214,78 +199,72 @@ function RecruiterSkillsAndExperience() {
         job_description: "",
         annual_ctc: 0,
       },
-    ];
+    ]
     dispatch(
       recruiterRegistrationUpdate({
         field: "work_experience",
         value: updatedWorkEx,
-      })
-    );
-  };
+      }),
+    )
+  }
   const addSkill = () => {
-    const updatedSkills = [...states.coreSkills, ""];
+    const updatedSkills = [...states.coreSkills, ""]
     dispatch(
       recruiterRegistrationUpdate({
         field: "core_skills",
         value: updatedSkills,
-      })
-    );
-  };
+      }),
+    )
+  }
   const removeInternship = (index: number) => {
-    let updatedInternship;
+    let updatedInternship
     if (states.internshipExperience.length > 1) {
-      updatedInternship = states.internshipExperience.filter(
-        (_: any, i: number) => i !== index
-      );
+      updatedInternship = states.internshipExperience.filter((_: any, i: number) => i !== index)
 
       dispatch(
         recruiterRegistrationUpdate({
           field: "internship_experience",
           value: updatedInternship,
-        })
-      );
+        }),
+      )
     }
-  };
+  }
 
   const removeCertificate = (index: number) => {
-    let updatedCertificate;
+    let updatedCertificate
     if (states.certificateCourses.length > 1) {
-      updatedCertificate = states.certificateCourses.filter(
-        (_: any, i: number) => i !== index
-      );
+      updatedCertificate = states.certificateCourses.filter((_: any, i: number) => i !== index)
       dispatch(
         recruiterRegistrationUpdate({
           field: "certificate_courses",
           value: updatedCertificate,
-        })
-      );
+        }),
+      )
     }
-  };
+  }
   const removeWorkEx = (index: number) => {
-    let updatedWorkEx;
+    let updatedWorkEx
     if (states.workExperience.length > 1) {
-      updatedWorkEx = states.workExperience.filter(
-        (_: any, i: number) => i !== index
-      );
+      updatedWorkEx = states.workExperience.filter((_: any, i: number) => i !== index)
       dispatch(
         recruiterRegistrationUpdate({
           field: "work_experience",
           value: updatedWorkEx,
-        })
-      );
+        }),
+      )
     }
-  };
+  }
   const removeSkill = (index: number) => {
     if (states.coreSkills.length > 1) {
-      const updatedSkills = states.coreSkills.filter((_, i) => i !== index);
+      const updatedSkills = states.coreSkills.filter((_, i) => i !== index)
       dispatch(
         recruiterRegistrationUpdate({
           field: "core_skills",
           value: updatedSkills,
-        })
-      );
+        }),
+      )
     }
-  };
+  }
   return (
     <>
       <Navbar />
@@ -302,136 +281,107 @@ function RecruiterSkillsAndExperience() {
             <div className="space-y-8">
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-semibold">Internship Experience</h3>
-                <Button
-                  className="bg-primary text-primary-foreground hover:bg-primary/90"
-                  onClick={addInternship}
-                >
+                <Button className="bg-primary text-primary-foreground hover:bg-primary/90" onClick={addInternship}>
                   <Plus className="w-4 h-4 mr-2" />
                   Add More Internships
                 </Button>
               </div>
-              {states.internshipExperience.map(
-                (internship: any, index: number) => (
-                  <Card key={index} className="space-y-4">
-                    <CardContent className="space-y-4">
-                      <div className="flex justify-between items-center">
-                        <h4 className="font-semibold">
-                          Internship {index + 1}
-                        </h4>
-                        {states.internshipExperience.length > 1 && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="text-destructive border-destructive hover:bg-destructive/90 hover:text-destructive-foreground"
-                            onClick={() => removeInternship(index)}
-                          >
-                            <Minus className="w-4 h-4 mr-2" />
-                            Remove Internship
-                          </Button>
-                        )}
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {INTERNSHIP_FORM_FIELDS.map(({ id, label, type }) => (
-                          <div key={id} className="space-y-2">
-                            <Label htmlFor={`${id}-${index}`}>{label}</Label>
-                            <Input
-                              placeholder={`Enter ${label}`}
-                              id={`${id}-${index}`}
-                              value={
-                                internship[id as keyof typeof internship] ?? ""
-                              }
-                              type={type}
-                              onChange={(e) =>
-                                handleInternshipInputChange(
-                                  index,
-                                  id,
-                                  e.type === "number"
-                                    ? parseFloat(e.target.value)
-                                    : e.target.value
-                                )
-                              }
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )
-              )}
+              {states.internshipExperience.map((internship: any, index: number) => (
+                <Card key={index} className="space-y-4">
+                  <CardContent className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <h4 className="font-semibold">Internship {index + 1}</h4>
+                      {states.internshipExperience.length > 1 && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-destructive border-destructive hover:bg-destructive/90 hover:text-destructive-foreground"
+                          onClick={() => removeInternship(index)}
+                        >
+                          <Minus className="w-4 h-4 mr-2" />
+                          Remove Internship
+                        </Button>
+                      )}
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {INTERNSHIP_FORM_FIELDS.map(({ id, label, type }) => (
+                        <div key={id} className="space-y-2">
+                          <Label htmlFor={`${id}-${index}`}>{label}</Label>
+                          <Input
+                            placeholder={`Enter ${label}`}
+                            id={`${id}-${index}`}
+                            value={internship[id as keyof typeof internship] ?? ""}
+                            type={type}
+                            onChange={(e) =>
+                              handleInternshipInputChange(
+                                index,
+                                id,
+                                e.type === "number" ? Number.parseFloat(e.target.value) : e.target.value,
+                              )
+                            }
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
             {/* Certificates related achievements */}
             <div className="space-y-8">
               <div className="flex justify-between items-center">
-                <h3 className="text-lg font-semibold">
-                  Certificate Related Achievements
-                </h3>
-                <Button
-                  className="bg-primary text-primary-foreground hover:bg-primary/90"
-                  onClick={addCertificate}
-                >
+                <h3 className="text-lg font-semibold">Certificate Related Achievements</h3>
+                <Button className="bg-primary text-primary-foreground hover:bg-primary/90" onClick={addCertificate}>
                   <Plus className="w-4 h-4 mr-2" />
                   Add More Certificates
                 </Button>
               </div>
-              {states.certificateCourses.map(
-                (certificate: any, index: number) => (
-                  <Card key={index} className="space-y-4">
-                    <CardContent className="space-y-4">
-                      <div className="flex-between justify-center">
-                        <h4 className="font-semibold">
-                          {" "}
-                          Certificate {index + 1}
-                        </h4>
-                        {states.certificateCourses.length > 1 && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="text-destructive border-destructive hover:bg-destructive/90 hover:text-destructive-foreground"
-                            onClick={() => removeCertificate(index)}
-                          >
-                            <Minus className="w-4 h-4 mr-2" />
-                            Remove Certificate
-                          </Button>
-                        )}
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {CERTIFICATE_FORM_FIELDS.map(({ id, label, type }) => (
-                          <div key={id} className="space-y-2">
-                            <Label htmlFor={`${id}-${index}`}>{label}</Label>
-                            <Input
-                              type={type}
-                              id={`${id}-${index}`}
-                              onChange={(e) =>
-                                handleCertificateInputChange(
-                                  index,
-                                  id,
-                                  type === "number"
-                                    ? parseFloat(e.target.value)
-                                    : e.target.value
-                                )
-                              }
-                              value={
-                                certificate[id as keyof typeof certificate] ??
-                                ""
-                              }
-                              placeholder={label}
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )
-              )}
+              {states.certificateCourses.map((certificate: any, index: number) => (
+                <Card key={index} className="space-y-4">
+                  <CardContent className="space-y-4">
+                    <div className="flex-between justify-center">
+                      <h4 className="font-semibold"> Certificate {index + 1}</h4>
+                      {states.certificateCourses.length > 1 && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-destructive border-destructive hover:bg-destructive/90 hover:text-destructive-foreground"
+                          onClick={() => removeCertificate(index)}
+                        >
+                          <Minus className="w-4 h-4 mr-2" />
+                          Remove Certificate
+                        </Button>
+                      )}
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {CERTIFICATE_FORM_FIELDS.map(({ id, label, type }) => (
+                        <div key={id} className="space-y-2">
+                          <Label htmlFor={`${id}-${index}`}>{label}</Label>
+                          <Input
+                            type={type}
+                            id={`${id}-${index}`}
+                            onChange={(e) =>
+                              handleCertificateInputChange(
+                                index,
+                                id,
+                                type === "number" ? Number.parseFloat(e.target.value) : e.target.value,
+                              )
+                            }
+                            value={certificate[id as keyof typeof certificate] ?? ""}
+                            placeholder={label}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
             {/* Work Ex related forms */}
             <div className="space-y-8">
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-semibold">Work Experience</h3>
-                <Button
-                  className="bg-primary text-primary-foreground hover:bg-primary/90"
-                  onClick={addWorkEx}
-                >
+                <Button className="bg-primary text-primary-foreground hover:bg-primary/90" onClick={addWorkEx}>
                   <Plus className="w-4 h-4 mr-2" />
                   Add more work experiences
                 </Button>
@@ -440,9 +390,7 @@ function RecruiterSkillsAndExperience() {
                 <Card key={index} className="space-y-4">
                   <CardContent className="space-y-4">
                     <div className="flex-between justify-center">
-                      <h4 className="font-semibold">
-                        Work Experience {index + 1}
-                      </h4>
+                      <h4 className="font-semibold">Work Experience {index + 1}</h4>
                       {states.workExperience.length > 1 && (
                         <Button
                           variant="outline"
@@ -468,9 +416,7 @@ function RecruiterSkillsAndExperience() {
                               handleWorkExInputChange(
                                 index,
                                 id,
-                                e.type === "number"
-                                  ? parseFloat(e.target.value)
-                                  : e.target.value
+                                e.type === "number" ? Number.parseFloat(e.target.value) : e.target.value,
                               )
                             }
                           />
@@ -485,10 +431,7 @@ function RecruiterSkillsAndExperience() {
             <div className="space-y-8">
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-semibold">Skill Set</h3>
-                <Button
-                  className="bg-primary text-primary-foreground hover:bg-primary/90"
-                  onClick={addSkill}
-                >
+                <Button className="bg-primary text-primary-foreground hover:bg-primary/90" onClick={addSkill}>
                   <Plus className="w-4 h-4 mr-2" />
                   Add More Skills
                 </Button>
@@ -500,9 +443,7 @@ function RecruiterSkillsAndExperience() {
                       <Input
                         placeholder="Enter skill"
                         value={skill}
-                        onChange={(e) =>
-                          handleSkillChange(e.target.value, index)
-                        }
+                        onChange={(e) => handleSkillChange(e.target.value, index)}
                         className="flex-1"
                       />
                       {states.coreSkills.length > 1 && (
@@ -521,10 +462,14 @@ function RecruiterSkillsAndExperience() {
               </div>
             </div>
           </CardContent>
+          <CardFooter>
+            <RecruiterRegistrationPagination currentPage={3} totalPages={4} />
+          </CardFooter>
         </Card>
       </div>
     </>
-  );
+  )
 }
 
-export default RecruiterSkillsAndExperience;
+export default RecruiterSkillsAndExperience
+

@@ -1,30 +1,25 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux"
 
-import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardDescription,
-} from "@/components/ui/card";
-import { recruiterRegistrationUpdate } from "../Slice/RecruiterSlice";
-import { RootState } from "@/Slice/Store";
-import { Label } from "@/components/ui/label";
-import Navbar from "@/components/ui/navbar";
+import { Input } from "@/components/ui/input"
+import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from "@/components/ui/card"
+import { recruiterRegistrationUpdate } from "../Slice/RecruiterSlice"
+import type { RootState } from "@/Slice/Store"
+import { Label } from "@/components/ui/label"
+import Navbar from "@/components/ui/navbar"
+import RecruiterRegistrationPagination from "./RecruiterRegistrationPagination"
 
 function RecruiterPresent() {
-  const dispatch = useDispatch();
+
+  const dispatch = useDispatch()
   const states = useSelector((state: RootState) => ({
     current_job: state.recruiterRegister.current_job,
     current_location: state.recruiterRegister.current_location,
-
-  }));
+  }))
 
   interface FormField {
-    id: keyof typeof formFields;
-    label: string;
-    type: "text" | "date"|"number";
+    id: keyof typeof formFields
+    label: string
+    type: "text" | "date" | "number"
   }
 
   // Define the form fields structure to match your state
@@ -33,8 +28,8 @@ function RecruiterPresent() {
     current_role: "current_role",
     job_description: "job_description",
     date_of_commencement: "date_of_commencement",
-    years_of_experience:"years_of_experience"
-  } as const;
+    years_of_experience: "years_of_experience",
+  } as const
 
   const CURRENT_WORK: FormField[] = [
     { id: "company", label: "Enter Company Name", type: "text" },
@@ -46,9 +41,11 @@ function RecruiterPresent() {
       type: "date",
     },
     {
-      id:"years_of_experience",label:"Enter Years of Experience you have", type:"number"
-    }
-  ];
+      id: "years_of_experience",
+      label: "Enter Years of Experience you have",
+      type: "number",
+    },
+  ]
 
   const handleChange = (field: keyof typeof formFields, value: string) => {
     dispatch(
@@ -58,23 +55,27 @@ function RecruiterPresent() {
           ...states.current_job,
           [field]: value,
         },
-      })
-    );
-  };
+      }),
+    )
+  }
 
   const getFieldValue = (id: keyof typeof formFields) => {
-    return states.current_job[id] || "";
-  };
+    return states.current_job[id] || ""
+  }
+
+  const handleSubmit = () => {
+    // Implement your submit logic here
+    console.log("Form submitted")
+    // You can dispatch an action to submit the form data to your backend
+  }
 
   return (
     <>
       <Navbar />
-      <div className="flex justify-center items-center min-h-screen bg-gray-100 p-6">
+      <div className="flex justify-center items-center min-h-screen bg-gray-100 p-6 ">
         <Card className="w-full max-w-4xl shadow-lg">
           <CardHeader>
-            <CardTitle className="text-center">
-              Present Job Introduction
-            </CardTitle>
+            <CardTitle className="text-center">Present Job Introduction</CardTitle>
             <CardDescription className="text-center">
               Please provide few details about your present work
             </CardDescription>
@@ -96,10 +97,14 @@ function RecruiterPresent() {
               ))}
             </div>
           </CardContent>
+          <CardFooter>
+            <RecruiterRegistrationPagination currentPage={4} totalPages={4} onSubmit={handleSubmit} />
+          </CardFooter>
         </Card>
       </div>
     </>
-  );
+  )
 }
 
-export default RecruiterPresent;
+export default RecruiterPresent
+

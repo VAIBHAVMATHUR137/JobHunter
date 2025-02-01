@@ -1,56 +1,33 @@
-import Navbar from "@/components/ui/navbar";
-import { ChangeEvent, FormEvent, useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import axios from "axios";
+import Navbar from "@/components/ui/navbar"
+import { type ChangeEvent, useState, useEffect } from "react"
+import { useSelector, useDispatch } from "react-redux"
+import axios from "axios"
 
-import { RootState } from "../Slice/Store";
-import { recruiterRegistrationUpdate } from "../Slice/RecruiterSlice";
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardFooter,
-} from "@/components/ui/card";
-import Calendar from "react-calendar";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Label } from "@/components/ui/label";
-import { AlertDialogDemo } from "@/components/ui/AlertDialogDemo";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-type basicFormDataType =
-  | "firstName"
-  | "lastName"
-  | "title"
-  | "one_liner_intro"
-  | "number"
-  | "email"
-  | "password";
+import type { RootState } from "../Slice/Store"
+import { recruiterRegistrationUpdate } from "../Slice/RecruiterSlice"
 
-const basicFormFields = [
-  "firstName",
-  "lastName",
-  "title",
-  "one_liner_intro",
-  "number",
-  "email",
-  "password",
-] as const;
-type FieldName = (typeof basicFormFields)[number];
+import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
+import RecruiterRegistrationPagination from "./RecruiterRegistrationPagination" // Import updated
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Label } from "@/components/ui/label"
+
+type basicFormDataType = "firstName" | "lastName" | "title" | "one_liner_intro" | "number" | "email" | "password"
+
+const basicFormFields = ["firstName", "lastName", "title", "one_liner_intro", "number", "email", "password"] as const
+type FieldName = (typeof basicFormFields)[number]
 
 function RecruiterPersonalInformation() {
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [date, setDate] = useState<Date | Date[]>(new Date());
-  const [showAlert, setShowAlert] = useState(false);
-  const [title, setTitle] = useState<string | "">("");
-  const [formComplete, setIsFormComplete] = useState(false);
-  const [message, setMessage] = useState<string | " ">("");
-  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-  const dispatch = useDispatch();
-  const formData = useSelector((state: RootState) => state.recruiterRegister);
+  const [isSuccess, setIsSuccess] = useState(false)
+  const [date, setDate] = useState<Date | Date[]>(new Date())
+  const [showAlert, setShowAlert] = useState(false)
+  const [title, setTitle] = useState<string | "">("")
+  const [formComplete, setIsFormComplete] = useState(false)
+  const [message, setMessage] = useState<string | " ">("")
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null)
+  const dispatch = useDispatch()
+  const formData = useSelector((state: RootState) => state.recruiterRegister)
   // Create a selector function
   const selectBasicFormData = (state: RootState) =>
     basicFormFields.reduce(
@@ -58,155 +35,139 @@ function RecruiterPersonalInformation() {
         ...acc,
         [field]: state.recruiterRegister[field],
       }),
-      {} as Pick<typeof state.recruiterRegister, FieldName>
-    );
-  const basicFormData = useSelector(selectBasicFormData);
-  const nav = useNavigate();
-  const putTitle = (heading: string) => setTitle(heading);
-  const putMessage = (message: string) => setMessage(message);
-  const firstName = useSelector(
-    (state: RootState) => state.recruiterRegister.firstName
-  );
-  const lastName = useSelector(
-    (state: RootState) => state.recruiterRegister.lastName
-  );
-  const username = useSelector(
-    (state: RootState) => state.recruiterRegister.username
-  );
-  const firstNameLength: number = firstName.split(" ").join("").trim().length;
-  const lastNameLength: number = lastName.split(" ").join("").trim().length;
-  const permittedUserNameLength: number = Math.trunc(
-    (firstNameLength + lastNameLength) / 2 + 3
-  );
-  const userNameLength: number = username.split(" ").join("").trim().length;
+      {} as Pick<typeof state.recruiterRegister, FieldName>,
+    )
+  const basicFormData = useSelector(selectBasicFormData)
+
+  const putTitle = (heading: string) => setTitle(heading)
+  const putMessage = (message: string) => setMessage(message)
+  const firstName = useSelector((state: RootState) => state.recruiterRegister.firstName)
+  const lastName = useSelector((state: RootState) => state.recruiterRegister.lastName)
+  const username = useSelector((state: RootState) => state.recruiterRegister.username)
+  const firstNameLength: number = firstName.split(" ").join("").trim().length
+  const lastNameLength: number = lastName.split(" ").join("").trim().length
+  const permittedUserNameLength: number = Math.trunc((firstNameLength + lastNameLength) / 2 + 3)
+  const userNameLength: number = username.split(" ").join("").trim().length
   const handlePhotoUpload = async (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+    const file = event.target.files?.[0]
     if (file) {
       try {
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("upload_preset", "ml_default");
+        const formData = new FormData()
+        formData.append("file", file)
+        formData.append("upload_preset", "ml_default")
 
-        const response = await fetch(
-          "https://api.cloudinary.com/v1_1/dqjqi572q/image/upload",
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
+        const response = await fetch("https://api.cloudinary.com/v1_1/dqjqi572q/image/upload", {
+          method: "POST",
+          body: formData,
+        })
 
-        const data = await response.json();
+        const data = await response.json()
 
         if (data.secure_url) {
-          setPhotoPreview(data.secure_url);
+          setPhotoPreview(data.secure_url)
           dispatch(
             recruiterRegistrationUpdate({
               field: "photo",
               value: data.secure_url,
-            })
-          );
+            }),
+          )
         } else {
-          console.error("Failed to get secure_url:", data);
+          console.error("Failed to get secure_url:", data)
         }
       } catch (error) {
-        console.error("Error uploading photo:", error);
+        console.error("Error uploading photo:", error)
       }
     }
-  };
+  }
   //cleanup browser memory from URL once the photo gets uploaded
   useEffect(() => {
     return () => {
       if (photoPreview) {
-        URL.revokeObjectURL(photoPreview);
+        URL.revokeObjectURL(photoPreview)
       }
-    };
-  }, [photoPreview]);
+    }
+  }, [photoPreview])
 
   //to get type of the field
   const getFieldType = (field: string): string => {
     switch (field) {
       case "number":
-        return "number";
+        return "number"
       case "email":
-        return "email";
+        return "email"
       case "password":
-        return "password";
+        return "password"
       default:
-        return "text";
+        return "text"
     }
-  };
+  }
   //to convert string parameter from camel case to properly capitalized label with space
   const getFieldLabel = (field: string): string =>
     field
       .split(/(?=[A-Z])|_/)
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(" ");
+      .join(" ")
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
+    const { name, value } = event.target
     dispatch(
       recruiterRegistrationUpdate({
         field: name as basicFormDataType,
         value: name === "number" ? Number(value) : value,
-      })
-    );
-  };
+      }),
+    )
+  }
   const handleDateChange = (event: ChangeEvent<HTMLInputElement>) => {
     dispatch(
       recruiterRegistrationUpdate({
         field: "date_of_birth",
         value: event.target.value,
-      })
-    );
-  };
+      }),
+    )
+  }
 
   const handleGenderChange = (value: string) => {
     dispatch(
       recruiterRegistrationUpdate({
         field: "gender",
         value,
-      })
-    );
-    console.log("Gender is" + value);
-  };
-  const handleUserNameInputChange = async (
-    event: ChangeEvent<HTMLInputElement>
-  ) => {
-    const { name, value } = event.target;
-    dispatch(recruiterRegistrationUpdate({ field: name as FieldName, value }));
+      }),
+    )
+    console.log("Gender is" + value)
+  }
+  const handleUserNameInputChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target
+    dispatch(recruiterRegistrationUpdate({ field: name as FieldName, value }))
 
     if (value.length === permittedUserNameLength) {
-      usernameVerificationHandler(value);
+      usernameVerificationHandler(value)
     }
-  };
+  }
 
   const usernameVerificationHandler = async (username: string) => {
     try {
-      const response = await axios.post(
-        "http://localhost:5000/UserName/check",
-        { username }
-      );
+      const response = await axios.post("http://localhost:5000/UserName/check", { username })
 
       if (response.status === 200) {
-        setShowAlert(true);
-        putTitle("Username Available");
-        putMessage("This username can be allotted to you");
-        setIsSuccess(false);
+        setShowAlert(true)
+        putTitle("Username Available")
+        putMessage("This username can be allotted to you")
+        setIsSuccess(false)
       } else {
-        throw new Error("Unexpected response status");
+        throw new Error("Unexpected response status")
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        const status = error.response?.status;
+        const status = error.response?.status
         if (status === 409) {
-          setShowAlert(true);
-          putTitle("Username Unavailable");
-          putMessage("This username cannot be allotted to you");
-          setIsSuccess(false);
+          setShowAlert(true)
+          putTitle("Username Unavailable")
+          putMessage("This username cannot be allotted to you")
+          setIsSuccess(false)
         }
       }
     }
-  };
+  }
   return (
     <>
       <Navbar />
@@ -214,19 +175,14 @@ function RecruiterPersonalInformation() {
         <Card className="w-full max-w-lg shadow-lg">
           <CardHeader>
             <CardTitle className="text-center">Registration</CardTitle>
-            <CardDescription className="text-center">
-              Recruiter needs to register themselves here
-            </CardDescription>
+            <CardDescription className="text-center">Recruiter needs to register themselves here</CardDescription>
           </CardHeader>
           <form>
             <CardContent className="space-y-4">
               {/* Photo Upload Section */}
               <div className="flex flex-col items-center space-y-4 mb-6">
                 <Avatar className="h-24 w-24">
-                  <AvatarImage
-                    src={photoPreview || undefined}
-                    alt="Recruiter Photo"
-                  />
+                  <AvatarImage src={photoPreview || undefined} alt="Recruiter Photo" />
                   <AvatarFallback>Photo</AvatarFallback>
                 </Avatar>
 
@@ -274,9 +230,7 @@ function RecruiterPersonalInformation() {
                     {!firstNameLength && !lastNameLength ? (
                       <></>
                     ) : (
-                      <div>{`now you can enter ${
-                        permittedUserNameLength - userNameLength
-                      } characters`}</div>
+                      <div>{`now you can enter ${permittedUserNameLength - userNameLength} characters`}</div>
                     )}
                   </div>
                   <Input
@@ -298,13 +252,7 @@ function RecruiterPersonalInformation() {
                   id="date_of_birth"
                   type="date"
                   onChange={handleDateChange}
-                  value={
-                    formData.date_of_birth
-                      ? new Date(formData.date_of_birth)
-                          .toISOString()
-                          .split("T")[0]
-                      : ""
-                  }
+                  value={formData.date_of_birth ? new Date(formData.date_of_birth).toISOString().split("T")[0] : ""}
                   required
                 />
               </div>
@@ -361,14 +309,17 @@ function RecruiterPersonalInformation() {
                 />
               </div>
             </CardContent>
-            {/* <CardFooter>
-              <Button type="submit" className="w-full">Submit</Button>
-            </CardFooter> */}
+            <CardFooter>
+              {" "}
+            
+              <RecruiterRegistrationPagination currentPage={1} totalPages={4} /> 
+            </CardFooter>
           </form>
         </Card>
       </div>
     </>
-  );
+  )
 }
 
-export default RecruiterPersonalInformation;
+export default RecruiterPersonalInformation
+

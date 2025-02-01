@@ -44,16 +44,7 @@ const router = createBrowserRouter([
     element:<RecruiterPresent/>,
     errorElement:<Error/>
   },
-  // {
-  //   path: "/CandidateLogin",
-  //   element: <CandidateLogin />,
-  //   errorElement: <Error />,
-  // },
-  // {
-  //   path: "/CandidateSignup",
-  //   element: <CandidateRegistration />,
-  //   errorElement: <Error />,
-  // },
+ 
   {
     path: "/RecruiterLogin",
     element: <RecruiterLogin />,
