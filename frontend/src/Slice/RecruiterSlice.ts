@@ -33,7 +33,7 @@ interface CollegeEducation {
   cgpa: number;
   duration: number;
   year_of_commencement: string;
-  passout_year: string;
+  year_of_conclusion: string;
 }
 
 const initialCollegeEducation: CollegeEducation = {
@@ -44,7 +44,7 @@ const initialCollegeEducation: CollegeEducation = {
   cgpa: 0,
   duration: 0,
   year_of_commencement: "",
-  passout_year: "",
+  year_of_conclusion: "",
 };
 
 //Internship Experience
@@ -112,14 +112,14 @@ interface CurrentJob {
   job_description: string;
   date_of_commencement: string;
   current_role: string;
-  years_of_experience:number
+  years_of_experience: number;
 }
 const initialCurrentJob: CurrentJob = {
   company: "",
   job_description: "",
   date_of_commencement: "",
   current_role: "",
-  years_of_experience:0
+  years_of_experience: 0,
 };
 
 //interface for first time registration/signin by the recruiter
@@ -145,8 +145,6 @@ interface recruiterAuthentication {
   certificate_courses: certificate[];
   current_job: CurrentJob;
   current_location: string;
-
-
 }
 const initialRecruiterRegisterState: recruiterAuthentication = {
   firstName: "",
@@ -170,8 +168,6 @@ const initialRecruiterRegisterState: recruiterAuthentication = {
   certificate_courses: [initialCertificateState],
   current_job: initialCurrentJob,
   current_location: "",
-
-
 };
 //common reducer to update the field
 const loginUpdateField = <T extends keyof loginFormState>(

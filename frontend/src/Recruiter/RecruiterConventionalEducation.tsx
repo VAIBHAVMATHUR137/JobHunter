@@ -1,23 +1,30 @@
-import { useDispatch, useSelector } from "react-redux"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { useDispatch, useSelector } from "react-redux";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
-import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from "@/components/ui/card"
-import { Plus, Minus } from "lucide-react"
-import { recruiterRegistrationUpdate } from "../Slice/RecruiterSlice"
-import type { RootState } from "@/Slice/Store"
-import { Label } from "@/components/ui/label"
-import Navbar from "@/components/ui/navbar"
-import RecruiterRegistrationPagination from "./RecruiterRegistrationPagination"
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardDescription,
+  CardFooter,
+} from "@/components/ui/card";
+import { Plus, Minus } from "lucide-react";
+import { recruiterRegistrationUpdate } from "../Slice/RecruiterSlice";
+import type { RootState } from "@/Slice/Store";
+import { Label } from "@/components/ui/label";
+import Navbar from "@/components/ui/navbar";
+import RecruiterRegistrationPagination from "./RecruiterRegistrationPagination";
 
 const RecruiterEducationForm = () => {
-  const dispatch = useDispatch()
-  type SchoolLevel = "tenth" | "twelth"
+  const dispatch = useDispatch();
+  type SchoolLevel = "tenth" | "twelth";
 
   interface EducationFormField {
-    id: string
-    label: string
-    type: "text" | "number" | "date"
+    id: string;
+    label: string;
+    type: "text" | "number" | "date";
   }
 
   const SCHOOL_FORM_FIELDS: EducationFormField[] = [
@@ -25,7 +32,7 @@ const RecruiterEducationForm = () => {
     { id: "school_board", label: "Enter your School Board", type: "text" },
     { id: "percentage_obtained", label: "Enter Percentage", type: "number" },
     { id: "year_of_passing", label: "Enter Year of Passing", type: "date" },
-  ]
+  ];
 
   const COLLEGE_FORM_FIELD: EducationFormField[] = [
     { id: "programme_name", label: "Enter Programme Name", type: "text" },
@@ -36,34 +43,38 @@ const RecruiterEducationForm = () => {
     { id: "duration", label: "Enter the Course Duration", type: "number" },
     { id: "year_of_commencement", label: "Year Of Commencement", type: "date" },
     { id: "year_of_passing", label: "Year Of Passing", type: "date" },
-  ]
+  ];
   const SCHOOL_LEVELS: { id: SchoolLevel; label: string }[] = [
     { id: "tenth", label: "Tenth Standard Education" },
     { id: "twelth", label: "Twelth Standard Education" },
-  ]
+  ];
 
   const schoolEducationData = useSelector((state: RootState) => ({
     tenth: state.recruiterRegister.tenth_standard_education,
     twelth: state.recruiterRegister.twelth_standard_education,
-  }))
+  }));
   const collegeEducationData = useSelector((state: RootState) => ({
     college: state.recruiterRegister.college_education,
-  }))
+  }));
 
-  const handleCollegeChange = (index: number, field: string, value: string | number) => {
-    const updatedCollegeEducation = [...collegeEducationData.college]
+  const handleCollegeChange = (
+    index: number,
+    field: string,
+    value: string | number
+  ) => {
+    const updatedCollegeEducation = [...collegeEducationData.college];
     updatedCollegeEducation[index] = {
       ...updatedCollegeEducation[index],
       [field]: value,
-    }
+    };
 
     dispatch(
       recruiterRegistrationUpdate({
         field: "college_education",
         value: updatedCollegeEducation,
-      }),
-    )
-  }
+      })
+    );
+  };
 
   const addCollegeEducation = () => {
     const updatedCollegeEducation = [
@@ -76,32 +87,38 @@ const RecruiterEducationForm = () => {
         cgpa: 0,
         duration: 0,
         year_of_commencement: "",
-        passout_year: "",
+        year_of_conclusion: "",
       },
-    ]
+    ];
 
     dispatch(
       recruiterRegistrationUpdate({
         field: "college_education",
         value: updatedCollegeEducation,
-      }),
-    )
-  }
+      })
+    );
+  };
 
   const removeCollegeEducation = (index: number) => {
     if (collegeEducationData.college.length > 1) {
-      const updatedCollegeEducation = collegeEducationData.college.filter((_: any, i: number) => i !== index)
+      const updatedCollegeEducation = collegeEducationData.college.filter(
+        (_: any, i: number) => i !== index
+      );
       dispatch(
         recruiterRegistrationUpdate({
           field: "college_education",
           value: updatedCollegeEducation,
-        }),
-      )
+        })
+      );
     }
-  }
+  };
 
-  const handleInputChange = (level: SchoolLevel, fieldId: string, value: string | number) => {
-    const standardKey = `${level}_standard_education` as const
+  const handleInputChange = (
+    level: SchoolLevel,
+    fieldId: string,
+    value: string | number
+  ) => {
+    const standardKey = `${level}_standard_education` as const;
     dispatch(
       recruiterRegistrationUpdate({
         field: standardKey,
@@ -109,9 +126,9 @@ const RecruiterEducationForm = () => {
           ...schoolEducationData[level],
           [fieldId]: value,
         },
-      }),
-    )
-  }
+      })
+    );
+  };
 
   return (
     <>
@@ -119,8 +136,12 @@ const RecruiterEducationForm = () => {
       <div className="flex justify-center items-center min-h-screen bg-gray-100 p-6">
         <Card className="w-full max-w-4xl shadow-lg">
           <CardHeader>
-            <CardTitle className="text-center">Educational Background</CardTitle>
-            <CardDescription className="text-center">Please provide your educational details</CardDescription>
+            <CardTitle className="text-center">
+              Educational Background
+            </CardTitle>
+            <CardDescription className="text-center">
+              Please provide your educational details
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Complete school education */}
@@ -137,7 +158,9 @@ const RecruiterEducationForm = () => {
                           name={`${level}-${id}`}
                           type={type}
                           value={
-                            schoolEducationData[level][id as keyof (typeof schoolEducationData)[typeof level]] || ""
+                            schoolEducationData[level][
+                              id as keyof (typeof schoolEducationData)[typeof level]
+                            ] || ""
                           }
                           placeholder={label}
                           onChange={(e) =>
@@ -145,7 +168,9 @@ const RecruiterEducationForm = () => {
                               level,
                               id,
 
-                              type === "number" ? Number.parseFloat(e.target.value) : e.target.value,
+                              type === "number"
+                                ? Number.parseFloat(e.target.value)
+                                : e.target.value
                             )
                           }
                           className="w-full"
@@ -198,7 +223,9 @@ const RecruiterEducationForm = () => {
                               handleCollegeChange(
                                 index,
                                 id,
-                                type === "number" ? Number.parseFloat(e.target.value) : e.target.value,
+                                type === "number"
+                                  ? Number.parseFloat(e.target.value)
+                                  : e.target.value
                               )
                             }
                             placeholder={label}
@@ -211,14 +238,14 @@ const RecruiterEducationForm = () => {
               ))}
             </div>
           </CardContent>
+    
           <CardFooter>
             <RecruiterRegistrationPagination currentPage={2} totalPages={4} />
           </CardFooter>
         </Card>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default RecruiterEducationForm
-
+export default RecruiterEducationForm;

@@ -23,7 +23,7 @@ export default function Home() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button asChild size="lg">
-                  <Link to="/RecruiterSignup">
+                  <Link to="/RecruiterPersonalInformation">
                     Register as Recruiter
                   </Link>
                 </Button>

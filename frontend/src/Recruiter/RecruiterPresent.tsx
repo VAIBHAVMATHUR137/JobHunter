@@ -63,11 +63,10 @@ function RecruiterPresent() {
     return states.current_job[id] || ""
   }
 
-  const handleSubmit = () => {
-    // Implement your submit logic here
-    console.log("Form submitted")
-    // You can dispatch an action to submit the form data to your backend
-  }
+const handleSubmit=()=>{
+
+}
+
 
   return (
     <>
@@ -96,11 +95,13 @@ function RecruiterPresent() {
                 </div>
               ))}
             </div>
+           
           </CardContent>
           <CardFooter>
             <RecruiterRegistrationPagination currentPage={4} totalPages={4} onSubmit={handleSubmit} />
           </CardFooter>
         </Card>
+
       </div>
     </>
   )
