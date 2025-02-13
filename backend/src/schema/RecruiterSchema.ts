@@ -7,49 +7,86 @@ type Gender = "male" | "female" | "transgender";
 // Define interfaces for School Education
 interface SchoolEducation {
   school_name: string;
-  percentage_obtained: number,
-  year_of_passing: number;
-  school_board:string
+  percentage_obtained: number;
+  year_of_passing: string;
+  school_board: string;
 }
 
-type CollegeEducation=[];
+interface CollegeEducation {
+  programme_name: string;
+  specialization: string;
+  college_name: string;
+  university_name: string;
+  cgpa: number;
+  duration: number;
+  year_of_commencement: string;
+  year_of_conclusion: string;
+}
+interface InternshipExperience {
+  date_of_commencement: string;
+  date_of_conclusion: string;
+  company: string;
+  duration: number;
+  roles_and_responsibilities: string;
+  stipend: string;
+}
 
-type InternshipExperience =[];
-
-type JobExperience=[];
+interface JobExperience {
+  company: string;
+  designation: string;
+  date_of_commencement: string;
+  date_of_resignation: string;
+  duration_of_service: number;
+  job_description: string;
+  annual_ctc: number;
+}
 
 interface CurrentJob {
   company: string;
-  job_description:string,
-  since_when: Date,
-  current_role:string
+  job_description: string;
+  date_of_commencement: string;
+  current_role: string;
+  years_of_experience: number;
+  current_location:string
+}
+
+interface CertificateCourse {
+  platform_name: string;
+  mentor_name: string;
+  title_of_course: string;
+  learning_description: string;
+  date_of_commencement: string;
+  date_of_conclusion: string;
 }
 
 interface IRecruiter extends Document {
+  photo: string;
   firstName: string;
   lastName: string;
-  number: string;
-  date_of_birth: Date;
+  title: string;
+  one_liner_intro: string;
+  number: number;
   email: string;
   username: string;
   password: string;
   gender: Gender;
   introduction: string;
-  photo: string;
-  tenth_standard_education: SchoolEducation[];
-  twelth_standard_education: SchoolEducation[];
+  tenth_standard_education: SchoolEducation;
+  twelth_standard_education: SchoolEducation;
   college_education: CollegeEducation[];
   internship_experience: InternshipExperience[];
   work_experience: JobExperience[];
-  core_skills: string[];
-  current_job: CurrentJob[];
+  core_skills: [];
+  certificate_courses: CertificateCourse[];
+  current_job: CurrentJob;
   current_location: string;
-  linkedin: string;
-  X: string;
-  years_of_experience:number
 }
 
 const recruiterSchema: Schema = new mongoose.Schema({
+  photo: {
+    type: String,
+    required: true,
+  },
   firstName: {
     type: String,
     required: true,
@@ -58,11 +95,7 @@ const recruiterSchema: Schema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  date_of_birth:{
-    type: Date,
-    required: true,
 
-  },
   number: {
     type: String,
     required: [true, "Mobile number is required"],
@@ -81,10 +114,7 @@ const recruiterSchema: Schema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  photo: {
-    type: String,
-    required: true,
-  },
+
   username: {
     type: String,
     required: true,
@@ -95,64 +125,75 @@ const recruiterSchema: Schema = new mongoose.Schema({
     required: true,
     enum: ["male", "female", "transgender"],
   },
-  linkedin: {
-    type: String,
-    required: true,
-    validate: {
-      validator: (v: string) => /^(https?:\/\/)?(www\.)?linkedin\.com\/(in|company)\/[a-zA-Z0-9\-]+\/?$/.test(v),
-      message: (props: { value: string }) => `${props.value} is not a valid LinkedIn URL!`,
-    },
-  },
-  X: {
-    type: String,
-    required: true,
-    validate: {
-      validator: (v: string) => /^(https?:\/\/)?(www\.)?(x|twitter)\.com\/[a-zA-Z0-9_]+$/.test(v),
-      message: (props: { value: string }) => `${props.value} is not a valid X/Twitter URL!`,
-    },
-  },
+
   introduction: {
     type: String,
     required: true,
   },
-  tenth_standard_education: [{
-    school_name: String,
-    percentage_obtained: Number,
-    year_of_passing: Number,
-    school_board:String
-  }],
-  twelth_standard_education: [{
-    school_name: String,
-    percentage_obtained: Number,
-    year_of_passing: Number,
-    school_board:String
-  }],
-  college_education: [],
-  internship_experience: [],
-  work_experience: [],
+  tenth_standard_education: 
+    {
+      school_name: String,
+      percentage_obtained: Number,
+      year_of_passing: String,
+      school_board: String,
+    },
+  
+  twelth_standard_education: 
+    {
+      school_name: String,
+      percentage_obtained: Number,
+      year_of_passing: String,
+      school_board: String,
+    },
+  
+  college_education: [
+    {
+      programme_name: String,
+      specialization: String,
+      college_name: String,
+      university_name: String,
+      cgpa: Number,
+      duration: Number,
+      year_of_commencement: String,
+      year_of_conclusion: String,
+    },
+  ],
+  internship_experience: [
+    {
+      date_of_commencement: String,
+      date_of_conclusion: String,
+      company: String,
+      duration: Number,
+      roles_and_responsibilities: String,
+      stipend: String,
+    },
+  ],
+  work_experience: [
+    {
+      company: String,
+      designation: String,
+      date_of_commencement: String,
+      date_of_resignation: String,
+      duration_of_service: Number,
+      job_description: String,
+      annual_ctc: Number,
+    },
+  ],
   core_skills: {
     type: [String],
     required: true,
   },
-  current_job: [{
-    company: String,
-    since_when: Date(),
-    job_location: String,
-    current_role:String
-  }],
-  current_location: {
-    type: String,
-    required: true,
-  },
-  years_of_experience: {
-    type:Number,
-    required:true
-  }
+  current_job: 
+    {
+      company: String,
+      job_description: String,
+      date_of_commencement: String,
+      current_role: String,
+      years_of_experience: Number,
+      current_location: String,
+    },
   
-},
-
-);
-
+});
 
 const Recruiter = mongoose.model<IRecruiter>("Recruiter", recruiterSchema);
 export default Recruiter;

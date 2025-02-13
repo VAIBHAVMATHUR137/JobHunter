@@ -38,10 +38,11 @@ export const validatePersonalInfo = (data: RootState['recruiterRegister']): Vali
   }
 }
 
+
 export const validateEducation = (data: RootState['recruiterRegister']): ValidationResult => {
   const errors: Record<string, string[]> = {}
 
-  // Validate 10th standard education
+  //validate school education   
   const validateSchoolEducation = (education: any, prefix: string) => {
     const requiredFields = {
       school_name: 'School Name',

@@ -13,7 +13,7 @@ function RecruiterPresent() {
   const dispatch = useDispatch()
   const states = useSelector((state: RootState) => ({
     current_job: state.recruiterRegister.current_job,
-    current_location: state.recruiterRegister.current_location,
+    current_location: state.recruiterRegister.current_job.current_location,
   }))
 
   interface FormField {
@@ -29,6 +29,7 @@ function RecruiterPresent() {
     job_description: "job_description",
     date_of_commencement: "date_of_commencement",
     years_of_experience: "years_of_experience",
+    current_location:"current_location"
   } as const
 
   const CURRENT_WORK: FormField[] = [
@@ -44,10 +45,15 @@ function RecruiterPresent() {
       id: "years_of_experience",
       label: "Enter Years of Experience you have",
       type: "number",
-    },
+    },{
+      id:"current_location",
+      label:"Current Location",
+      type:"text"
+    }
   ]
 
   const handleChange = (field: keyof typeof formFields, value: string) => {
+  
     dispatch(
       recruiterRegistrationUpdate({
         field: "current_job",

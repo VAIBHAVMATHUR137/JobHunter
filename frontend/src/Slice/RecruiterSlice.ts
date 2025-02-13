@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 // Define types for School Education
-type SchoolEducation = {
+interface SchoolEducation {
   school_name: string;
   percentage_obtained: number;
   year_of_passing: string;
@@ -113,6 +113,7 @@ interface CurrentJob {
   date_of_commencement: string;
   current_role: string;
   years_of_experience: number;
+  current_location:string
 }
 const initialCurrentJob: CurrentJob = {
   company: "",
@@ -120,6 +121,7 @@ const initialCurrentJob: CurrentJob = {
   date_of_commencement: "",
   current_role: "",
   years_of_experience: 0,
+  current_location:"",
 };
 
 //interface for first time registration/signin by the recruiter
@@ -129,7 +131,7 @@ interface recruiterAuthentication {
   title: string;
   one_liner_intro: string;
   number: number;
-  date_of_birth: string;
+
   email: string;
   username: string;
   password: string;
@@ -144,7 +146,7 @@ interface recruiterAuthentication {
   core_skills: coreSkills;
   certificate_courses: certificate[];
   current_job: CurrentJob;
-  current_location: string;
+
 }
 const initialRecruiterRegisterState: recruiterAuthentication = {
   firstName: "",
@@ -155,7 +157,7 @@ const initialRecruiterRegisterState: recruiterAuthentication = {
   email: "",
   username: "",
   password: "",
-  date_of_birth: "",
+
   gender: intialGender,
   introduction: "",
   photo: "",
@@ -167,7 +169,7 @@ const initialRecruiterRegisterState: recruiterAuthentication = {
   core_skills: initialSkills,
   certificate_courses: [initialCertificateState],
   current_job: initialCurrentJob,
-  current_location: "",
+
 };
 //common reducer to update the field
 const loginUpdateField = <T extends keyof loginFormState>(

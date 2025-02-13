@@ -117,14 +117,7 @@ function RecruiterPersonalInformation() {
       }),
     )
   }
-  const handleDateChange = (event: ChangeEvent<HTMLInputElement>) => {
-    dispatch(
-      recruiterRegistrationUpdate({
-        field: "date_of_birth",
-        value: event.target.value,
-      }),
-    )
-  }
+
 
   const handleGenderChange = (value: string) => {
     dispatch(
@@ -245,17 +238,6 @@ function RecruiterPersonalInformation() {
                 </div>
               </div>
 
-              {/* Date of Birth */}
-              <div className="space-y-2">
-                <Label htmlFor="date_of_birth">Date of Birth</Label>
-                <Input
-                  id="date_of_birth"
-                  type="date"
-                  onChange={handleDateChange}
-                  value={formData.date_of_birth ? new Date(formData.date_of_birth).toISOString().split("T")[0] : ""}
-                  required
-                />
-              </div>
 
               {/* Gender Selection */}
               <div className="space-y-2">

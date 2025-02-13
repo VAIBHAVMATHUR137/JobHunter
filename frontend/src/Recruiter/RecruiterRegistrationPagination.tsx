@@ -1,33 +1,41 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from "@/components/ui/button"
-import { Check, ChevronLeft, ChevronRight } from 'lucide-react';
-import { RootState } from '@/Slice/Store';
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { validatePersonalInfo, validateEducation, validateSkillsAndExperience, validatePresentJob } from "./RecruiterFormValidator"
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Check, ChevronLeft, ChevronRight } from "lucide-react";
+import { RootState } from "@/Slice/Store";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  validatePersonalInfo,
+  validateEducation,
+  validateSkillsAndExperience,
+  validatePresentJob,
+} from "./RecruiterFormValidator";
 interface PaginationProps {
   currentPage: number;
   totalPages: number;
   onSubmit?: () => void;
 }
 
-const RecruiterRegistrationPagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onSubmit }) => {
+const RecruiterRegistrationPagination: React.FC<PaginationProps> = ({
+  currentPage,
+  totalPages,
+  onSubmit,
+}) => {
   const [validationError, setValidationError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const formData = useSelector((state: RootState) => state.recruiterRegister)
-
+  const formData = useSelector((state: RootState) => state.recruiterRegister);
 
   const pages = [
     "/RecruiterPersonalInformation",
     "/RecruiterConventionalEducation",
     "/RecruiterSkillsAndExperience",
-    "/RecruiterPresent"
+    "/RecruiterPresent",
   ];
   const validateCurrentPage = (): boolean => {
     let validationResult;
-    
+
     switch (currentPage) {
       case 1:
         validationResult = validatePersonalInfo(formData);
@@ -47,7 +55,7 @@ const RecruiterRegistrationPagination: React.FC<PaginationProps> = ({ currentPag
 
     if (!validationResult.isValid) {
       const errorMessages = Object.values(validationResult.errors).flat();
-      setValidationError(errorMessages[0]); // Show first error message
+      setValidationError(errorMessages[0]); 
       return false;
     }
 
@@ -65,7 +73,7 @@ const RecruiterRegistrationPagination: React.FC<PaginationProps> = ({ currentPag
     setValidationError(null);
     navigate(pages[page - 1]);
   };
-   
+
   const handleNextOrSubmit = () => {
     if (!validateCurrentPage()) {
       return;
@@ -77,12 +85,14 @@ const RecruiterRegistrationPagination: React.FC<PaginationProps> = ({ currentPag
         validatePersonalInfo(formData),
         validateEducation(formData),
         validateSkillsAndExperience(formData),
-        validatePresentJob(formData)
+        validatePresentJob(formData),
       ];
 
-      const isValid = validations.every(v => v.isValid);
+      const isValid = validations.every((v) => v.isValid);
       if (!isValid) {
-        setValidationError("Please complete all required fields before submitting.");
+        setValidationError(
+          "Please complete all required fields before submitting."
+        );
         return;
       }
 
@@ -126,9 +136,13 @@ const RecruiterRegistrationPagination: React.FC<PaginationProps> = ({ currentPag
           className="flex items-center"
         >
           {currentPage === totalPages ? (
-            <>Submit <Check className="ml-2 h-4 w-4" /></>
+            <>
+              Submit <Check className="ml-2 h-4 w-4" />
+            </>
           ) : (
-            <>Next <ChevronRight className="ml-2 h-4 w-4" /></>
+            <>
+              Next <ChevronRight className="ml-2 h-4 w-4" />
+            </>
           )}
         </Button>
       </div>
@@ -139,8 +153,6 @@ const RecruiterRegistrationPagination: React.FC<PaginationProps> = ({ currentPag
         ></div>
       </div>
     </div>
-
-
   );
 };
 

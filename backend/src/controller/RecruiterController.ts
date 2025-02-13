@@ -48,16 +48,11 @@ export const createRecruiter = expressAsyncHandler(
       work_experience,
       core_skills,
       current_job,
-      current_location,
-      linkedin,
-     
-      X,
-      years_of_experience
     } = req.body;
 
     // Check if a recruiter with the same email or number already exists
     const existingRecruiter = await Recruiter.findOne({
-     username
+      username,
     });
 
     if (existingRecruiter) {
@@ -86,11 +81,6 @@ export const createRecruiter = expressAsyncHandler(
       work_experience,
       core_skills,
       current_job,
-      current_location,
-      linkedin,
-      X,
-      years_of_experience
-
     });
 
     if (recruiter) {
@@ -140,22 +130,20 @@ export const recruiterLogin = expressAsyncHandler(
 
     // Input validation
     if (!username || !password) {
-      res.status(401).json({"Message":"All fields are mandatory"});
+      res.status(401).json({ Message: "All fields are mandatory" });
       return;
-     
     }
 
     const recruiter = await Recruiter.findOne({ username });
     if (!recruiter) {
-      res.status(404).json({"Message":"Recruiter not found"});
+      res.status(404).json({ Message: "Recruiter not found" });
       return;
-    
     }
 
     const isPasswordValid = await bcrypt.compare(password, recruiter.password);
     if (!isPasswordValid) {
-      res.status(401).json({"Message":"Invalid Password"});
-     return;
+      res.status(401).json({ Message: "Invalid Password" });
+      return;
     }
 
     // Generate access and refresh tokens
@@ -172,7 +160,7 @@ export const recruiterLogin = expressAsyncHandler(
     );
 
     const refreshToken = jwt.sign(
-      {username: recruiter.username, id: recruiter.id },
+      { username: recruiter.username, id: recruiter.id },
       process.env.SECRET_REFRESH_TOKEN!,
       { expiresIn: "30d" }
     );
