@@ -2,13 +2,13 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 // Define types for School Education
 interface SchoolEducation {
   school_name: string;
-  percentage_obtained: number;
+  percentage_obtained: string;
   year_of_passing: string;
   school_board: string;
 };
 const initialSchoolEducation: SchoolEducation = {
   school_name: "",
-  percentage_obtained: 0,
+  percentage_obtained: "",
   year_of_passing: "",
   school_board: "",
 };
@@ -30,8 +30,8 @@ interface CollegeEducation {
   specialization: string;
   college_name: string;
   university_name: string;
-  cgpa: number;
-  duration: number;
+  cgpa: string;
+  duration: string;
   year_of_commencement: string;
   year_of_conclusion: string;
 }
@@ -41,56 +41,52 @@ const initialCollegeEducation: CollegeEducation = {
   specialization: "",
   college_name: "",
   university_name: "",
-  cgpa: 0,
-  duration: 0,
+  cgpa: "",
+  duration: "",
   year_of_commencement: "",
   year_of_conclusion: "",
 };
 
 //Internship Experience
-interface individual_internship {
+interface InternshipExperience {
   date_of_commencement: string;
   date_of_conclusion: string;
   company: string;
-  duration: number;
+  duration: string;
   roles_and_responsibilities: string;
   stipend: string;
 }
 
-const initialInternship: individual_internship = {
+const initialInternship: InternshipExperience= {
   date_of_commencement: "",
   date_of_conclusion: "",
   company: "",
-  duration: 0,
+  duration: "",
   roles_and_responsibilities: "",
   stipend: "",
 };
 
 //Job Experience
-interface individual_job_experience {
+interface JobExperience {
   company: string;
   designation: string;
   date_of_commencement: string;
   date_of_resignation: string;
-  duration_of_service: number;
+  duration_of_service: string;
   job_description: string;
-  annual_ctc: number;
+  annual_ctc: string;
 }
-const initial_job_experience: individual_job_experience = {
+const initial_job_experience: JobExperience = {
   company: "",
   designation: "",
   date_of_commencement: "",
   date_of_resignation: "",
-  duration_of_service: 0,
-
+  duration_of_service: "",
   job_description: "",
-  annual_ctc: 0,
+  annual_ctc: "",
 };
-//Skills
-type coreSkills = string[];
-const initialSkills: coreSkills = [];
 //Certificate
-interface certificate {
+interface CertificateCourse {
   platform_name: string;
   mentor_name: string;
   title_of_course: string;
@@ -98,7 +94,7 @@ interface certificate {
   date_of_commencement: string;
   date_of_conclusion: string;
 }
-const initialCertificateState: certificate = {
+const initialCertificateState: CertificateCourse = {
   platform_name: "",
   mentor_name: "",
   title_of_course: "",
@@ -112,7 +108,7 @@ interface CurrentJob {
   job_description: string;
   date_of_commencement: string;
   current_role: string;
-  years_of_experience: number;
+  years_of_experience: string;
   current_location:string
 }
 const initialCurrentJob: CurrentJob = {
@@ -120,7 +116,7 @@ const initialCurrentJob: CurrentJob = {
   job_description: "",
   date_of_commencement: "",
   current_role: "",
-  years_of_experience: 0,
+  years_of_experience: "",
   current_location:"",
 };
 
@@ -130,8 +126,7 @@ interface recruiterAuthentication {
   lastName: string;
   title: string;
   one_liner_intro: string;
-  number: number;
-
+  number: string;
   email: string;
   username: string;
   password: string;
@@ -141,10 +136,10 @@ interface recruiterAuthentication {
   tenth_standard_education: SchoolEducation;
   twelth_standard_education: SchoolEducation;
   college_education: CollegeEducation[];
-  internship_experience: individual_internship[];
-  work_experience: individual_job_experience[];
-  core_skills: coreSkills;
-  certificate_courses: certificate[];
+  internship_experience: InternshipExperience[];
+  work_experience: JobExperience[];
+  core_skills: string[];
+  certificate_courses: CertificateCourse[];
   current_job: CurrentJob;
 
 }
@@ -153,11 +148,10 @@ const initialRecruiterRegisterState: recruiterAuthentication = {
   lastName: "",
   title: "",
   one_liner_intro: "",
-  number: 0,
+  number: "",
   email: "",
   username: "",
   password: "",
-
   gender: intialGender,
   introduction: "",
   photo: "",
@@ -166,7 +160,7 @@ const initialRecruiterRegisterState: recruiterAuthentication = {
   college_education: [initialCollegeEducation],
   internship_experience: [initialInternship],
   work_experience: [initial_job_experience],
-  core_skills: initialSkills,
+  core_skills: [],
   certificate_courses: [initialCertificateState],
   current_job: initialCurrentJob,
 

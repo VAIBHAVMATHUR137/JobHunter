@@ -7,19 +7,22 @@ import type { RootState } from "@/Slice/Store"
 import { Label } from "@/components/ui/label"
 import Navbar from "@/components/ui/navbar"
 import RecruiterRegistrationPagination from "./RecruiterRegistrationPagination"
+import axios from "axios"
+import { useState } from "react"
 
 function RecruiterPresent() {
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const dispatch = useDispatch()
   const states = useSelector((state: RootState) => ({
     current_job: state.recruiterRegister.current_job,
     current_location: state.recruiterRegister.current_job.current_location,
   }))
 
+const recruiterFormStates=useSelector((state:RootState)=>state.recruiterRegister)
   interface FormField {
     id: keyof typeof formFields
     label: string
-    type: "text" | "date" | "number"
+    type: "text" | "date" 
   }
 
   // Define the form fields structure to match your state
@@ -44,7 +47,7 @@ function RecruiterPresent() {
     {
       id: "years_of_experience",
       label: "Enter Years of Experience you have",
-      type: "number",
+      type: "text",
     },{
       id:"current_location",
       label:"Current Location",
@@ -69,8 +72,36 @@ function RecruiterPresent() {
     return states.current_job[id] || ""
   }
 
-const handleSubmit=()=>{
+const formatDataForBackend=()=>{
+  return {
+    ...recruiterFormStates,
+    // tenth_standard_education: Object.values(recruiterFormStates.tenth_standard_education),
+    // twelth_standard_education: Object.values(recruiterFormStates.twelth_standard_education),
+    college_education: Object.values(recruiterFormStates.college_education),
+    internship_experience: Object.values(recruiterFormStates.internship_experience),
+    certificate_courses: Object.values(recruiterFormStates.certificate_courses),
+    work_experience: Object.values(recruiterFormStates.work_experience),
+    // current_job: Object.values(recruiterFormStates.current_job),
+  }
+}
 
+const handleSubmit = async () => {
+  const formattedData = formatDataForBackend();
+  console.log("Sending data:", formattedData); // Log the data being sent
+
+  try {
+    const response = await axios.post("http://localhost:5000/recruiter/createRecruiter", formattedData);
+    if(response.status === 201) {
+      alert("Data Gone")
+    }
+  } catch (error: any) {
+    // Better error logging
+    if (axios.isAxiosError(error)) {
+      console.error("Server Error Response:", error.response?.data);
+      console.error("Status Code:", error.response?.status);
+    }
+    console.error("Error details:", error);
+  }
 }
 
 

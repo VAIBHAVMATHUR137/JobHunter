@@ -24,13 +24,13 @@ const RecruiterEducationForm = () => {
   interface EducationFormField {
     id: string;
     label: string;
-    type: "text" | "number" | "date";
+    type: "text" | "date";
   }
 
   const SCHOOL_FORM_FIELDS: EducationFormField[] = [
     { id: "school_name", label: "Enter your School Name", type: "text" },
     { id: "school_board", label: "Enter your School Board", type: "text" },
-    { id: "percentage_obtained", label: "Enter Percentage", type: "number" },
+    { id: "percentage_obtained", label: "Enter Percentage", type: "text" },
     { id: "year_of_passing", label: "Enter Year of Passing", type: "date" },
   ];
 
@@ -39,10 +39,10 @@ const RecruiterEducationForm = () => {
     { id: "specialization", label: "Enter Specialization", type: "text" },
     { id: "college_name", label: "Enter College Name", type: "text" },
     { id: "university_name", label: "Enter University Name", type: "text" },
-    { id: "cgpa", label: "Enter CGPA you scored", type: "number" },
-    { id: "duration", label: "Enter the Course Duration", type: "number" },
+    { id: "cgpa", label: "Enter CGPA you scored", type: "text" },
+    { id: "duration", label: "Enter the Course Duration", type: "text" },
     { id: "year_of_commencement", label: "Year Of Commencement", type: "date" },
-    { id: "year_of_passing", label: "Year Of Passing", type: "date" },
+    { id: "year_of_conclusion", label: "Year Of Conclusion", type: "date" },
   ];
   const SCHOOL_LEVELS: { id: SchoolLevel; label: string }[] = [
     { id: "tenth", label: "Tenth Standard Education" },
@@ -60,7 +60,7 @@ const RecruiterEducationForm = () => {
   const handleCollegeChange = (
     index: number,
     field: string,
-    value: string | number
+    value: string 
   ) => {
     const updatedCollegeEducation = [...collegeEducationData.college];
     updatedCollegeEducation[index] = {
@@ -84,8 +84,8 @@ const RecruiterEducationForm = () => {
         specialization: "",
         college_name: "",
         university_name: "",
-        cgpa: 0,
-        duration: 0,
+        cgpa: "",
+        duration: "",
         year_of_commencement: "",
         year_of_conclusion: "",
       },
@@ -129,6 +129,16 @@ const RecruiterEducationForm = () => {
       })
     );
   };
+  interface college_education {
+    programme_name: string;
+    specialization: string;
+    college_name: string;
+    university_name: string;
+    cgpa: string;
+    duration: string;
+    year_of_commencement: string;
+    year_of_conclusion: string;
+  }
 
   return (
     <>
@@ -168,9 +178,7 @@ const RecruiterEducationForm = () => {
                               level,
                               id,
 
-                              type === "number"
-                                ? Number.parseFloat(e.target.value)
-                                : e.target.value
+                             e.target.value
                             )
                           }
                           className="w-full"
@@ -194,7 +202,7 @@ const RecruiterEducationForm = () => {
                   Add Degree
                 </Button>
               </div>
-              {collegeEducationData.college.map((edu: any, index: number) => (
+              {collegeEducationData.college.map((edu: college_education, index: number) => (
                 <Card key={index} className="p-4">
                   <CardContent className="space-y-4">
                     <div className="flex justify-between items-center">
@@ -223,9 +231,7 @@ const RecruiterEducationForm = () => {
                               handleCollegeChange(
                                 index,
                                 id,
-                                type === "number"
-                                  ? Number.parseFloat(e.target.value)
-                                  : e.target.value
+                               e.target.value
                               )
                             }
                             placeholder={label}

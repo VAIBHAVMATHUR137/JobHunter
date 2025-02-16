@@ -20,7 +20,7 @@ export const validatePersonalInfo = (data: RootState['recruiterRegister']): Vali
     email: 'Email',
     username: 'Username',
     password: 'Password',
-    date_of_birth: 'Date of Birth',
+   
     gender: 'Gender',
     introduction: 'Introduction',
     photo: 'Photo'
@@ -71,7 +71,7 @@ export const validateEducation = (data: RootState['recruiterRegister']): Validat
       cgpa: 'CGPA',
       duration: 'Duration',
       year_of_commencement: 'Year of Commencement',
-      year_of_passing: 'Year of Passing'
+      year_of_conclusion: 'Year of Conclusion'
     }
 
     Object.entries(requiredFields).forEach(([field, label]) => {

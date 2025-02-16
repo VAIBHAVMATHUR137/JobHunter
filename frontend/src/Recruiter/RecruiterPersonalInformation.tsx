@@ -91,8 +91,8 @@ function RecruiterPersonalInformation() {
   //to get type of the field
   const getFieldType = (field: string): string => {
     switch (field) {
-      case "number":
-        return "number"
+      // case "number":
+      //   return "number"
       case "email":
         return "email"
       case "password":
@@ -113,7 +113,7 @@ function RecruiterPersonalInformation() {
     dispatch(
       recruiterRegistrationUpdate({
         field: name as basicFormDataType,
-        value: name === "number" ? Number(value) : value,
+        value: value,
       }),
     )
   }

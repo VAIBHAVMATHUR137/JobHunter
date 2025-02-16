@@ -31,23 +31,25 @@ export const fetchIndividualRecruiter = expressAsyncHandler(
 export const createRecruiter = expressAsyncHandler(
   async (req: Request, res: Response) => {
     const {
+      photo,
       firstName,
       lastName,
-      number,
+      title,
+      one_liner_intro,
       email,
-      date_of_birth,
       password,
       username,
       gender,
       introduction,
-      photo,
+      number,
       tenth_standard_education,
       twelth_standard_education,
       college_education,
       internship_experience,
+      certificate_courses,
       work_experience,
       core_skills,
-      current_job,
+      current_job
     } = req.body;
 
     // Check if a recruiter with the same email or number already exists
@@ -63,36 +65,42 @@ export const createRecruiter = expressAsyncHandler(
     }
     const hashedPassword = await bcrypt.hash(password, 8);
     console.log("Hashed Password", hashedPassword);
-    const recruiter = await Recruiter.create({
-      firstName,
-      lastName,
-      number,
-      email,
-      date_of_birth,
-      password: hashedPassword,
-      photo,
-      username,
-      gender,
-      introduction,
-      tenth_standard_education,
-      twelth_standard_education,
-      college_education,
-      internship_experience,
-      work_experience,
-      core_skills,
-      current_job,
-    });
+    try {
+      const recruiter = await Recruiter.create({
+        photo,
+        firstName,
+        lastName,
+        title,
+        one_liner_intro,
+        email,
+        password:hashedPassword,
+        username,
+        gender,
+        introduction,
+        number,
+        tenth_standard_education,
+        twelth_standard_education,
+        college_education,
+        internship_experience,
+        certificate_courses,
+        work_experience,
+        core_skills,
+        current_job
+      });
+      if (recruiter) {
+        res.status(201).json(recruiter);
+      }
 
-    if (recruiter) {
-      res.status(201).json(recruiter);
-    } else {
-      res
-        .status(400)
-        .json({ Message: "Data entered here is not in proper form" });
-      return;
+    } catch (error) {
+      console.log(error)
     }
+
+
+ 
+
   }
-);
+  )
+
 //deleting a recruiter at portal
 export const deleteRecruiter = expressAsyncHandler(
   async (req: Request, res: Response) => {
@@ -252,4 +260,5 @@ export const refreshAccessToken = expressAsyncHandler(
       res.status(403).json({ message: "Invalid or expired refresh token" });
     }
   }
-);
+)
+  
