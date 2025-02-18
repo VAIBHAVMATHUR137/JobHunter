@@ -7,6 +7,8 @@ const store=configureStore({
         recruiterLogin:recruiterLoginReducer,
         candidateRegister:candidateRegistrationReducer,
         recruiterRegister:recruiterRegistrationReducer,
+
+        
         jobPosting:jobPostingReducer
         
     }   

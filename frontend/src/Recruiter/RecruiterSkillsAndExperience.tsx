@@ -24,6 +24,31 @@ function RecruiterSkillsAndExperience() {
     label: string;
     type: "text" | "date";
   }
+  interface InternshipExperience {
+    date_of_commencement: string;
+    date_of_conclusion: string;
+    company: string;
+    duration: string;
+    roles_and_responsibilities: string;
+    stipend: string;
+  }
+  interface CertificateCourse {
+    platform_name: string;
+    mentor_name: string;
+    title_of_course: string;
+    learning_description: string;
+    date_of_commencement: string;
+    date_of_conclusion: string;
+  }
+  interface JobExperience {
+    company: string;
+    designation: string;
+    date_of_commencement: string;
+    date_of_resignation: string;
+    duration_of_service: string;
+    job_description: string;
+    annual_ctc: string;
+  }
 
   const INTERNSHIP_FORM_FIELDS: Experience[] = [
     {
@@ -314,7 +339,7 @@ function RecruiterSkillsAndExperience() {
                 </Button>
               </div>
               {states.internshipExperience.map(
-                (internship: any, index: number) => (
+                (internship: InternshipExperience, index: number) => (
                   <Card key={index} className="space-y-4">
                     <CardContent className="space-y-4">
                       <div className="flex justify-between items-center">
@@ -377,7 +402,7 @@ function RecruiterSkillsAndExperience() {
                 </Button>
               </div>
               {states.certificateCourses.map(
-                (certificate: any, index: number) => (
+                (certificate: CertificateCourse, index: number) => (
                   <Card key={index} className="space-y-4">
                     <CardContent className="space-y-4">
                       <div className="flex-between justify-center">
@@ -437,7 +462,7 @@ function RecruiterSkillsAndExperience() {
                   Add more work experiences
                 </Button>
               </div>
-              {states.workExperience.map((workex: any, index: number) => (
+              {states.workExperience.map((workex: JobExperience, index: number) => (
                 <Card key={index} className="space-y-4">
                   <CardContent className="space-y-4">
                     <div className="flex-between justify-center">

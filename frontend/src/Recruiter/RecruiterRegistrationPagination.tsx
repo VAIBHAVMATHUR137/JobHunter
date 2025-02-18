@@ -12,6 +12,7 @@ import {
   validateSkillsAndExperience,
   validatePresentJob,
 } from "./RecruiterFormValidator";
+import { AlertDialogDemo } from "@/components/ui/AlertDialogDemo";
 interface PaginationProps {
   currentPage: number;
   totalPages: number;
@@ -23,10 +24,15 @@ const RecruiterRegistrationPagination: React.FC<PaginationProps> = ({
   totalPages,
   onSubmit,
 }) => {
-  const [validationError, setValidationError] = useState<string | null>(null);
+  const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  const [title, setTitle] = useState<string | "">("");
+  const [message, setMessage] = useState<string | " ">("");
+  const [showAlert, setShowAlert] = useState<boolean>(false);
   const navigate = useNavigate();
   const formData = useSelector((state: RootState) => state.recruiterRegister);
-
+  const nav = useNavigate();
+  const putTitle = (heading: string) => setTitle(heading);
+  const putMessage = (message: string) => setMessage(message);
   const pages = [
     "/RecruiterPersonalInformation",
     "/RecruiterConventionalEducation",
@@ -55,11 +61,14 @@ const RecruiterRegistrationPagination: React.FC<PaginationProps> = ({
 
     if (!validationResult.isValid) {
       const errorMessages = Object.values(validationResult.errors).flat();
-      setValidationError(errorMessages[0]); 
+
+      setShowAlert(true);
+      putTitle("Data Missing");
+      putMessage(errorMessages[0]);
+      setIsSuccess(false);
       return false;
     }
 
-    setValidationError(null);
     return true;
   };
 
@@ -70,7 +79,7 @@ const RecruiterRegistrationPagination: React.FC<PaginationProps> = ({
         return;
       }
     }
-    setValidationError(null);
+
     navigate(pages[page - 1]);
   };
 
@@ -90,9 +99,10 @@ const RecruiterRegistrationPagination: React.FC<PaginationProps> = ({
 
       const isValid = validations.every((v) => v.isValid);
       if (!isValid) {
-        setValidationError(
-          "Please complete all required fields before submitting."
-        );
+        setShowAlert(true);
+        putTitle("Data Missing");
+        putMessage("Complete all fields before submission");
+        setIsSuccess(false);
         return;
       }
 
@@ -104,11 +114,6 @@ const RecruiterRegistrationPagination: React.FC<PaginationProps> = ({
 
   return (
     <div className="flex flex-col items-center space-y-4 w-full">
-      {validationError && (
-        <Alert variant="destructive" className="mb-4 w-full">
-          <AlertDescription>{validationError}</AlertDescription>
-        </Alert>
-      )}
       <div className="flex justify-between items-center w-full">
         <Button
           variant="outline"
@@ -152,6 +157,16 @@ const RecruiterRegistrationPagination: React.FC<PaginationProps> = ({
           style={{ width: `${(currentPage / totalPages) * 100}%` }}
         ></div>
       </div>
+      {showAlert && (
+        <AlertDialogDemo
+          title={title}
+          message={message}
+          onClose={() => setShowAlert(false)}
+          nextPage={() => nav("/RecruiterLogin")}
+          setIsSuccess={setIsSuccess}
+          isSuccess={isSuccess}
+        />
+      )}
     </div>
   );
 };

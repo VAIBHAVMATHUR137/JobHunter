@@ -1,7 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
 import {
   Card,
   CardHeader,
@@ -11,7 +10,9 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Plus, Minus } from "lucide-react";
-import { recruiterRegistrationUpdate } from "../Slice/RecruiterSlice";
+import {
+  recruiterRegistrationUpdate,
+} from "../Slice/RecruiterSlice";
 import type { RootState } from "@/Slice/Store";
 import { Label } from "@/components/ui/label";
 import Navbar from "@/components/ui/navbar";
@@ -26,6 +27,7 @@ const RecruiterEducationForm = () => {
     label: string;
     type: "text" | "date";
   }
+
 
   const SCHOOL_FORM_FIELDS: EducationFormField[] = [
     { id: "school_name", label: "Enter your School Name", type: "text" },
@@ -57,11 +59,7 @@ const RecruiterEducationForm = () => {
     college: state.recruiterRegister.college_education,
   }));
 
-  const handleCollegeChange = (
-    index: number,
-    field: string,
-    value: string 
-  ) => {
+  const handleCollegeChange = (index: number, field: string, value: string) => {
     const updatedCollegeEducation = [...collegeEducationData.college];
     updatedCollegeEducation[index] = {
       ...updatedCollegeEducation[index],
@@ -178,7 +176,7 @@ const RecruiterEducationForm = () => {
                               level,
                               id,
 
-                             e.target.value
+                              e.target.value
                             )
                           }
                           className="w-full"
@@ -202,49 +200,47 @@ const RecruiterEducationForm = () => {
                   Add Degree
                 </Button>
               </div>
-              {collegeEducationData.college.map((edu: college_education, index: number) => (
-                <Card key={index} className="p-4">
-                  <CardContent className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <h4 className="font-semibold">Degree {index + 1}</h4>
-                      {collegeEducationData.college.length > 1 && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => removeCollegeEducation(index)}
-                          className="text-destructive border-destructive hover:bg-destructive/90 hover:text-destructive-foreground"
-                        >
-                          <Minus className="w-4 h-4 mr-2" />
-                          Remove
-                        </Button>
-                      )}
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {COLLEGE_FORM_FIELD.map(({ id, label, type }) => (
-                        <div key={id} className="space-y-2">
-                          <Label htmlFor={`${id}-${index}`}>{label}</Label>
-                          <Input
-                            id={`${id}-${index}`}
-                            type={type}
-                            value={edu[id as keyof typeof edu] ?? ""}
-                            onChange={(e) =>
-                              handleCollegeChange(
-                                index,
-                                id,
-                               e.target.value
-                              )
-                            }
-                            placeholder={label}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+              {collegeEducationData.college.map(
+                (edu: college_education, index: number) => (
+                  <Card key={index} className="p-4">
+                    <CardContent className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <h4 className="font-semibold">Degree {index + 1}</h4>
+                        {collegeEducationData.college.length > 1 && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => removeCollegeEducation(index)}
+                            className="text-destructive border-destructive hover:bg-destructive/90 hover:text-destructive-foreground"
+                          >
+                            <Minus className="w-4 h-4 mr-2" />
+                            Remove
+                          </Button>
+                        )}
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {COLLEGE_FORM_FIELD.map(({ id, label, type }) => (
+                          <div key={id} className="space-y-2">
+                            <Label htmlFor={`${id}-${index}`}>{label}</Label>
+                            <Input
+                              id={`${id}-${index}`}
+                              type={type}
+                              value={edu[id as keyof typeof edu] ?? ""}
+                              onChange={(e) =>
+                                handleCollegeChange(index, id, e.target.value)
+                              }
+                              placeholder={label}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )
+              )}
             </div>
           </CardContent>
-    
+
           <CardFooter>
             <RecruiterRegistrationPagination currentPage={2} totalPages={4} />
           </CardFooter>

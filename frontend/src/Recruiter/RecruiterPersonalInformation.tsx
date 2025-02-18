@@ -2,7 +2,7 @@ import Navbar from "@/components/ui/navbar"
 import { type ChangeEvent, useState, useEffect } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import axios from "axios"
-
+import { AlertDialogDemo } from "@/components/ui/AlertDialogDemo"
 import type { RootState } from "../Slice/Store"
 import { recruiterRegistrationUpdate } from "../Slice/RecruiterSlice"
 
@@ -12,6 +12,7 @@ import RecruiterRegistrationPagination from "./RecruiterRegistrationPagination" 
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Label } from "@/components/ui/label"
+import { useNavigate } from "react-router-dom"
 
 type basicFormDataType = "firstName" | "lastName" | "title" | "one_liner_intro" | "number" | "email" | "password"
 
@@ -28,6 +29,7 @@ function RecruiterPersonalInformation() {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
   const dispatch = useDispatch()
   const formData = useSelector((state: RootState) => state.recruiterRegister)
+  const nav=useNavigate()
   // Create a selector function
   const selectBasicFormData = (state: RootState) =>
     basicFormFields.reduce(
@@ -155,7 +157,7 @@ function RecruiterPersonalInformation() {
         if (status === 409) {
           setShowAlert(true)
           putTitle("Username Unavailable")
-          putMessage("This username cannot be allotted to you")
+          putMessage("Sorry another user is having this username")
           setIsSuccess(false)
         }
       }
@@ -299,6 +301,16 @@ function RecruiterPersonalInformation() {
           </form>
         </Card>
       </div>
+      {showAlert && (
+        <AlertDialogDemo
+          title={title}
+          message={message}
+          onClose={() => setShowAlert(false)}
+          nextPage={() => nav("/RecruiterLogin")}
+          setIsSuccess={setIsSuccess}
+          isSuccess={isSuccess}
+        />
+      )}
     </>
   )
 }
