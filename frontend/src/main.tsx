@@ -13,7 +13,7 @@ import RecruiterLogin from "./Pages/RecruiterLogin";
 import RecruiterRegistration from "./Pages/RecruiterRegistration";
 import CommonAuthentication from "./Pages/CommonAuthentication";
 // import CandidateDashboard from "./Pages/CandidateDashboard";
-// import RecruiterDashboard from "./Pages/RecruiterDashboard";
+import RecruiterDashboard from "./Recruiter/RecruiterDashboard";
 import JobPosting from "./Pages/JobPosting";
 import { AuthProvider } from "./context/Context";
 import RecruiterSkillsAndExperience from "./Recruiter/RecruiterSkillsAndExperience";
@@ -65,16 +65,16 @@ const router = createBrowserRouter([
   //   element: <CandidateDashboard />,
   //   errorElement: <Error />,
   // },
-  // {
-  //   path: "/RecruiterDashboard/:username",
-  //   element: <RecruiterDashboard />,
-  //   errorElement: <Error />,
-  // },
+  {
+    path: "/RecruiterDashboard/:username",
+    element: <RecruiterDashboard />,
+    errorElement: <Error />,
+  },
   {
     path: "/JobPosting",
     element: <JobPosting />,
     errorElement: <Error />,
-  },
+  }
 ]);
 createRoot(document.getElementById("root")!).render(
   <Provider store={store}>
