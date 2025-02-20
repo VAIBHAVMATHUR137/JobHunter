@@ -25,26 +25,27 @@ const RecruiterEducationForm = () => {
   interface EducationFormField {
     id: string;
     label: string;
-    type: "text" | "date";
+    type: "text"
+    placeholder:string
   }
 
 
   const SCHOOL_FORM_FIELDS: EducationFormField[] = [
-    { id: "school_name", label: "Enter your School Name", type: "text" },
-    { id: "school_board", label: "Enter your School Board", type: "text" },
-    { id: "percentage_obtained", label: "Enter Percentage", type: "text" },
-    { id: "year_of_passing", label: "Enter Year of Passing", type: "date" },
+    { id: "school_name", label: "Enter your School Name", type: "text", placeholder:"e.g KDB Public School" },
+    { id: "school_board", label: "Enter your School Board", type: "text", placeholder:"e.g CBSE/ICSE"},
+    { id: "percentage_obtained", label: "Enter Percentage", type: "text", placeholder:"e.g 91.89. Do not enter % symbol" },
+    { id: "year_of_passing", label: "Enter Year of Passing", type: "text", placeholder:"DD/MM/YYYY  OR  MM/YYYY  OR  YYYY" },
   ];
 
   const COLLEGE_FORM_FIELD: EducationFormField[] = [
-    { id: "programme_name", label: "Enter Programme Name", type: "text" },
-    { id: "specialization", label: "Enter Specialization", type: "text" },
-    { id: "college_name", label: "Enter College Name", type: "text" },
-    { id: "university_name", label: "Enter University Name", type: "text" },
-    { id: "cgpa", label: "Enter CGPA you scored", type: "text" },
-    { id: "duration", label: "Enter the Course Duration", type: "text" },
-    { id: "year_of_commencement", label: "Year Of Commencement", type: "date" },
-    { id: "year_of_conclusion", label: "Year Of Conclusion", type: "date" },
+    { id: "programme_name", label: "Enter Programme Name", type: "text", placeholder:"e.g Bachelor of Technology or Masters of Engineering"  },
+    { id: "specialization", label: "Enter Specialization", type: "text", placeholder:"e.g Finance or Human Resources or Structural" },
+    { id: "college_name", label: "Enter College Name", type: "text", placeholder:"e.g Indian Institute of Technology Delhi" },
+    { id: "university_name", label: "Enter University Name", type: "text", placeholder:"e.g Anna University or Manipal University" },
+    { id: "cgpa", label: "Enter CGPA you scored", type: "text", placeholder:"Enter non decimal values out of 10" },
+    { id: "duration", label: "Enter the Course Duration", type: "text", placeholder:"Enter duration in months in form of numeric input only" },
+    { id: "year_of_commencement", label: "Year Of Commencement", type: "text", placeholder:"DD/MM/YYYY  OR  MM/YYYY  OR  YYYY" },
+    { id: "year_of_conclusion", label: "Year Of Conclusion", type: "text", placeholder:"DD/MM/YYYY  OR  MM/YYYY  OR  YYYY" },
   ];
   const SCHOOL_LEVELS: { id: SchoolLevel; label: string }[] = [
     { id: "tenth", label: "Tenth Standard Education" },
@@ -158,7 +159,7 @@ const RecruiterEducationForm = () => {
                 <div key={level} className="space-y-4">
                   <h3 className="text-lg font-semibold">{label}</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {SCHOOL_FORM_FIELDS.map(({ id, label, type }) => (
+                    {SCHOOL_FORM_FIELDS.map(({ id, label, type,placeholder }) => (
                       <div key={`${level}-${id}`} className="space-y-2">
                         <Label htmlFor={`${level}-${id}`}>{label}</Label>
                         <Input
@@ -170,7 +171,7 @@ const RecruiterEducationForm = () => {
                               id as keyof (typeof schoolEducationData)[typeof level]
                             ] || ""
                           }
-                          placeholder={label}
+                          placeholder={placeholder}
                           onChange={(e) =>
                             handleInputChange(
                               level,
@@ -219,7 +220,7 @@ const RecruiterEducationForm = () => {
                         )}
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {COLLEGE_FORM_FIELD.map(({ id, label, type }) => (
+                        {COLLEGE_FORM_FIELD.map(({ id, label, type,placeholder }) => (
                           <div key={id} className="space-y-2">
                             <Label htmlFor={`${id}-${index}`}>{label}</Label>
                             <Input
@@ -229,7 +230,7 @@ const RecruiterEducationForm = () => {
                               onChange={(e) =>
                                 handleCollegeChange(index, id, e.target.value)
                               }
-                              placeholder={label}
+                              placeholder={placeholder}
                             />
                           </div>
                         ))}

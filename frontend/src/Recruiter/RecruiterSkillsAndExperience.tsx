@@ -22,7 +22,8 @@ function RecruiterSkillsAndExperience() {
   interface Experience {
     id: string;
     label: string;
-    type: "text" | "date";
+    type: "text",
+    placeholder:string
   }
   interface InternshipExperience {
     date_of_commencement: string;
@@ -54,74 +55,81 @@ function RecruiterSkillsAndExperience() {
     {
       id: "date_of_commencement",
       label: "Enter date of commencement",
-      type: "date",
+      type: "text", placeholder:"DD/MM/YYYY  OR  MM/YYYY  OR  YYYY"
+
     },
     {
       id: "date_of_conclusion",
       label: "Enter date of conclusion",
-      type: "date",
+      type: "text", placeholder:"DD/MM/YYYY  OR  MM/YYYY  OR  YYYY"
     },
-    { id: "company", label: "Enter Company Name", type: "text" },
-    { id: "duration", label: "Duration of Internship", type: "text" },
+    { id: "company", label: "Enter Company Name", type: "text", placeholder:"e.g Google or Microsoft" },
+    { id: "duration", label: "Duration of Internship", type: "text", placeholder:"Enter duration in months and in numeric form only" },
     {
       id: "roles_and_responsibilities",
       label: "Mention your roles and responsibilities here",
       type: "text",
+      placeholder:"e.g developing React apps"
     },
-    { id: "stipend", label: "Stipend you received", type: "text" },
+    { id: "stipend", label: "Enter stipend you received in USD", type: "text", placeholder:"Enter in USD and in numeric form only" },
   ];
   const CERTIFICATE_FORM_FIELDS: Experience[] = [
     {
       id: "platform_name",
       label: "Enter name of the platform",
       type: "text",
+      placeholder:"e.g Udemy or Coursera or any workshop in your campus"
     },
     {
       id: "mentor_name",
       label: "Enter name of your mentor",
       type: "text",
+      placeholder:"e.g Sandeep Jain or Kirat Singh"
     },
     {
       id: "title_of_course",
       label: "Enter course name",
       type: "text",
+      placeholder:"e.g PCB designing workshop or React Tutorial"
     },
     {
       id: "learning_description",
       label: "Enter description of what you learnt",
       type: "text",
+      placeholder:"Describe what you learnt"
     },
     {
       id: "date_of_commencement",
       label: "Enter Date of Commencement",
-      type: "date",
+      type: "text", placeholder:"DD/MM/YYYY  OR  MM/YYYY  OR  YYYY"
     },
     {
       id: "date_of_conclusion",
       label: "Enter Date of Conclusion",
-      type: "date",
+      type: "text", placeholder:"DD/MM/YYYY  OR  MM/YYYY  OR  YYYY"
     },
   ];
   const WORKEX_FORM_FIELDS: Experience[] = [
-    { id: "company", label: "Enter Company you served", type: "text" },
-    { id: "designation", label: "Enter Job Title", type: "text" },
+    { id: "company", label: "Enter Company you served", type: "text", placeholder:"e.g Google or Microsoft" },
+    { id: "designation", label: "Enter Job Title", type: "text", placeholder:"e.g Senior React developer or Hiring Manager" },
     {
       id: "date_of_commencement",
       label: "Enter date of commencement",
-      type: "date",
+      type: "text", placeholder:"DD/MM/YYYY  OR  MM/YYYY  OR  YYYY"
     },
     {
       id: "date_of_resignation",
       label: "Enter date of resignation",
-      type: "date",
+      type: "text", placeholder:"DD/MM/YYYY  OR  MM/YYYY  OR  YYYY"
     },
     {
       id: "duration_of_service",
       label: "Enter duration of service",
       type: "text",
+      placeholder:"enter duration in months and in numeric form only"
     },
-    { id: "job_description", label: "Enter Job Description", type: "text" },
-    { id: "annual_ctc", label: "Enter Annual CTC (in USD)", type: "text" },
+    { id: "job_description", label: "Enter Job Description", type: "text", placeholder:"e.g Managed hiring for devops or frontend teams" },
+    { id: "annual_ctc", label: "Enter Annual CTC (in USD)", type: "text", placeholder:"e.g 4000" },
   ];
 
   const states = useSelector((state: RootState) => ({
@@ -359,11 +367,11 @@ function RecruiterSkillsAndExperience() {
                         )}
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {INTERNSHIP_FORM_FIELDS.map(({ id, label, type }) => (
+                        {INTERNSHIP_FORM_FIELDS.map(({ id, label, type,placeholder }) => (
                           <div key={id} className="space-y-2">
                             <Label htmlFor={`${id}-${index}`}>{label}</Label>
                             <Input
-                              placeholder={`Enter ${label}`}
+                              placeholder={placeholder}
                               id={`${id}-${index}`}
                               value={
                                 internship[id as keyof typeof internship] ?? ""
@@ -373,9 +381,7 @@ function RecruiterSkillsAndExperience() {
                                 handleInternshipInputChange(
                                   index,
                                   id,
-                                  e.type === "number"
-                                    ? Number.parseFloat(e.target.value)
-                                    : e.target.value
+                                  e.target.value
                                 )
                               }
                             />
@@ -423,7 +429,7 @@ function RecruiterSkillsAndExperience() {
                         )}
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {CERTIFICATE_FORM_FIELDS.map(({ id, label, type }) => (
+                        {CERTIFICATE_FORM_FIELDS.map(({ id, label, type,placeholder }) => (
                           <div key={id} className="space-y-2">
                             <Label htmlFor={`${id}-${index}`}>{label}</Label>
                             <Input
@@ -440,7 +446,7 @@ function RecruiterSkillsAndExperience() {
                                 certificate[id as keyof typeof certificate] ??
                                 ""
                               }
-                              placeholder={label}
+                              placeholder={placeholder}
                             />
                           </div>
                         ))}

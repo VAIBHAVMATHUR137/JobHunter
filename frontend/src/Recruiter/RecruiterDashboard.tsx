@@ -28,9 +28,7 @@ import Navbar from "@/components/ui/navbar";
 
 const RecruiterDashboard: React.FC = () => {
   const dispatch = useDispatch();
-  const recruiterData = useSelector(
-    (state: RootState) => state.recruiterRegister
-  );
+  const recruiterData = useSelector((state: RootState) => state.recruiterRegister);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -38,7 +36,7 @@ const RecruiterDashboard: React.FC = () => {
     const fetchRecruiterData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/recruiter/fetchRecruiter/Mathur128"
+          "http://localhost:5000/recruiter/fetchRecruiter/Putin1234"
         );
 
         if (response.status === 200 && response.data) {
@@ -65,22 +63,22 @@ const RecruiterDashboard: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-primary"></div>
+      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-primary"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 p-4">
         <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle className="text-destructive">Error</CardTitle>
           </CardHeader>
           <CardContent>
-            <p>{error}</p>
-            <Button className="mt-4" onClick={() => window.location.reload()}>
+            <p className="text-gray-600 dark:text-gray-400">{error}</p>
+            <Button className="mt-6 w-full" onClick={() => window.location.reload()}>
               Try Again
             </Button>
           </CardContent>
@@ -92,35 +90,35 @@ const RecruiterDashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
       <Navbar />
-      <div className="container mx-auto p-6 ">
-      <header className="mb-8 flex justify-center">
-  <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 text-center">
-    User Profile
-  </h1>
-  <div>
-  <p className="text-4xl font-bold text-gray-900 dark:text-gray-100 text-center">{recruiterData.username}</p>
-  </div>
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+        <header className="mb-12">
+          <div className="text-center space-y-2">
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100">
+              Profile Dashboard
+            </h1>
+            <p className="text-xl text-gray-600 dark:text-gray-400 ">
+              @{recruiterData.username}
+            </p>
+          </div>
+        </header>
 
-</header>
-
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
           {/* Profile Card */}
-          <Card className="lg:col-span-2 shadow-lg hover:shadow-xl transition-shadow duration-300">
+          <Card className="lg:col-span-2 shadow-lg hover:shadow-xl transition-all duration-300 border-t-4 border-t-primary">
             <CardHeader className="pb-0">
-              <div className="flex items-center space-x-4">
-                <Avatar className="h-20 w-20 border-4 border-primary">
+              <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
+                <Avatar className="h-24 w-24 border-4 border-primary ring-4 ring-primary/20">
                   <AvatarImage
                     src={recruiterData.photo}
                     alt={`${recruiterData.firstName} ${recruiterData.lastName}`}
                   />
-                  <AvatarFallback>
+                  <AvatarFallback className="text-lg">
                     {recruiterData.firstName[0]}
                     {recruiterData.lastName[0]}
                   </AvatarFallback>
                 </Avatar>
-                <div>
-                  <CardTitle className="text-2xl">
+                <div className="text-center sm:text-left space-y-2">
+                  <CardTitle className="text-3xl">
                     {recruiterData.firstName} {recruiterData.lastName}
                   </CardTitle>
                   <CardDescription className="text-lg font-medium text-primary">
@@ -129,52 +127,56 @@ const RecruiterDashboard: React.FC = () => {
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="pt-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <p className="flex items-center text-sm">
-                    <Mail className="mr-2 h-4 w-4 text-primary" />{" "}
-                    {recruiterData.email}
-                  </p>
-                  <p className="flex items-center text-sm">
-                    <Phone className="mr-2 h-4 w-4 text-primary" />{" "}
-                    {recruiterData.number}
-                  </p>
-                  <p className="flex items-center text-sm">
-                    <MapPin className="mr-2 h-4 w-4 text-primary" />{" "}
-                    {recruiterData.current_job.current_location}
-                  </p>
+            <CardContent className="pt-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-3 p-3 bg-primary/5 rounded-lg">
+                    <Mail className="h-5 w-5 text-primary" />
+                    <span className="text-sm font-medium">{recruiterData.email}</span>
+                  </div>
+                  <div className="flex items-center space-x-3 p-3 bg-primary/5 rounded-lg">
+                    <Phone className="h-5 w-5 text-primary" />
+                    <span className="text-sm font-medium">{recruiterData.number}</span>
+                  </div>
+                  <div className="flex items-center space-x-3 p-3 bg-primary/5 rounded-lg">
+                    <MapPin className="h-5 w-5 text-primary" />
+                    <span className="text-sm font-medium">{recruiterData.current_job.current_location}</span>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <p className="flex items-center text-sm">
-                    <Briefcase className="mr-2 h-4 w-4 text-primary" />{" "}
-                    {recruiterData.current_job.company}
-                  </p>
-                  <p className="flex items-center text-sm">
-                    <GraduationCap className="mr-2 h-4 w-4 text-primary" />{" "}
-                    {recruiterData.current_job.current_role}
-                  </p>
-                  <p className="flex items-center text-sm">
-                    <Award className="mr-2 h-4 w-4 text-primary" />{" "}
-                    {recruiterData.current_job.years_of_experience} years
-                    experience
-                  </p>
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-3 p-3 bg-primary/5 rounded-lg">
+                    <Briefcase className="h-5 w-5 text-primary" />
+                    <span className="text-sm font-medium">{recruiterData.current_job.company}</span>
+                  </div>
+                  <div className="flex items-center space-x-3 p-3 bg-primary/5 rounded-lg">
+                    <GraduationCap className="h-5 w-5 text-primary" />
+                    <span className="text-sm font-medium">{recruiterData.current_job.current_role}</span>
+                  </div>
+                  <div className="flex items-center space-x-3 p-3 bg-primary/5 rounded-lg">
+                    <Award className="h-5 w-5 text-primary" />
+                    <span className="text-sm font-medium">{recruiterData.current_job.years_of_experience} years experience</span>
+                  </div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Skills Card */}
-          <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300">
+          <Card className="shadow-lg hover:shadow-xl transition-all duration-300 border-t-4 border-t-primary">
             <CardHeader>
-              <CardTitle className="text-xl font-semibold">
+              <CardTitle className="text-xl font-semibold flex items-center">
+                <Award className="mr-2 h-5 w-5 text-primary" />
                 Core Skills
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
                 {recruiterData.core_skills.map((skill, index) => (
-                  <Badge key={index} variant="secondary" className="text-sm">
+                  <Badge 
+                    key={index} 
+                    variant="secondary" 
+                    className="px-3 py-1 text-sm font-medium bg-primary/10 hover:bg-primary/20 transition-colors"
+                  >
                     {skill}
                   </Badge>
                 ))}
@@ -184,14 +186,26 @@ const RecruiterDashboard: React.FC = () => {
         </div>
 
         <Tabs defaultValue="education" className="mt-8">
-          <TabsList className="grid w-full grid-cols-2 mb-8">
-            <TabsTrigger value="education">Education</TabsTrigger>
-            <TabsTrigger value="experience">Work Experience</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 mb-8 p-1 bg-primary/5 rounded-lg">
+            <TabsTrigger 
+              value="education"
+              className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-md transition-all"
+            >
+              Education
+            </TabsTrigger>
+            <TabsTrigger 
+              value="experience"
+              className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-md transition-all"
+            >
+              Work Experience
+            </TabsTrigger>
           </TabsList>
+          
           <TabsContent value="education">
-            <Card>
+            <Card className="shadow-lg border-t-4 border-t-primary">
               <CardHeader>
-                <CardTitle className="text-2xl font-bold">
+                <CardTitle className="text-2xl font-bold flex items-center">
+                  <GraduationCap className="mr-2 h-6 w-6 text-primary" />
                   Education History
                 </CardTitle>
               </CardHeader>
@@ -200,16 +214,19 @@ const RecruiterDashboard: React.FC = () => {
                   {recruiterData.college_education.map((edu, index) => (
                     <div
                       key={index}
-                      className="border-b border-gray-200 dark:border-gray-700 pb-4 last:border-b-0"
+                      className="relative pl-6 pb-8 border-l-2 border-primary/20 last:pb-0"
                     >
+                      <div className="absolute -left-1.5 top-0 h-3 w-3 rounded-full bg-primary" />
                       <h3 className="text-lg font-semibold text-primary">
                         {edu.programme_name} in {edu.specialization}
                       </h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {edu.college_name}, {edu.university_name}
+                      <p className="text-base font-medium mt-1">
+                        {edu.college_name}
+                        <br />
+                        University: {edu.university_name}
                       </p>
-                      <p className="text-sm">CGPA: {edu.cgpa}</p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                      <p className="text-sm mt-1">CGPA: {edu.cgpa}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                         {edu.year_of_commencement} - {edu.year_of_conclusion}
                       </p>
                     </div>
@@ -218,10 +235,12 @@ const RecruiterDashboard: React.FC = () => {
               </CardContent>
             </Card>
           </TabsContent>
+
           <TabsContent value="experience">
-            <Card>
+            <Card className="shadow-lg border-t-4 border-t-primary">
               <CardHeader>
-                <CardTitle className="text-2xl font-bold">
+                <CardTitle className="text-2xl font-bold flex items-center">
+                  <Briefcase className="mr-2 h-6 w-6 text-primary" />
                   Work Experience
                 </CardTitle>
               </CardHeader>
@@ -230,16 +249,19 @@ const RecruiterDashboard: React.FC = () => {
                   {recruiterData.work_experience.map((exp, index) => (
                     <div
                       key={index}
-                      className="border-b border-gray-200 dark:border-gray-700 pb-4 last:border-b-0"
+                      className="relative pl-6 pb-8 border-l-2 border-primary/20 last:pb-0"
                     >
+                      <div className="absolute -left-1.5 top-0 h-3 w-3 rounded-full bg-primary" />
                       <h3 className="text-lg font-semibold text-primary">
                         {exp.designation}
                       </h3>
-                      <p className="text-sm font-medium">{exp.company}</p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                      <p className="text-base font-medium mt-1">{exp.company}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                         {exp.date_of_commencement} - {exp.date_of_resignation}
                       </p>
-                      <p className="text-sm mt-2">{exp.job_description}</p>
+                      <p className="text-sm mt-2 text-gray-600 dark:text-gray-300">
+                        {exp.job_description}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -248,9 +270,10 @@ const RecruiterDashboard: React.FC = () => {
           </TabsContent>
         </Tabs>
 
-        <div className="mt-8 flex justify-end space-x-4">
-          <Button className="flex items-center">
-            <Users className="mr-2 h-4 w-4" /> View Candidates
+        <div className="mt-12 flex justify-end">
+          <Button className="flex items-center space-x-2 bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all">
+            <Users className="h-5 w-5" />
+            <span>View Candidates</span>
           </Button>
         </div>
       </div>

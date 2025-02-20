@@ -40,7 +40,8 @@ function RecruiterPresent() {
   interface FormField {
     id: keyof typeof formFields;
     label: string;
-    type: "text" | "date";
+    type: "text" ,
+    placeholder:string
   }
   // Define the form fields structure to match your state
   const formFields = {
@@ -52,23 +53,25 @@ function RecruiterPresent() {
     current_location: "current_location",
   } as const;
   const CURRENT_WORK: FormField[] = [
-    { id: "company", label: "Enter Company Name", type: "text" },
-    { id: "current_role", label: "Enter Designation", type: "text" },
-    { id: "job_description", label: "Describe your work", type: "text" },
+    { id: "company", label: "Enter Company Name", type: "text" ,placeholder:"e.g Google or Microsoft" },
+    { id: "current_role", label: "Enter Designation", type: "text", placeholder:"e.g React Developer" },
+    { id: "job_description", label: "Describe your work", type: "text", placeholder:"e.g Writing code for React apps" },
     {
       id: "date_of_commencement",
       label: "Enter date of commencement",
-      type: "date",
+      type:"text", placeholder:"DD/MM/YYYY  OR  MM/YYYY  OR  YYYY"
     },
     {
       id: "years_of_experience",
       label: "Enter Years of Experience you have",
       type: "text",
+         placeholder:"enter duration in years and in numeric form only"
     },
     {
       id: "current_location",
       label: "Current Location",
       type: "text",
+         placeholder:"e.g Pune or Delhi or USA"
     },
   ];
 
@@ -169,6 +172,8 @@ function RecruiterPresent() {
             "Kindly check the data you entered. There is some issue in the data you provided"
           );
           setIsSuccess(false);
+          console.error("Server Error Response:", error.response?.data);
+          console.error("Status Code:", error.response?.status);
         } else {
           setShowAlert(true);
           putTitle("Error Occurred");
@@ -196,14 +201,14 @@ function RecruiterPresent() {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-8">
-              {CURRENT_WORK.map(({ id, label, type }) => (
+              {CURRENT_WORK.map(({ id, label, type, placeholder }) => (
                 <div key={id} className="space-y-2">
                   <Label htmlFor={id}>{label}</Label>
                   <Input
                     id={id}
                     name={id}
                     type={type}
-                    placeholder={label}
+                    placeholder={placeholder}
                     value={getFieldValue(id)}
                     onChange={(e) => handleChange(id, e.target.value)}
                   />
