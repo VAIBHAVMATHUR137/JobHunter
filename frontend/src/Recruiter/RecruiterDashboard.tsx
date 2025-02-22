@@ -21,17 +21,19 @@ import {
   Briefcase,
   GraduationCap,
   Award,
-  Users,
 } from "lucide-react";
 import { recruiterRegistrationUpdate } from "@/Slice/RecruiterSlice";
 import Navbar from "@/components/ui/navbar";
 
+
 const RecruiterDashboard: React.FC = () => {
   const dispatch = useDispatch();
-  const recruiterData = useSelector((state: RootState) => state.recruiterRegister);
+  const recruiterData = useSelector(
+    (state: RootState) => state.recruiterRegister
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  const tabMenu = ["Education", "Experience", "Certificate", "Internship"];
   useEffect(() => {
     const fetchRecruiterData = async () => {
       try {
@@ -41,6 +43,7 @@ const RecruiterDashboard: React.FC = () => {
 
         if (response.status === 200 && response.data) {
           const data = response.data;
+          console.log(recruiterData.work_experience);
           Object.keys(data).forEach((key) => {
             dispatch(
               recruiterRegistrationUpdate({
@@ -78,7 +81,10 @@ const RecruiterDashboard: React.FC = () => {
           </CardHeader>
           <CardContent>
             <p className="text-gray-600 dark:text-gray-400">{error}</p>
-            <Button className="mt-6 w-full" onClick={() => window.location.reload()}>
+            <Button
+              className="mt-6 w-full"
+              onClick={() => window.location.reload()}
+            >
               Try Again
             </Button>
           </CardContent>
@@ -104,57 +110,63 @@ const RecruiterDashboard: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
           {/* Profile Card */}
-          <Card className="lg:col-span-2 shadow-lg hover:shadow-xl transition-all duration-300 border-t-4 border-t-primary">
-            <CardHeader className="pb-0">
+          <Card className="lg:col-span-2 shadow-xl hover:shadow-2xl transition-all duration-300 border-t-4 border-t-primary overflow-hidden">
+            <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-6">
               <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
-                <Avatar className="h-24 w-24 border-4 border-primary ring-4 ring-primary/20">
-                  <AvatarImage
-                    src={recruiterData.photo}
-                    alt={`${recruiterData.firstName} ${recruiterData.lastName}`}
-                  />
-                  <AvatarFallback className="text-lg">
+                <Avatar className="h-28 w-28 border-4 border-white shadow-lg">
+                  <AvatarImage src={recruiterData.photo} alt={`${recruiterData.firstName} ${recruiterData.lastName}`} />
+                  <AvatarFallback className="text-2xl bg-primary text-primary-foreground">
                     {recruiterData.firstName[0]}
                     {recruiterData.lastName[0]}
                   </AvatarFallback>
                 </Avatar>
                 <div className="text-center sm:text-left space-y-2">
-                  <CardTitle className="text-3xl">
+                  <CardTitle className="text-3xl font-bold text-gray-800 dark:text-gray-100">
                     {recruiterData.firstName} {recruiterData.lastName}
                   </CardTitle>
-                  <CardDescription className="text-lg font-medium text-primary">
-                    {recruiterData.title}
+                  <CardDescription className="text-lg font-medium text-primary">{recruiterData.title}</CardDescription>
+                  <CardDescription className="text-md text-gray-600 dark:text-gray-300 italic">
+                    "{recruiterData.one_liner_intro}"
                   </CardDescription>
                 </div>
               </div>
-            </CardHeader>
+            </div>
             <CardContent className="pt-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
-                  <div className="flex items-center space-x-3 p-3 bg-primary/5 rounded-lg">
+                  <div className="flex items-center space-x-3 p-3 bg-primary/5 rounded-lg hover:bg-primary/10 transition-colors duration-200">
                     <Mail className="h-5 w-5 text-primary" />
-                    <span className="text-sm font-medium">{recruiterData.email}</span>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{recruiterData.email}</span>
                   </div>
-                  <div className="flex items-center space-x-3 p-3 bg-primary/5 rounded-lg">
+                  <div className="flex items-center space-x-3 p-3 bg-primary/5 rounded-lg hover:bg-primary/10 transition-colors duration-200">
                     <Phone className="h-5 w-5 text-primary" />
-                    <span className="text-sm font-medium">{recruiterData.number}</span>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{recruiterData.number}</span>
                   </div>
-                  <div className="flex items-center space-x-3 p-3 bg-primary/5 rounded-lg">
+                  <div className="flex items-center space-x-3 p-3 bg-primary/5 rounded-lg hover:bg-primary/10 transition-colors duration-200">
                     <MapPin className="h-5 w-5 text-primary" />
-                    <span className="text-sm font-medium">{recruiterData.current_job.current_location}</span>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {recruiterData.current_job.current_location}
+                    </span>
                   </div>
                 </div>
                 <div className="space-y-4">
-                  <div className="flex items-center space-x-3 p-3 bg-primary/5 rounded-lg">
+                  <div className="flex items-center space-x-3 p-3 bg-primary/5 rounded-lg hover:bg-primary/10 transition-colors duration-200">
                     <Briefcase className="h-5 w-5 text-primary" />
-                    <span className="text-sm font-medium">{recruiterData.current_job.company}</span>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {recruiterData.current_job.company}
+                    </span>
                   </div>
-                  <div className="flex items-center space-x-3 p-3 bg-primary/5 rounded-lg">
+                  <div className="flex items-center space-x-3 p-3 bg-primary/5 rounded-lg hover:bg-primary/10 transition-colors duration-200">
                     <GraduationCap className="h-5 w-5 text-primary" />
-                    <span className="text-sm font-medium">{recruiterData.current_job.current_role}</span>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {recruiterData.current_job.current_role}
+                    </span>
                   </div>
-                  <div className="flex items-center space-x-3 p-3 bg-primary/5 rounded-lg">
+                  <div className="flex items-center space-x-3 p-3 bg-primary/5 rounded-lg hover:bg-primary/10 transition-colors duration-200">
                     <Award className="h-5 w-5 text-primary" />
-                    <span className="text-sm font-medium">{recruiterData.current_job.years_of_experience} years experience</span>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {recruiterData.current_job.years_of_experience} years experience
+                    </span>
                   </div>
                 </div>
               </div>
@@ -172,9 +184,9 @@ const RecruiterDashboard: React.FC = () => {
             <CardContent>
               <div className="flex flex-wrap gap-2">
                 {recruiterData.core_skills.map((skill, index) => (
-                  <Badge 
-                    key={index} 
-                    variant="secondary" 
+                  <Badge
+                    key={index}
+                    variant="secondary"
                     className="px-3 py-1 text-sm font-medium bg-primary/10 hover:bg-primary/20 transition-colors"
                   >
                     {skill}
@@ -186,22 +198,21 @@ const RecruiterDashboard: React.FC = () => {
         </div>
 
         <Tabs defaultValue="education" className="mt-8">
-          <TabsList className="grid w-full grid-cols-2 mb-8 p-1 bg-primary/5 rounded-lg">
-            <TabsTrigger 
-              value="education"
-              className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-md transition-all"
-            >
-              Education
-            </TabsTrigger>
-            <TabsTrigger 
-              value="experience"
-              className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-md transition-all"
-            >
-              Work Experience
-            </TabsTrigger>
+          <TabsList className="grid w-5/6 grid-cols-4 gap-3 mx-auto mb-6 p-1 bg-gray-100 rounded-xl shadow-sm">
+            {tabMenu.map((element: string) => (
+              <TabsTrigger
+                key={element}
+                value={element}
+                className="w-full bg-blue-700 text-white rounded-full px-4 py-2 text-sm transition-all 
+                 data-[state=active]:bg-gray-200 data-[state=active]:text-blue-800 
+                 hover:bg-gray-300 hover:text-blue-900"
+              >
+                {element}
+              </TabsTrigger>
+            ))}
           </TabsList>
-          
-          <TabsContent value="education">
+
+          <TabsContent value="Education">
             <Card className="shadow-lg border-t-4 border-t-primary">
               <CardHeader>
                 <CardTitle className="text-2xl font-bold flex items-center">
@@ -211,32 +222,35 @@ const RecruiterDashboard: React.FC = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-8">
-                  {recruiterData.college_education.map((edu, index) => (
-                    <div
-                      key={index}
-                      className="relative pl-6 pb-8 border-l-2 border-primary/20 last:pb-0"
-                    >
-                      <div className="absolute -left-1.5 top-0 h-3 w-3 rounded-full bg-primary" />
-                      <h3 className="text-lg font-semibold text-primary">
-                        {edu.programme_name} in {edu.specialization}
-                      </h3>
-                      <p className="text-base font-medium mt-1">
-                        {edu.college_name}
-                        <br />
-                        University: {edu.university_name}
-                      </p>
-                      <p className="text-sm mt-1">CGPA: {edu.cgpa}</p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        {edu.year_of_commencement} - {edu.year_of_conclusion}
-                      </p>
-                    </div>
-                  ))}
+                  {recruiterData.college_education
+                    .map((edu, index) => (
+                      <div
+                        key={index}
+                        className="relative pl-8 pb-8 border-l-2 border-gray-800 last:pb-0"
+                      >
+                        <h3 className="text-lg font-semibold text-gray-950">
+                          {edu.programme_name} in {edu.specialization}
+                        </h3>
+                        <p className="text-base font-medium text-blue-950 mt-1">
+                          {edu.college_name}
+                          <br />
+                          University: {edu.university_name}
+                        </p>
+                        <p className="text-sm mt-1 text-black font-medium">
+                          CGPA: {edu.cgpa}
+                        </p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                          {edu.year_of_commencement} - {edu.year_of_conclusion}
+                        </p>
+                      </div>
+                    ))
+                    .reverse()}
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
 
-          <TabsContent value="experience">
+          <TabsContent value="Experience">
             <Card className="shadow-lg border-t-4 border-t-primary">
               <CardHeader>
                 <CardTitle className="text-2xl font-bold flex items-center">
@@ -245,37 +259,111 @@ const RecruiterDashboard: React.FC = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-8">
-                  {recruiterData.work_experience.map((exp, index) => (
-                    <div
-                      key={index}
-                      className="relative pl-6 pb-8 border-l-2 border-primary/20 last:pb-0"
-                    >
-                      <div className="absolute -left-1.5 top-0 h-3 w-3 rounded-full bg-primary" />
-                      <h3 className="text-lg font-semibold text-primary">
-                        {exp.designation}
-                      </h3>
-                      <p className="text-base font-medium mt-1">{exp.company}</p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        {exp.date_of_commencement} - {exp.date_of_resignation}
-                      </p>
-                      <p className="text-sm mt-2 text-gray-600 dark:text-gray-300">
-                        {exp.job_description}
-                      </p>
-                    </div>
-                  ))}
+                <div className="space-y-8 ">
+                  {recruiterData.work_experience
+                    .map((exp, index) => (
+                      <div
+                        key={index}
+                        className="relative pl-8 pb-8 border-l-2 border-gray-800 last:pb-0"
+                      >
+                        {/* Content */}
+                        <h3 className="text-lg font-semibold text-gray-950">
+                          {exp.designation}
+                        </h3>
+                        <p className="text-base font-medium text-blue-950 mt-1">
+                          {exp.company}
+                        </p>
+                        <p className="text-sm text-gray-950 mt-1">
+                          {exp.date_of_commencement} - {exp.date_of_resignation}
+                        </p>
+                        <p className="text-sm mt-2 text-blue-950 leading-relaxed">
+                          {exp.job_description}
+                        </p>
+                      </div>
+                    ))
+                    .reverse()}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="Certificate">
+            <Card className="shadow-lg border-t-4 border-t-primary">
+              <CardHeader>
+                <CardTitle className="text-2xl font-bold flex items-center">
+                  <Briefcase className="mr-2 h-6 w-6 text-primary" />
+                  Certificates
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-8 ">
+                  {recruiterData.certificate_courses
+                    .map((certificate, index) => (
+                      <div
+                        key={index}
+                        className="relative pl-8 pb-8 border-l-2 border-gray-800 last:pb-0"
+                      >
+                        {/* Content */}
+                        <h3 className="text-lg font-semibold text-gray-950">
+                          {certificate.platform_name}
+                        </h3>
+                        <h3 className="text-lg font-semibold text-gray-950">
+                          {certificate.title_of_course}
+                        </h3>
+                        <p className="text-base font-medium text-blue-950 mt-1">
+                          Mentor: {certificate.mentor_name}
+                        </p>
+                        <p className="text-sm text-gray-950 mt-1">
+                          {certificate.date_of_commencement} -{" "}
+                          {certificate.date_of_conclusion}
+                        </p>
+                        <p className="text-sm mt-2 text-blue-950 leading-relaxed">
+                          {certificate.learning_description}
+                        </p>
+                      </div>
+                    ))
+                    .reverse()}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="Internship">
+            <Card className="shadow-lg border-t-4 border-t-primary">
+              <CardHeader>
+                <CardTitle className="text-2xl font-bold flex items-center">
+                  <Briefcase className="mr-2 h-6 w-6 text-primary" />
+                  Previous Internships
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-8 ">
+                  {recruiterData.internship_experience
+                    .map((internship, index) => (
+                      <div
+                        key={index}
+                        className="relative pl-8 pb-8 border-l-2 border-gray-800 last:pb-0"
+                      >
+                        {/* Content */}
+                        <h3 className="text-lg font-semibold text-gray-950">
+                          {internship.company}
+                        </h3>
+                        <p className="text-base font-medium text-blue-950 mt-1">
+                          {internship.roles_and_responsibilities}
+                        </p>
+                        <p className="text-sm text-gray-950 mt-1">
+                          {internship.date_of_commencement} -{" "}
+                          {internship.date_of_conclusion}
+                        </p>
+                        <p className="text-sm mt-2 text-blue-950 leading-relaxed">
+                          Duration : {internship.duration} months
+                        </p>
+                      </div>
+                    ))
+                    .reverse()}
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
-
-        <div className="mt-12 flex justify-end">
-          <Button className="flex items-center space-x-2 bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all">
-            <Users className="h-5 w-5" />
-            <span>View Candidates</span>
-          </Button>
-        </div>
       </div>
     </div>
   );
