@@ -1,6 +1,7 @@
 import type React from "react";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { fetchRecruiterDetails } from "@/Slice/RecruiterThunk";
 import axios from "axios";
 import {
   Card,
@@ -22,46 +23,25 @@ import {
   GraduationCap,
   Award,
 } from "lucide-react";
-import { recruiterRegistrationUpdate } from "@/Slice/RecruiterSlice";
+
 import Navbar from "@/components/ui/navbar";
 
-
+import type { AppDispatch } from "@/Slice/Store";
 const RecruiterDashboard: React.FC = () => {
-  const dispatch = useDispatch();
-  const recruiterData = useSelector(
-    (state: RootState) => state.recruiterRegister
+  const dispatch = useDispatch<AppDispatch>();
+
+  const { recruiterData, isLoading, error } = useSelector(
+    (state: RootState) => state.recruiterApi
   );
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const recruiterState = useSelector((state: RootState) => state.recruiterApi);
+  console.log("Full recruiter state: ", recruiterState);
+
   const tabMenu = ["Education", "Experience", "Certificate", "Internship"];
+
   useEffect(() => {
-    const fetchRecruiterData = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:5000/recruiter/fetchRecruiter/Putin1234"
-        );
-
-        if (response.status === 200 && response.data) {
-          const data = response.data;
-          console.log(recruiterData.work_experience);
-          Object.keys(data).forEach((key) => {
-            dispatch(
-              recruiterRegistrationUpdate({
-                field: key as keyof typeof recruiterData,
-                value: data[key],
-              })
-            );
-          });
-          setIsLoading(false);
-        }
-      } catch (error) {
-        console.error("Error fetching recruiter data:", error);
-        setError("Failed to load recruiter data. Please try again later.");
-        setIsLoading(false);
-      }
-    };
-
-    fetchRecruiterData();
+    const username = localStorage.getItem("username");
+    console.log("Fetched username from localStorage: ", username);
+    if (username) dispatch(fetchRecruiterDetails({ username }));
   }, [dispatch]);
 
   if (isLoading) {
@@ -93,6 +73,52 @@ const RecruiterDashboard: React.FC = () => {
     );
   }
 
+  // Render dashboard only if recruiter data is available
+  if (!recruiterData) {
+    return null;
+  }
+  interface Experience {
+    id: string;
+    label: string;
+    type: "text";
+    placeholder: string;
+  }
+  interface InternshipExperience {
+    date_of_commencement: string;
+    date_of_conclusion: string;
+    company: string;
+    duration: string;
+    roles_and_responsibilities: string;
+    stipend: string;
+  }
+  interface CertificateCourse {
+    platform_name: string;
+    mentor_name: string;
+    title_of_course: string;
+    learning_description: string;
+    date_of_commencement: string;
+    date_of_conclusion: string;
+  }
+  interface JobExperience {
+    company: string;
+    designation: string;
+    date_of_commencement: string;
+    date_of_resignation: string;
+    duration_of_service: string;
+    job_description: string;
+    annual_ctc: string;
+  }
+  interface CollegeEducation {
+    programme_name: string;
+    specialization: string;
+    college_name: string;
+    university_name: string;
+    cgpa: string;
+    duration: string;
+    year_of_commencement: string;
+    year_of_conclusion: string;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
       <Navbar />
@@ -114,7 +140,10 @@ const RecruiterDashboard: React.FC = () => {
             <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-6">
               <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
                 <Avatar className="h-28 w-28 border-4 border-white shadow-lg">
-                  <AvatarImage src={recruiterData.photo} alt={`${recruiterData.firstName} ${recruiterData.lastName}`} />
+                  <AvatarImage
+                    src={recruiterData.photo}
+                    alt={`${recruiterData.firstName} ${recruiterData.lastName}`}
+                  />
                   <AvatarFallback className="text-2xl bg-primary text-primary-foreground">
                     {recruiterData.firstName[0]}
                     {recruiterData.lastName[0]}
@@ -124,7 +153,9 @@ const RecruiterDashboard: React.FC = () => {
                   <CardTitle className="text-3xl font-bold text-gray-800 dark:text-gray-100">
                     {recruiterData.firstName} {recruiterData.lastName}
                   </CardTitle>
-                  <CardDescription className="text-lg font-medium text-primary">{recruiterData.title}</CardDescription>
+                  <CardDescription className="text-lg font-medium text-primary">
+                    {recruiterData.title}
+                  </CardDescription>
                   <CardDescription className="text-md text-gray-600 dark:text-gray-300 italic">
                     "{recruiterData.one_liner_intro}"
                   </CardDescription>
@@ -136,11 +167,15 @@ const RecruiterDashboard: React.FC = () => {
                 <div className="space-y-4">
                   <div className="flex items-center space-x-3 p-3 bg-primary/5 rounded-lg hover:bg-primary/10 transition-colors duration-200">
                     <Mail className="h-5 w-5 text-primary" />
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{recruiterData.email}</span>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {recruiterData.email}
+                    </span>
                   </div>
                   <div className="flex items-center space-x-3 p-3 bg-primary/5 rounded-lg hover:bg-primary/10 transition-colors duration-200">
                     <Phone className="h-5 w-5 text-primary" />
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{recruiterData.number}</span>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {recruiterData.number}
+                    </span>
                   </div>
                   <div className="flex items-center space-x-3 p-3 bg-primary/5 rounded-lg hover:bg-primary/10 transition-colors duration-200">
                     <MapPin className="h-5 w-5 text-primary" />
@@ -165,7 +200,8 @@ const RecruiterDashboard: React.FC = () => {
                   <div className="flex items-center space-x-3 p-3 bg-primary/5 rounded-lg hover:bg-primary/10 transition-colors duration-200">
                     <Award className="h-5 w-5 text-primary" />
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      {recruiterData.current_job.years_of_experience} years experience
+                      {recruiterData.current_job.years_of_experience} years
+                      experience
                     </span>
                   </div>
                 </div>
@@ -183,15 +219,17 @@ const RecruiterDashboard: React.FC = () => {
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
-                {recruiterData.core_skills.map((skill, index) => (
-                  <Badge
-                    key={index}
-                    variant="secondary"
-                    className="px-3 py-1 text-sm font-medium bg-primary/10 hover:bg-primary/20 transition-colors"
-                  >
-                    {skill}
-                  </Badge>
-                ))}
+                {recruiterData.core_skills.map(
+                  (skill: string[], index: number) => (
+                    <Badge
+                      key={index}
+                      variant="secondary"
+                      className="px-3 py-1 text-sm font-medium bg-primary/10 hover:bg-primary/20 transition-colors"
+                    >
+                      {skill}
+                    </Badge>
+                  )
+                )}
               </div>
             </CardContent>
           </Card>
@@ -223,7 +261,7 @@ const RecruiterDashboard: React.FC = () => {
               <CardContent>
                 <div className="space-y-8">
                   {recruiterData.college_education
-                    .map((edu, index) => (
+                    .map((edu: CollegeEducation, index: number) => (
                       <div
                         key={index}
                         className="relative pl-8 pb-8 border-l-2 border-gray-800 last:pb-0"
@@ -261,7 +299,7 @@ const RecruiterDashboard: React.FC = () => {
               <CardContent>
                 <div className="space-y-8 ">
                   {recruiterData.work_experience
-                    .map((exp, index) => (
+                    .map((exp: JobExperience, index: number) => (
                       <div
                         key={index}
                         className="relative pl-8 pb-8 border-l-2 border-gray-800 last:pb-0"
@@ -297,7 +335,7 @@ const RecruiterDashboard: React.FC = () => {
               <CardContent>
                 <div className="space-y-8 ">
                   {recruiterData.certificate_courses
-                    .map((certificate, index) => (
+                    .map((certificate: CertificateCourse, index: number) => (
                       <div
                         key={index}
                         className="relative pl-8 pb-8 border-l-2 border-gray-800 last:pb-0"
@@ -337,7 +375,7 @@ const RecruiterDashboard: React.FC = () => {
               <CardContent>
                 <div className="space-y-8 ">
                   {recruiterData.internship_experience
-                    .map((internship, index) => (
+                    .map((internship: InternshipExperience, index: number) => (
                       <div
                         key={index}
                         className="relative pl-8 pb-8 border-l-2 border-gray-800 last:pb-0"

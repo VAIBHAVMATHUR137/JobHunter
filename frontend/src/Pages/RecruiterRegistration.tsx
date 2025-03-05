@@ -6,7 +6,7 @@ import { RootState } from "../Slice/Store";
 import {
   recruiterRegistrationReset,
   recruiterRegistrationUpdate,
-} from "../Slice/RecruiterSlice";
+} from "../Slice/RecruiterStateSlice";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { AlertDialogDemo } from "@/components/ui/AlertDialogDemo";
 import type { RootState } from "../Slice/Store";
-import { recruiterRegistrationUpdate } from "../Slice/RecruiterSlice";
+import { recruiterRegistrationUpdate } from "../Slice/RecruiterStateSlice";
 
 import { Input } from "@/components/ui/input";
 import {

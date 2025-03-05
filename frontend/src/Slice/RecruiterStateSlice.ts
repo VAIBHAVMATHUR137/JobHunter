@@ -1,11 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
 // Define types for School Education
 interface SchoolEducation {
   school_name: string;
   percentage_obtained: string;
   year_of_passing: string;
   school_board: string;
-};
+}
 const initialSchoolEducation: SchoolEducation = {
   school_name: "",
   percentage_obtained: "",
@@ -57,7 +58,7 @@ interface InternshipExperience {
   stipend: string;
 }
 
-const initialInternship: InternshipExperience= {
+const initialInternship: InternshipExperience = {
   date_of_commencement: "",
   date_of_conclusion: "",
   company: "",
@@ -109,7 +110,7 @@ interface CurrentJob {
   date_of_commencement: string;
   current_role: string;
   years_of_experience: string;
-  current_location:string
+  current_location: string;
 }
 const initialCurrentJob: CurrentJob = {
   company: "",
@@ -117,7 +118,7 @@ const initialCurrentJob: CurrentJob = {
   date_of_commencement: "",
   current_role: "",
   years_of_experience: "",
-  current_location:"",
+  current_location: "",
 };
 
 //interface for first time registration/signin by the recruiter
@@ -141,7 +142,6 @@ interface recruiterAuthentication {
   core_skills: string[];
   certificate_courses: CertificateCourse[];
   current_job: CurrentJob;
-
 }
 const initialRecruiterRegisterState: recruiterAuthentication = {
   firstName: "",
@@ -163,8 +163,8 @@ const initialRecruiterRegisterState: recruiterAuthentication = {
   core_skills: [],
   certificate_courses: [initialCertificateState],
   current_job: initialCurrentJob,
-
 };
+
 //common reducer to update the field
 const loginUpdateField = <T extends keyof loginFormState>(
   state: loginFormState,
@@ -230,6 +230,7 @@ const recruiterRegistrationSlice = createSlice({
     recruiterRegistrationReset: recruiterRegistartionResetField,
   },
 });
+
 //Actions for recruiter login fields
 export const { recruiterLoginUpdateField, recruiterLoginResetField } =
   recruiterLoginSlice.actions;
@@ -238,4 +239,3 @@ export const { recruiterRegistrationReset, recruiterRegistrationUpdate } =
   recruiterRegistrationSlice.actions;
 export const recruiterLoginReducer = recruiterLoginSlice.reducer;
 export const recruiterRegistrationReducer = recruiterRegistrationSlice.reducer;
-

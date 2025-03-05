@@ -1,6 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
 import { AlertDialogDemo } from "@/components/ui/AlertDialogDemo";
 import { Input } from "@/components/ui/input";
+import { recruiterRegistration } from "../Slice/RecruiterThunk";
+import type { AppDispatch } from "@/Slice/Store";
 import {
   Card,
   CardHeader,
@@ -12,12 +14,12 @@ import {
 import {
   recruiterRegistrationUpdate,
   recruiterRegistrationReset,
-} from "../Slice/RecruiterSlice";
+} from "../Slice/RecruiterStateSlice";
 import type { RootState } from "@/Slice/Store";
 import { Label } from "@/components/ui/label";
 import Navbar from "@/components/ui/navbar";
 import RecruiterRegistrationPagination from "./RecruiterRegistrationPagination";
-import axios from "axios";
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -26,7 +28,7 @@ function RecruiterPresent() {
   const [showAlert, setShowAlert] = useState<boolean>(false);
   const [title, setTitle] = useState<string | "">("");
   const [message, setMessage] = useState<string | " ">("");
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const states = useSelector((state: RootState) => ({
     current_job: state.recruiterRegister.current_job,
     current_location: state.recruiterRegister.current_job.current_location,
@@ -34,14 +36,15 @@ function RecruiterPresent() {
   const nav = useNavigate();
   const putTitle = (title: string) => setTitle(title);
   const putMessage = (message: string) => setMessage(message);
+
   const recruiterFormStates = useSelector(
     (state: RootState) => state.recruiterRegister
   );
   interface FormField {
     id: keyof typeof formFields;
     label: string;
-    type: "text" ,
-    placeholder:string
+    type: "text";
+    placeholder: string;
   }
   // Define the form fields structure to match your state
   const formFields = {
@@ -53,25 +56,41 @@ function RecruiterPresent() {
     current_location: "current_location",
   } as const;
   const CURRENT_WORK: FormField[] = [
-    { id: "company", label: "Enter Company Name", type: "text" ,placeholder:"e.g Google or Microsoft" },
-    { id: "current_role", label: "Enter Designation", type: "text", placeholder:"e.g React Developer" },
-    { id: "job_description", label: "Describe your work", type: "text", placeholder:"e.g Writing code for React apps" },
+    {
+      id: "company",
+      label: "Enter Company Name",
+      type: "text",
+      placeholder: "e.g Google or Microsoft",
+    },
+    {
+      id: "current_role",
+      label: "Enter Designation",
+      type: "text",
+      placeholder: "e.g React Developer",
+    },
+    {
+      id: "job_description",
+      label: "Describe your work",
+      type: "text",
+      placeholder: "e.g Writing code for React apps",
+    },
     {
       id: "date_of_commencement",
       label: "Enter date of commencement",
-      type:"text", placeholder:"DD/MM/YYYY  OR  MM/YYYY  OR  YYYY"
+      type: "text",
+      placeholder: "DD/MM/YYYY  OR  MM/YYYY  OR  YYYY",
     },
     {
       id: "years_of_experience",
       label: "Enter Years of Experience you have",
       type: "text",
-         placeholder:"enter duration in years and in numeric form only"
+      placeholder: "enter duration in years and in numeric form only",
     },
     {
       id: "current_location",
       label: "Current Location",
       type: "text",
-         placeholder:"e.g Pune or Delhi or USA"
+      placeholder: "e.g Pune or Delhi or USA",
     },
   ];
 
@@ -104,7 +123,7 @@ function RecruiterPresent() {
       work_experience: Object.values(recruiterFormStates.work_experience),
     };
   };
-  const all_data=[
+  const all_data = [
     "firstName",
     "lastName",
     "title",
@@ -122,67 +141,46 @@ function RecruiterPresent() {
     "internship_experience",
     "certificate_courses",
     "work_experience",
-    "current_job"
-  ] as const 
+    "current_job",
+  ] as const;
   const handleSubmit = async () => {
     const data_for_backend = formatDataForBackend();
 
     try {
-      const username_entry = await axios.post(
-        "http://localhost:5000/UserName/create",
-        {
-          username: recruiterFormStates.username,
-        }
+      // Properly dispatch the thunk - it returns a Promise with a specific structure
+      const resultAction = await dispatch(
+        recruiterRegistration(data_for_backend)
       );
-      if (username_entry.status === 201) {
-        const response = await axios.post(
-          "http://localhost:5000/recruiter/createRecruiter",
-          data_for_backend
-        );
-        if (response.status === 201) {
-          setShowAlert(true);
-          putTitle(`Welcome ${recruiterFormStates.firstName}`);
-          putMessage(
-            `You have been registered successfully as recruiter ${recruiterFormStates.firstName} ${recruiterFormStates.lastName} ! Kindly navigate to Login Page`
-          );
-          setIsSuccess(true);
-          all_data.forEach((entry)=>{
-            dispatch(recruiterRegistrationReset({field:entry}))
-          })
-        }
-      } else {
+
+      // Check if the action was fulfilled (success) or rejected (error)
+      if (recruiterRegistration.fulfilled.match(resultAction)) {
+        // Success case
         setShowAlert(true);
-        putTitle("Error occured");
-        putMessage("Some unexpected error occured");
+        putTitle(`Welcome ${recruiterFormStates.firstName}`);
+        putMessage(
+          `You have been registered successfully as recruiter ${recruiterFormStates.firstName} ${recruiterFormStates.lastName}! Kindly navigate to Login Page`
+        );
+        setIsSuccess(true);
+        all_data.forEach((entry) => {
+          dispatch(recruiterRegistrationReset({ field: entry }));
+        });
+      } else {
+        // Error case
+        const error = resultAction.payload;
+        setShowAlert(true);
+        putTitle("Error occurred");
+        putMessage(
+          error?.message || "Something went wrong. Please try again later."
+        );
         setIsSuccess(false);
       }
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const status = error.response?.status;
-
-        if (status === 409) {
-          setShowAlert(true);
-          putTitle("Error");
-          putMessage("Recruiter with same email or cell number already exists");
-          setIsSuccess(false);
-        } else if (status === 400) {
-          setShowAlert(true);
-          putTitle("Error");
-          putMessage(
-            "Kindly check the data you entered. There is some issue in the data you provided"
-          );
-          setIsSuccess(false);
-          console.error("Server Error Response:", error.response?.data);
-          console.error("Status Code:", error.response?.status);
-        } else {
-          setShowAlert(true);
-          putTitle("Error Occurred");
-          putMessage("Something went wrong. Please try again later.");
-          setIsSuccess(false);
-        }
-      } else {
-        console.error("Non-Axios error:", error);
-      }
+      // Handle any unexpected errors
+      console.error("Error during registration:", error);
+      setShowAlert(true);
+      putTitle("Error Occurred");
+      putMessage("Something went wrong. Please try again later.");
+      setIsSuccess(false);
     }
   };
 

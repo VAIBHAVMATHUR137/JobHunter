@@ -12,7 +12,7 @@ import {
 import { Plus, Minus } from "lucide-react";
 import {
   recruiterRegistrationUpdate,
-} from "../Slice/RecruiterSlice";
+} from "../Slice/RecruiterStateSlice";
 import type { RootState } from "@/Slice/Store";
 import { Label } from "@/components/ui/label";
 import Navbar from "@/components/ui/navbar";
