@@ -82,8 +82,8 @@ const clearAuthData = () => {
 // Function to refresh token asynchronously
 const refreshTokenAsync = async (refreshToken: string) => {
   console.log("Starting function refreshTokenAsync....")
-  const response = await axios.post(
-    "http://localhost:5000/recruiter/refresh-token",
+  const response = await api.post(
+    "/recruiter/refresh-token",
     { refreshToken }
   );
   
