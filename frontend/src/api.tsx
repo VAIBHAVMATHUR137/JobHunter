@@ -7,12 +7,18 @@ const api = axios.create({
 // Function to decode the token and extract expiration time
 const getTokenExpirationTime = (token: string): number | null => {
   if (!token) return null;
-  const payload = JSON.parse(atob(token.split(".")[1])); // Decode JWT
-  return payload.exp * 1000; // Convert to milliseconds
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1])); // Decode JWT
+    return payload.exp * 1000; // Convert to milliseconds
+  } catch (error) {
+    console.error("Error decoding token:", error);
+    return null;
+  }
 };
 
 // Function to schedule token refresh
 const scheduleTokenRefresh = () => {
+  console.log("schedule token refresh working.....")
   const accessToken = localStorage.getItem("accessToken");
   const refreshToken = localStorage.getItem("refreshToken");
 
@@ -23,23 +29,24 @@ const scheduleTokenRefresh = () => {
 
   if (expirationTime) {
     const timeLeft = expirationTime - currentTime;
+    console.log("Time left is "+ timeLeft)
 
-    // Schedule a refresh slightly before the token expires
-    const refreshTime = timeLeft - 60000; // Refresh 1 minute before expiry
+    // Schedule a refresh slightly before the token expires (30 seconds before expiry)
+    const refreshTime = Math.max(timeLeft - 30000, 0); 
 
     if (refreshTime > 0) {
       setTimeout(async () => {
         try {
           const response = await axios.post(
-            "http://localhost:5000/recruiter/refresh-token",
-            {
-              refreshToken,
-            }
+            `http://localhost:5000/recruiter/refresh-token`,
+            { refreshToken }
           );
 
-          const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
-            response.data;
-
+          const { accessToken: newAccessToken, refreshToken: newRefreshToken } = response.data;
+          console.log({
+            "New Access Token":newAccessToken,
+            "New Refresh Token":newRefreshToken
+          })
           // Store the new tokens
           localStorage.setItem("accessToken", newAccessToken);
           localStorage.setItem("refreshToken", newRefreshToken);
@@ -48,16 +55,51 @@ const scheduleTokenRefresh = () => {
           scheduleTokenRefresh();
         } catch (error) {
           console.error("Failed to refresh token:", error);
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("refreshToken");
+          clearAuthData();
           window.location.href = "/RecruiterLogin";
         }
       }, refreshTime);
+    } else {
+      // Token is already expired or about to expire, refresh immediately
+      refreshTokenAsync(refreshToken).catch(() => {
+        clearAuthData();
+        window.location.href = "/RecruiterLogin";
+      });
     }
   }
 };
 
-// Schedule refresh when the app starts
+// Helper function to clear auth data
+const clearAuthData = () => {
+  console.log("Clear Auth data working.....")
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
+  localStorage.removeItem("jobRole");
+  localStorage.removeItem("username");
+  localStorage.removeItem("photo");
+};
+
+// Function to refresh token asynchronously
+const refreshTokenAsync = async (refreshToken: string) => {
+  console.log("Starting function refreshTokenAsync....")
+  const response = await axios.post(
+    "http://localhost:5000/recruiter/refresh-token",
+    { refreshToken }
+  );
+  
+  const { accessToken, refreshToken: newRefreshToken } = response.data;
+  console.log({
+    "new access token":accessToken,
+    "new refresh token":newRefreshToken
+  })
+  
+  localStorage.setItem("accessToken", accessToken);
+  localStorage.setItem("refreshToken", newRefreshToken);
+  
+  return { accessToken, refreshToken: newRefreshToken };
+};
+
+// Initialize token refresh on script load
 scheduleTokenRefresh();
 
 // Axios Request Interceptor
@@ -78,8 +120,8 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // If the error is 401 and we haven't retried yet
-    if (error.response.status === 401 && !originalRequest._retry) {
+    // If the error is 401 (Unauthorized) and we haven't retried yet
+    if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       try {
@@ -89,17 +131,7 @@ api.interceptors.response.use(
           throw new Error("No refresh token available");
         }
 
-        const response = await axios.post(
-          "http://localhost:5000/recruiter/refresh-token",
-          {
-            refreshToken,
-          }
-        );
-
-        const { accessToken, refreshToken: newRefreshToken } = response.data;
-
-        localStorage.setItem("accessToken", accessToken);
-        localStorage.setItem("refreshToken", newRefreshToken);
+        const { accessToken } = await refreshTokenAsync(refreshToken);
 
         // Update the authorization header
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
@@ -107,8 +139,7 @@ api.interceptors.response.use(
         // Retry the original request
         return api(originalRequest);
       } catch (refreshError) {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
+        clearAuthData();
         window.location.href = "/RecruiterLogin";
         return Promise.reject(refreshError);
       }

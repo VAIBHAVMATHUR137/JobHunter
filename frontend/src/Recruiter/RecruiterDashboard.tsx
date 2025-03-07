@@ -1,8 +1,8 @@
 import type React from "react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchRecruiterDetails } from "@/Slice/RecruiterThunk";
-import axios from "axios";
+
 import {
   Card,
   CardContent,
@@ -77,12 +77,7 @@ const RecruiterDashboard: React.FC = () => {
   if (!recruiterData) {
     return null;
   }
-  interface Experience {
-    id: string;
-    label: string;
-    type: "text";
-    placeholder: string;
-  }
+
   interface InternshipExperience {
     date_of_commencement: string;
     date_of_conclusion: string;

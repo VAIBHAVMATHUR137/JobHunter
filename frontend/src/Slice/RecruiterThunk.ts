@@ -1,12 +1,12 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import api from "@/api";
 import { recruiterRegistrationReset } from "./RecruiterStateSlice";
 import { createSlice } from "@reduxjs/toolkit";
 // Types
 interface UsernameRequest {
   username: string;
 }
-
 interface RecruiterFormData {
   firstName: string;
   lastName: string;
@@ -94,10 +94,7 @@ export const checkUsername = createAsyncThunk<
   { rejectValue: ErrorResponse }
 >("recruiter/checkUsername", async (data, { rejectWithValue }) => {
   try {
-    const response = await axios.post(
-      "http://localhost:5000/UserName/create",
-      data
-    );
+    const response = await api.post("/UserName/create", data);
     return { success: response.status === 201 };
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -112,7 +109,7 @@ export const checkUsername = createAsyncThunk<
 
 // Thunk for recruiter registration
 export const recruiterRegistration = createAsyncThunk<
-  { success: boolean; data: any },
+  { success: boolean; data: RecruiterFormData },
   RecruiterFormData,
   { rejectValue: ErrorResponse }
 >("recruiter/register", async (formData, { dispatch, rejectWithValue }) => {
@@ -127,10 +124,7 @@ export const recruiterRegistration = createAsyncThunk<
       });
     }
     //username stage verified, procees with registration
-    const response = await axios.post(
-      "http://localhost:5000/recruiter/createRecruiter",
-      formData
-    );
+    const response = await api.post("/recruiter/createRecruiter", formData);
     //registration successful
     if (response.status === 201) {
       //RESET form on successful registration
@@ -199,10 +193,7 @@ export const loginRecruiter = createAsyncThunk<
   { rejectValue: ErrorResponse }
 >("recruiter/login", async (credentials, { rejectWithValue }) => {
   try {
-    const response = await axios.post(
-      "http://localhost:5000/recruiter/login",
-      credentials
-    );
+    const response = await api.post("/recruiter/login", credentials);
     return {
       success: true,
       data: response.data,
@@ -221,47 +212,44 @@ export const loginRecruiter = createAsyncThunk<
   }
 });
 export const fetchRecruiterDetails = createAsyncThunk<
-  RecruiterFormData, 
-  { username: string }, 
+  RecruiterFormData,
+  { username: string },
   { rejectValue: { message: string; status: number } }
->(
-  "recruiter/fetchDetails",
-  async ({ username }, { rejectWithValue }) => {
-    try {
-      console.log("Calling API with username: ", username);
-      const response = await axios.get(
-        `http://localhost:5000/recruiter/fetchRecruiter/${username}`
-      );
+>("recruiter/fetchDetails", async ({ username }, { rejectWithValue }) => {
+  try {
+    console.log("Calling API with username: ", username);
+    const response = await api.get(`/recruiter/fetchRecruiter/${username}`);
 
-      if (response.status === 200) {
-        return response.data;
-      }
+    if (response.status === 200) {
+      return response.data;
+    }
 
+    return rejectWithValue({
+      message: "Failed to fetch recruiter details",
+      status: response.status,
+    });
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
       return rejectWithValue({
-        message: "Failed to fetch recruiter details",
-        status: response.status
-      });
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        return rejectWithValue({
-          message: error.response?.data?.message || "Failed to fetch recruiter details",
-          status: error.response?.status || 500
-        });
-      }
-
-      return rejectWithValue({
-        message: "An unknown error occurred",
-        status: 500
+        message:
+          error.response?.data?.message || "Failed to fetch recruiter details",
+        status: error.response?.status || 500,
       });
     }
+
+    return rejectWithValue({
+      message: "An unknown error occurred",
+      status: 500,
+    });
   }
-);
+});
 interface RecruiterApiState {
   isLoading: boolean;
   error: string | null;
   isSuccess: boolean;
   isAuthenticated: boolean;
   recruiterData: any;
+  username: string | null;
 }
 
 const initialState: RecruiterApiState = {
@@ -270,6 +258,7 @@ const initialState: RecruiterApiState = {
   isSuccess: false,
   isAuthenticated: false,
   recruiterData: null,
+  username: null,
 };
 const recruiterApiSlice = createSlice({
   name: "recruiterApi",
@@ -283,6 +272,9 @@ const recruiterApiSlice = createSlice({
     logout: (state) => {
       state.isAuthenticated = false;
       state.recruiterData = null;
+    },
+    setUsername: (state, action) => {
+      state.username = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -329,6 +321,7 @@ const recruiterApiSlice = createSlice({
         state.isLoading = false;
         state.isAuthenticated = true;
         state.recruiterData = action.payload.data;
+        state.username = action.payload.data.recruiter.username;
         state.error = null;
       })
       .addCase(loginRecruiter.rejected, (state, action) => {
@@ -336,8 +329,8 @@ const recruiterApiSlice = createSlice({
         state.error = action.payload?.message || "Login failed";
         state.isAuthenticated = false;
       });
-      //handle recruiter data fetching
-      builder
+    //handle recruiter data fetching
+    builder
       .addCase(fetchRecruiterDetails.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -347,15 +340,17 @@ const recruiterApiSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.recruiterData = action.payload;
+        state.username = action.payload.username;
         state.error = null;
       })
       .addCase(fetchRecruiterDetails.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload?.message || "Failed to fetch recruiter details";
+        state.error =
+          action.payload?.message || "Failed to fetch recruiter details";
         state.isSuccess = false;
         state.recruiterData = null;
       });
   },
 });
-export const { resetApiState, logout } = recruiterApiSlice.actions;
+export const { resetApiState, logout, setUsername } = recruiterApiSlice.actions;
 export default recruiterApiSlice.reducer;

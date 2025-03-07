@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../Slice/Store";
+import { RootState, AppDispatch } from "../Slice/Store";
 import { ChangeEvent, FormEvent, useState, useEffect } from "react";
 import {
   recruiterLoginUpdateField,
@@ -24,13 +24,8 @@ import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "@/context/Context";
 
-
-
-
 const formFields = ["username", "password"] as const;
 type FieldName = (typeof formFields)[number];
-
-
 
 function RecruiterLogin() {
   const [isSuccess, setIsSuccess] = useState(false);
@@ -39,10 +34,11 @@ function RecruiterLogin() {
   const [message, setMessage] = useState<string>("");
   const [formComplete, setIsFormComplete] = useState(false);
   const nav = useNavigate();
-  const dispatch = useDispatch();
+
   const formData = useSelector((state: RootState) => state.recruiterLogin);
+  const dispatch = useDispatch<AppDispatch>();
   const auth = useContext(AuthContext);
-  
+
   if (!auth) {
     throw new Error("RecruiterLogin must be used within an AuthProvider");
   }
@@ -54,18 +50,19 @@ function RecruiterLogin() {
     setIsFormComplete(isComplete);
   }, [formData]);
 
-
-
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     dispatch(recruiterLoginUpdateField({ field: name as FieldName, value }));
-    
   };
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
+    
     try {
-      const response = await auth.recruiterLoginHandler();
+      const response = await auth.recruiterLoginHandler(
+        formData.username, 
+        formData.password
+      );
       
       if (response.status === 200) {
         setShowAlert(true);
@@ -73,14 +70,16 @@ function RecruiterLogin() {
         setMessage("Successfully logged in");
         setIsSuccess(true);
 
+        // Reset form fields
         formFields.forEach((field) => {
           dispatch(recruiterLoginResetField({ field, value: "" }));
         });
 
-        const username = localStorage.getItem("username");
-        if (username) {
-          setTimeout(() => nav(`/RecruiterDashboard/${username}`), 1500);
-        }
+        // Navigate to dashboard with username
+        setTimeout(() => 
+          nav(`/RecruiterDashboard/${response.data.recruiter.username}`), 
+          1500
+        );
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -98,6 +97,8 @@ function RecruiterLogin() {
           case 401:
             errorMessage = "Incorrect Password";
             break;
+          default:
+            errorMessage = error.response?.data?.message || "Login failed";
         }
 
         setShowAlert(true);
@@ -106,12 +107,16 @@ function RecruiterLogin() {
         setIsSuccess(false);
       } else {
         console.error("Non-Axios error:", error);
+        setShowAlert(true);
+        setTitle("Error");
+        setMessage("An unexpected error occurred");
+        setIsSuccess(false);
       }
     }
   };
 
   const getFieldType = (field: FieldName): string =>
-    field === "password" ? "password" : "username";
+    field === "password" ? "password" : "text";
 
   const getFieldLabel = (field: FieldName): string =>
     field.charAt(0).toUpperCase() + field.slice(1);
@@ -153,7 +158,6 @@ function RecruiterLogin() {
             </CardFooter>
           </form>
         </Card>
-
       </div>
 
       {showAlert && (
