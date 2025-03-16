@@ -2,7 +2,7 @@ import express, { Express } from "express";
 import candidateRoute from "./routes/CandidateRoute";
 import recruiterRoute from "./routes/RecruiterRoute";
 import jobRoute from "./routes/JobPostingRoute";
-import UserNameRoute from "./routes/UserNameRoute"
+
 import cors from "cors";
 import connectDb from "./dbConnection";
 import dotenv from "dotenv";
@@ -20,7 +20,7 @@ export const client=new Redis();
 app.use("/candidate", candidateRoute);
 app.use("/recruiter", recruiterRoute);
 app.use("/job", jobRoute);
-app.use('/UserName',UserNameRoute)
+
 
 // Connect to database and start server
 connectDb()

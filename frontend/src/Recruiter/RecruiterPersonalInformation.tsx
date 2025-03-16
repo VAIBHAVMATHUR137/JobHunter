@@ -5,7 +5,7 @@ import axios from "axios";
 import { AlertDialogDemo } from "@/components/ui/AlertDialogDemo";
 import type { RootState } from "../Slice/Store";
 import { recruiterRegistrationUpdate } from "../Slice/RecruiterStateSlice";
-
+import api from "@/api";
 import { Input } from "@/components/ui/input";
 import {
   Card,
@@ -171,8 +171,8 @@ function RecruiterPersonalInformation() {
 
   const usernameVerificationHandler = async (username: string) => {
     try {
-      const response = await axios.post(
-        "http://localhost:5000/UserName/check",
+      const response = await api.post(
+        "/recruiter/username/check",
         { username }
       );
 

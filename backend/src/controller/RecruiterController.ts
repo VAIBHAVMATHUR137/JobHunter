@@ -5,7 +5,9 @@ import expressAsyncHandler from "express-async-handler";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import UserName from "../schema/UserNameSchema";
+
+import RecruiterUserName from "../schema/RecruiterUserNameSchema";
+
 
 dotenv.config();
 const SECRET_ACCESS_TOKEN = process.env.SECRET_ACCESS_TOKEN;
@@ -49,22 +51,23 @@ export const createRecruiter = expressAsyncHandler(
       certificate_courses,
       work_experience,
       core_skills,
-      current_job
+      current_job,
     } = req.body;
 
-    // Check if a recruiter with the same email or number already exists
+    //HERE WE ARE CHECKING IF RECRUITER WITH SAME USERNAME EXISTS OR NOT
     const existingRecruiter = await Recruiter.findOne({
       username,
     });
 
     if (existingRecruiter) {
       res.status(409).json({
-        message: "Recruiter with this email or number already exists",
+        message: "Recruiter already exists",
       });
       return;
     }
+    //HERE WE ARE USING HASHED PASSWORD
     const hashedPassword = await bcrypt.hash(password, 8);
-    console.log("Hashed Password", hashedPassword);
+
     try {
       const recruiter = await Recruiter.create({
         photo,
@@ -73,7 +76,7 @@ export const createRecruiter = expressAsyncHandler(
         title,
         one_liner_intro,
         email,
-        password:hashedPassword,
+        password: hashedPassword,
         username,
         gender,
         introduction,
@@ -85,53 +88,41 @@ export const createRecruiter = expressAsyncHandler(
         certificate_courses,
         work_experience,
         core_skills,
-        current_job
+        current_job,
       });
       if (recruiter) {
         res.status(201).json(recruiter);
       }
-
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-
-
- 
-
   }
-  )
+);
 
 //deleting a recruiter at portal
 export const deleteRecruiter = expressAsyncHandler(
   async (req: Request, res: Response) => {
     const { username } = req.params;
+
+    // Check if the recruiter exists
     const recruiter = await Recruiter.findOne({ username });
-    const recruiterUsername = await UserName.findOne({ username });
     if (!recruiter) {
       res
         .status(400)
-        .json({ Message: "No such recruiter exists in our database" });
-      return;
-    }
-    if (!recruiterUsername) {
-      res
-        .status(400)
-        .json({ Message: "No such username exists in our database" });
+        .json({ message: "No such recruiter exists in our database" });
       return;
     }
 
     await Promise.all([
-      Recruiter.deleteOne({ username: recruiter.username }),
-      UserName.deleteOne({ username: recruiterUsername.username }),
+      Recruiter.deleteOne({ username }), // Delete from Recruiter collection
+      RecruiterUserName.deleteOne({ username }), // Delete from RecruiterUserName collection
     ]);
 
-    res.status(200).json({
-      message: `Recruiter ${username} has been deleted from both collections`,
-    });
+    res.status(200).json({ message: "Recruiter deleted successfully" });
   }
 );
-//login feature for recruiter with refresh token
 
+//login feature for recruiter with refresh token
 export const recruiterLogin = expressAsyncHandler(
   async (req: Request, res: Response) => {
     const { username, password } = req.body;
@@ -143,6 +134,7 @@ export const recruiterLogin = expressAsyncHandler(
     }
 
     const recruiter = await Recruiter.findOne({ username });
+
     if (!recruiter) {
       res.status(404).json({ Message: "Recruiter not found" });
       return;
@@ -173,15 +165,20 @@ export const recruiterLogin = expressAsyncHandler(
       { expiresIn: "30d" }
     );
 
-    await client.set(`${recruiter.username}_Refresh Token`, refreshToken);
-    await client.set(`${recruiter.username}_Access Token`, accessToken);
+    await client.set(
+      `Recruiter_${recruiter.username}_Refresh Token`,
+      refreshToken
+    );
+    await client.set(
+      `Recruiter_${recruiter.username}_Access Token`,
+      accessToken
+    );
 
     // Send tokens in the response body only
     res.status(200).json({
       accessToken,
       refreshToken,
       recruiter: {
-        email: recruiter.email,
         id: recruiter.id,
         role: "recruiter",
         firstName: recruiter.firstName,
@@ -190,7 +187,6 @@ export const recruiterLogin = expressAsyncHandler(
         username: recruiter.username,
       },
     });
-    console.log(accessToken, refreshToken, recruiter.username);
   }
 );
 
@@ -218,7 +214,7 @@ export const refreshAccessToken = expressAsyncHandler(
       }
       //Check if such refresh token exists in redis
       const existingRefreshToken = await client.get(
-        `${recruiter.username}_Refresh Token`
+        `Recruiter_${recruiter.username}_Refresh Token`
       );
       if (existingRefreshToken !== refreshToken) {
         res.status(403);
@@ -244,12 +240,9 @@ export const refreshAccessToken = expressAsyncHandler(
         process.env.SECRET_REFRESH_TOKEN!,
         { expiresIn: "30d" }
       );
-
       // Save the new refresh token in DB (optional rotation)
-      await client.set(`${recruiter.username}_Refresh Token`, newRefreshToken);
-
-      await client.set(`${recruiter.username}_Access Token`, newAccessToken);
-
+      await client.set(`Recruiter_${recruiter.username}_Refresh Token`, newRefreshToken);
+      await client.set(`Recruiter_${recruiter.username}_Access Token`, newAccessToken);
       // Send tokens in the response
       res.status(200).json({
         accessToken: newAccessToken,
@@ -260,5 +253,4 @@ export const refreshAccessToken = expressAsyncHandler(
       res.status(403).json({ message: "Invalid or expired refresh token" });
     }
   }
-)
-  
+);

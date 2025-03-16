@@ -74,8 +74,11 @@ const router = createBrowserRouter([
     path: "/JobPosting",
     element: <JobPosting />,
     errorElement: <Error />,
-  }
-]);
+  },
+],
+
+);
+
 createRoot(document.getElementById("root")!).render(
   <Provider store={store}>
     <AuthProvider>

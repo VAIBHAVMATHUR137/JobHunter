@@ -3,7 +3,15 @@ import axios from "axios";
 const api = axios.create({
   baseURL: "http://localhost:5000",
 });
-
+const baseAPI = axios.create({
+  baseURL: "http://localhost:5000",
+});
+export const recruiterApi=axios.create({
+  baseURL:`${baseAPI}/recruiter`
+})
+export const candidateAPI=axios.create({
+  baseURL:`${baseAPI}/candidate`
+})
 // Function to decode the token and extract expiration time
 const getTokenExpirationTime = (token: string): number | null => {
   if (!token) return null;
@@ -37,8 +45,8 @@ const scheduleTokenRefresh = () => {
     if (refreshTime > 0) {
       setTimeout(async () => {
         try {
-          const response = await axios.post(
-            `http://localhost:5000/recruiter/refresh-token`,
+          const response = await api.post(
+            `/recruiter/refresh-token`,
             { refreshToken }
           );
 

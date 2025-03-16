@@ -36,7 +36,10 @@ type basicFieldName = (typeof basicFormFields)[number];
 // type skillFieldName = (typeof skillFormFields)[number];
 
 function JobPosting() {
-  
+  const recruiter = useSelector(
+    (state: RootState) => state.recruiterApi.username
+  );
+
   const [isSuccess, setIsSuccess] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [title, setTitle] = useState<string | "">("");
@@ -47,8 +50,8 @@ function JobPosting() {
   const nav = useNavigate();
   const putTitle = (heading: string) => setTitle(heading);
   const putMessage = (message: string) => setMessage(message);
-const accessToken=localStorage.getItem("accessToken")
-const recruiterEmail=localStorage.getItem("recruiterEmail")
+  const accessToken = localStorage.getItem("accessToken");
+  const recruiterEmail = localStorage.getItem("recruiterEmail");
   useEffect(() => {
     if (!accessToken) {
       setShowAlert(true);
@@ -96,8 +99,7 @@ const recruiterEmail=localStorage.getItem("recruiterEmail")
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     try {
-      
-      const accessToken=localStorage.getItem("accessToken")
+      const accessToken = localStorage.getItem("accessToken");
       if (!accessToken) {
         setShowAlert(true);
         putTitle("Authentication Error");
@@ -106,7 +108,7 @@ const recruiterEmail=localStorage.getItem("recruiterEmail")
       }
       const formattedData = {
         ...formatSkillsForBackend(),
-        recruiter_email: recruiterEmail
+        recruiter_email: recruiterEmail,
       };
       const response = await api.post("/job/create", formattedData);
       console.log(response);
@@ -162,60 +164,67 @@ const recruiterEmail=localStorage.getItem("recruiterEmail")
   return (
     <>
       <Navbar />
-      <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
-        <Card className="w-full max-w-md shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-center">Post a Job</CardTitle>
-            <CardDescription className="text-center">
-              Fill in the details you need from the candidate
-            </CardDescription>
-          </CardHeader>
+      {recruiter && (
+        <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
+          <Card className="w-full max-w-md shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-center">Post a Job</CardTitle>
+              <CardDescription className="text-center">
+                Fill in the details you need from the candidate
+              </CardDescription>
+            </CardHeader>
 
-          <form onSubmit={handleSubmit}>
-            <div>
-              <CardContent className="space-y-4">
-                {basicFormFields.map((field) => (
-                  <div key={field} className="space-y-2">
-                    <Label>{getFieldLabel(field)}</Label>
-                    <Input
-                      type={getFieldType(field)}
-                      name={field}
-                      value={jobData[field] || " "}
-                      onChange={handleBasicInputChange}
-                      required
-                    />
-                  </div>
-                ))}
-              </CardContent>
-            </div>
-            <div>
-              <CardContent className="space-y-4">
-                {Object.keys(jobData.skills_required).map((skill) => (
-                  <div key={skill} className="space-y-2">
-                    <Label>{getFieldLabel(skill)}</Label>
-                    <Input
-                      type="text"
-                      name={skill}
-                      value={
-                        jobData.skills_required[
-                          skill as keyof typeof jobData.skills_required
-                        ] || ""
-                      }
-                      onChange={handleSkillChange}
-                      required
-                    />
-                  </div>
-                ))}
-              </CardContent>
-            </div>
-            <CardFooter>
-              <Button type="submit" className="w-full" disabled={!formComplete}>
-                {formComplete ? "Register" : "Complete all fields"}
-              </Button>
-            </CardFooter>
-          </form>
-        </Card>
-      </div>
+            <form onSubmit={handleSubmit}>
+              <div>
+                <CardContent className="space-y-4">
+                  {basicFormFields.map((field) => (
+                    <div key={field} className="space-y-2">
+                      <Label>{getFieldLabel(field)}</Label>
+                      <Input
+                        type={getFieldType(field)}
+                        name={field}
+                        value={jobData[field] || " "}
+                        onChange={handleBasicInputChange}
+                        required
+                      />
+                    </div>
+                  ))}
+                </CardContent>
+              </div>
+              <div>
+                <CardContent className="space-y-4">
+                  {Object.keys(jobData.skills_required).map((skill) => (
+                    <div key={skill} className="space-y-2">
+                      <Label>{getFieldLabel(skill)}</Label>
+                      <Input
+                        type="text"
+                        name={skill}
+                        value={
+                          jobData.skills_required[
+                            skill as keyof typeof jobData.skills_required
+                          ] || ""
+                        }
+                        onChange={handleSkillChange}
+                        required
+                      />
+                    </div>
+                  ))}
+                </CardContent>
+              </div>
+              <CardFooter>
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={!formComplete}
+                >
+                  {formComplete ? "Register" : "Complete all fields"}
+                </Button>
+              </CardFooter>
+            </form>
+          </Card>
+        </div>
+      )}
+
       {showAlert && (
         <AlertDialogDemo
           title={title}

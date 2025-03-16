@@ -6,6 +6,7 @@ import { createSlice } from "@reduxjs/toolkit";
 // Types
 interface UsernameRequest {
   username: string;
+  password:string
 }
 interface RecruiterFormData {
   firstName: string;
@@ -94,7 +95,7 @@ export const checkUsername = createAsyncThunk<
   { rejectValue: ErrorResponse }
 >("recruiter/checkUsername", async (data, { rejectWithValue }) => {
   try {
-    const response = await api.post("/UserName/create", data);
+    const response = await api.post("/recruiter/username/create", data);
     return { success: response.status === 201 };
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -115,7 +116,7 @@ export const recruiterRegistration = createAsyncThunk<
 >("recruiter/register", async (formData, { dispatch, rejectWithValue }) => {
   try {
     const userNameCheck = await dispatch(
-      checkUsername({ username: formData.username })
+      checkUsername({ username: formData.username,password:formData.password })
     ).unwrap();
     if (!userNameCheck.success) {
       return rejectWithValue({
@@ -217,7 +218,7 @@ export const fetchRecruiterDetails = createAsyncThunk<
   { rejectValue: { message: string; status: number } }
 >("recruiter/fetchDetails", async ({ username }, { rejectWithValue }) => {
   try {
-    console.log("Calling API with username: ", username);
+    
     const response = await api.get(`/recruiter/fetchRecruiter/${username}`);
 
     if (response.status === 200) {
