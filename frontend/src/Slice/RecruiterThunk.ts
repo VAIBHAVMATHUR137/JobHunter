@@ -4,9 +4,10 @@ import api from "@/api";
 import { recruiterRegistrationReset } from "./RecruiterStateSlice";
 import { createSlice } from "@reduxjs/toolkit";
 // Types
+
 interface UsernameRequest {
   username: string;
-  password:string
+  password: string;
 }
 interface RecruiterFormData {
   firstName: string;
@@ -88,7 +89,29 @@ interface ErrorResponse {
   message: string;
   status: number;
 }
-//Thunk to check username
+//Thunk to check username in database
+export const checkUsernameAvailability = createAsyncThunk(
+  "recruiter/checkUsernameAvailability",
+  async (username: string, { rejectWithValue }) => {
+    try {
+      const response = await api.post("/recruiter/username/check", {
+        username,
+      });
+      if (response.status === 200) {
+        return { available: true, message: "Username Available" };
+      } else {
+        return rejectWithValue("Unexpected response status");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 409) {
+        return rejectWithValue("Username Unavailable");
+      }
+      return rejectWithValue("An unexpected error occurred");
+    }
+  }
+);
+
+//Thunk to generate username
 export const checkUsername = createAsyncThunk<
   { success: boolean },
   UsernameRequest,
@@ -99,9 +122,18 @@ export const checkUsername = createAsyncThunk<
     return { success: response.status === 201 };
   } catch (error) {
     if (axios.isAxiosError(error)) {
+      let status: number;
+      let message: string;
+      if (error.response?.status === 409) {
+        status = 409;
+        message = "Username already exists";
+      } else {
+        status = error.response?.status || 500;
+        message = error.response?.data?.message;
+      }
       return rejectWithValue({
-        message: error.response?.data?.message || "Username check failed",
-        status: error.response?.status || 500,
+        message,
+        status,
       });
     }
   }
@@ -116,7 +148,10 @@ export const recruiterRegistration = createAsyncThunk<
 >("recruiter/register", async (formData, { dispatch, rejectWithValue }) => {
   try {
     const userNameCheck = await dispatch(
-      checkUsername({ username: formData.username,password:formData.password })
+      checkUsername({
+        username: formData.username,
+        password: formData.password,
+      })
     ).unwrap();
     if (!userNameCheck.success) {
       return rejectWithValue({
@@ -218,7 +253,6 @@ export const fetchRecruiterDetails = createAsyncThunk<
   { rejectValue: { message: string; status: number } }
 >("recruiter/fetchDetails", async ({ username }, { rejectWithValue }) => {
   try {
-    
     const response = await api.get(`/recruiter/fetchRecruiter/${username}`);
 
     if (response.status === 200) {
@@ -251,6 +285,8 @@ interface RecruiterApiState {
   isAuthenticated: boolean;
   recruiterData: any;
   username: string | null;
+  usernameAvailable: boolean | null;
+  usernameMessage: string;
 }
 
 const initialState: RecruiterApiState = {
@@ -260,6 +296,8 @@ const initialState: RecruiterApiState = {
   isAuthenticated: false,
   recruiterData: null,
   username: null,
+  usernameAvailable: null,
+  usernameMessage: "",
 };
 const recruiterApiSlice = createSlice({
   name: "recruiterApi",
@@ -279,7 +317,7 @@ const recruiterApiSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // Handle username check
+    // Create Username at the time of registration
     builder
       .addCase(checkUsername.pending, (state) => {
         state.isLoading = true;
@@ -291,6 +329,16 @@ const recruiterApiSlice = createSlice({
       .addCase(checkUsername.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload?.message || "Username check failed";
+      });
+    //Verify if no same username exists in database
+    builder
+      .addCase(checkUsernameAvailability.fulfilled, (state, action) => {
+        state.usernameAvailable = true;
+        state.usernameMessage = action.payload?.message;
+      })
+      .addCase(checkUsernameAvailability.rejected, (state, action) => {
+        state.usernameAvailable = false;
+        state.usernameMessage = action.payload as string;
       });
 
     // Handle recruiter registration

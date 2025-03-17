@@ -3,8 +3,9 @@ import { type ChangeEvent, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { AlertDialogDemo } from "@/components/ui/AlertDialogDemo";
-import type { RootState } from "../Slice/Store";
+import { AppDispatch, type RootState } from "../Slice/Store";
 import { recruiterRegistrationUpdate } from "../Slice/RecruiterStateSlice";
+import { checkUsernameAvailability } from "../Slice/RecruiterThunk";
 import api from "@/api";
 import { Input } from "@/components/ui/input";
 import {
@@ -47,7 +48,7 @@ function RecruiterPersonalInformation() {
   const [title, setTitle] = useState<string | "">("");
   const [message, setMessage] = useState<string | " ">("");
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const formData = useSelector((state: RootState) => state.recruiterRegister);
   const nav = useNavigate();
   const recruiter_photo = useSelector(
@@ -158,14 +159,24 @@ function RecruiterPersonalInformation() {
     );
     console.log("Gender is" + value);
   };
-  const handleUserNameInputChange = async (
-    event: ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleUserNameInputChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     dispatch(recruiterRegistrationUpdate({ field: name as FieldName, value }));
-
+  
     if (value.length === permittedUserNameLength) {
-      usernameVerificationHandler(value);
+      dispatch(checkUsernameAvailability(value)).then((result: any) => {
+        if (checkUsernameAvailability.fulfilled.match(result)) {
+          setShowAlert(true);
+          putTitle("Username Available");
+          putMessage("This username can be allotted to you");
+          setIsSuccess(false);
+        } else if (checkUsernameAvailability.rejected.match(result)) {
+          setShowAlert(true);
+          putTitle("Username Unavailable");
+          putMessage("Username is not available. Try another one");
+          setIsSuccess(false);
+        }
+      });
     }
   };
 
