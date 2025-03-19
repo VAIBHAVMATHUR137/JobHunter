@@ -1,12 +1,10 @@
 import Navbar from "@/components/ui/navbar";
 import { type ChangeEvent, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import axios from "axios";
 import { AlertDialogDemo } from "@/components/ui/AlertDialogDemo";
 import { AppDispatch, type RootState } from "../Slice/Store";
 import { recruiterRegistrationUpdate } from "../Slice/RecruiterStateSlice";
 import { checkUsernameAvailability } from "../Slice/RecruiterThunk";
-import api from "@/api";
 import { Input } from "@/components/ui/input";
 import {
   Card,
@@ -16,7 +14,7 @@ import {
   CardDescription,
   CardFooter,
 } from "@/components/ui/card";
-import RecruiterRegistrationPagination from "./RecruiterRegistrationPagination"; // Import updated
+import RecruiterRegistrationPagination from "./RecruiterRegistrationPagination"; 
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
@@ -159,54 +157,32 @@ function RecruiterPersonalInformation() {
     );
     console.log("Gender is" + value);
   };
-  const handleUserNameInputChange = async (event: ChangeEvent<HTMLInputElement>) => {
+  const handleUserNameInputChange = async (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
     const { name, value } = event.target;
     dispatch(recruiterRegistrationUpdate({ field: name as FieldName, value }));
-  
+
     if (value.length === permittedUserNameLength) {
-      dispatch(checkUsernameAvailability(value)).then((result: any) => {
-        if (checkUsernameAvailability.fulfilled.match(result)) {
-          setShowAlert(true);
-          putTitle("Username Available");
-          putMessage("This username can be allotted to you");
-          setIsSuccess(false);
-        } else if (checkUsernameAvailability.rejected.match(result)) {
-          setShowAlert(true);
-          putTitle("Username Unavailable");
-          putMessage("Username is not available. Try another one");
-          setIsSuccess(false);
-        }
-      });
-    }
-  };
-
-  const usernameVerificationHandler = async (username: string) => {
-    try {
-      const response = await api.post(
-        "/recruiter/username/check",
-        { username }
-      );
-
-      if (response.status === 200) {
+      try {
+        const result = await dispatch(checkUsernameAvailability(value)).unwrap();
+        console.log("Result is:", result);
         setShowAlert(true);
         putTitle("Username Available");
         putMessage("This username can be allotted to you");
         setIsSuccess(false);
-      } else {
-        throw new Error("Unexpected response status");
+      } catch (error) {
+        console.log("Error is:", error);
+
+        setShowAlert(true);
+        putTitle("Username Unavailable");
+        putMessage("Username is not available. Try another one");
+        setIsSuccess(false);
       }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const status = error.response?.status;
-        if (status === 409) {
-          setShowAlert(true);
-          putTitle("Username Unavailable");
-          putMessage("Sorry another user is having this username");
-          setIsSuccess(false);
-        }
-      }
+
     }
   };
+
   return (
     <>
       <Navbar />

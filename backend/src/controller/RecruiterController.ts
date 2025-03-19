@@ -179,12 +179,11 @@ export const recruiterLogin = expressAsyncHandler(
       accessToken,
       refreshToken,
       recruiter: {
+        role:"recruiter",
         id: recruiter.id,
-        role: "recruiter",
-        firstName: recruiter.firstName,
-        lastName: recruiter.lastName,
         photo: recruiter.photo,
         username: recruiter.username,
+        
       },
     });
   }

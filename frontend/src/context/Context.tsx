@@ -1,37 +1,18 @@
-import { createContext, ReactNode, useState, useEffect } from "react";
-import {  useDispatch } from "react-redux";
-
+import { ReactNode, useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { setUsername } from "@/Slice/RecruiterThunk";
 import api from "@/api";
-import { AxiosResponse } from "axios";
-
-
-
+import { AuthContext } from "./CreateContext";
 
 interface LoginResponse {
   accessToken: string;
   refreshToken: string;
   recruiter: {
     id: string;
-    role: string;
-    firstName: string;
-    lastName: string;
     photo: string;
     username: string;
   };
 }
-
-interface AuthContextType {
-  accessToken: string | null;
-  setAccessToken: (token: string | null) => void;
-  recruiterLoginHandler: (username: string, password: string) => Promise<AxiosResponse<LoginResponse>>;
-  isAuthenticated: boolean;
-  logout: () => void;
-}
-
-export const AuthContext = createContext<AuthContextType | undefined>(
-  undefined
-);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [accessToken, setAccessToken] = useState<string | null>(
@@ -45,7 +26,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     if (token) {
       setAccessToken(token);
-      
+
       // If username exists in localStorage, update Redux store
       if (username) {
         dispatch(setUsername(username));
@@ -54,27 +35,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [dispatch]);
 
   const recruiterLoginHandler = async (username: string, password: string) => {
-    const response = await api.post<LoginResponse>("/recruiter/login", { username, password });
+    const response = await api.post<LoginResponse>("/recruiter/login", {
+      username,
+      password,
+    });
 
     if (response.data.accessToken) {
       setAccessToken(response.data.accessToken);
       localStorage.setItem("accessToken", response.data.accessToken);
       localStorage.setItem("refreshToken", response.data.refreshToken);
-      localStorage.setItem("jobRole", response.data.recruiter.role);
       localStorage.setItem("username", response.data.recruiter.username);
       localStorage.setItem("photo", response.data.recruiter.photo);
-      
       // Update Redux store with username
       dispatch(setUsername(response.data.recruiter.username));
     }
-
     return response;
   };
 
   const logout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
-    localStorage.removeItem("jobRole");
     localStorage.removeItem("username");
     localStorage.removeItem("photo");
     setAccessToken(null);
@@ -89,7 +69,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setAccessToken,
         recruiterLoginHandler,
         isAuthenticated,
-        logout
+        logout,
       }}
     >
       {children}

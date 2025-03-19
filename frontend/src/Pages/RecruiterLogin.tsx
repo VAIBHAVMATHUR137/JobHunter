@@ -22,7 +22,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 import { useContext } from "react";
-import { AuthContext } from "@/context/Context";
+import { AuthContext } from "@/context/CreateContext";
 
 const formFields = ["username", "password"] as const;
 type FieldName = (typeof formFields)[number];
