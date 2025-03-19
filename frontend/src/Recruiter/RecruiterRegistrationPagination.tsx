@@ -5,7 +5,7 @@ import { Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { RootState } from "@/Slice/Store";
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+
 import {
   validatePersonalInfo,
   validateEducation,

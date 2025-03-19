@@ -14,7 +14,7 @@ import {
   CardDescription,
   CardFooter,
 } from "@/components/ui/card";
-import api from "@/api";
+import { recruiterApi } from "@/API/recruiterApi";
 import { Label } from "@/components/ui/label";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -110,7 +110,7 @@ function JobPosting() {
         ...formatSkillsForBackend(),
         recruiter_email: recruiterEmail,
       };
-      const response = await api.post("/job/create", formattedData);
+      const response = await recruiterApi.post("/job/create", formattedData);
       console.log(response);
       if (response.status === 201) {
         setShowAlert(true);

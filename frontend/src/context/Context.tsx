@@ -1,7 +1,7 @@
 import { ReactNode, useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { setUsername } from "@/Slice/RecruiterThunk";
-import api from "@/api";
+import { recruiterApi } from "@/API/recruiterApi";
 import { AuthContext } from "./CreateContext";
 
 interface LoginResponse {
@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [dispatch]);
 
   const recruiterLoginHandler = async (username: string, password: string) => {
-    const response = await api.post<LoginResponse>("/recruiter/login", {
+    const response = await recruiterApi.post<LoginResponse>("/login", {
       username,
       password,
     });

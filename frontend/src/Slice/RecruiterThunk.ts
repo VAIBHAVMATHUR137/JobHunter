@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import api from "@/api";
+import { recruiterApi } from "@/API/recruiterApi";
 import { recruiterRegistrationReset } from "./RecruiterStateSlice";
 import { createSlice } from "@reduxjs/toolkit";
 // Types
@@ -94,7 +94,7 @@ export const checkUsernameAvailability = createAsyncThunk(
   "recruiter/checkUsernameAvailability",
   async (username: string, { rejectWithValue }) => {
     try {
-      const response = await api.post("/recruiter/username/check", {
+      const response = await recruiterApi.post("/username/check", {
         username,
       });
       if (response.status === 200) {
@@ -118,7 +118,7 @@ export const checkUsername = createAsyncThunk<
   { rejectValue: ErrorResponse }
 >("recruiter/checkUsername", async (data, { rejectWithValue }) => {
   try {
-    const response = await api.post("/recruiter/username/create", data);
+    const response = await recruiterApi.post("/username/create", data);
     return { success: response.status === 201 };
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -160,7 +160,7 @@ export const recruiterRegistration = createAsyncThunk<
       });
     }
     //username stage verified, procees with registration
-    const response = await api.post("/recruiter/createRecruiter", formData);
+    const response = await recruiterApi.post("/createRecruiter", formData);
     //registration successful
     if (response.status === 201) {
       //RESET form on successful registration
@@ -229,7 +229,7 @@ export const loginRecruiter = createAsyncThunk<
   { rejectValue: ErrorResponse }
 >("recruiter/login", async (credentials, { rejectWithValue }) => {
   try {
-    const response = await api.post("/recruiter/login", credentials);
+    const response = await recruiterApi.post("/login", credentials);
     return {
       success: true,
       data: response.data,
@@ -253,7 +253,7 @@ export const fetchRecruiterDetails = createAsyncThunk<
   { rejectValue: { message: string; status: number } }
 >("recruiter/fetchDetails", async ({ username }, { rejectWithValue }) => {
   try {
-    const response = await api.get(`/recruiter/fetchRecruiter/${username}`);
+    const response = await recruiterApi.get(`/fetchRecruiter/${username}`);
 
     if (response.status === 200) {
       return response.data;

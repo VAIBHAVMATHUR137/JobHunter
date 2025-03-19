@@ -1,17 +1,8 @@
 import axios from "axios";
+export const recruiterApi = axios.create({
+  baseURL: "http://localhost:5000/recruiter"
+});
 
-const api = axios.create({
-  baseURL: "http://localhost:5000",
-});
-const baseAPI = axios.create({
-  baseURL: "http://localhost:5000",
-});
-export const recruiterApi=axios.create({
-  baseURL:`${baseAPI}/recruiter`
-})
-export const candidateAPI=axios.create({
-  baseURL:`${baseAPI}/candidate`
-})
 // Function to decode the token and extract expiration time
 const getTokenExpirationTime = (token: string): number | null => {
   if (!token) return null;
@@ -45,8 +36,8 @@ const scheduleTokenRefresh = () => {
     if (refreshTime > 0) {
       setTimeout(async () => {
         try {
-          const response = await api.post(
-            `/recruiter/refresh-token`,
+          const response = await recruiterApi.post(
+            `/refresh-token`,
             { refreshToken }
           );
 
@@ -90,8 +81,8 @@ const clearAuthData = () => {
 // Function to refresh token asynchronously
 const refreshTokenAsync = async (refreshToken: string) => {
   console.log("Starting function refreshTokenAsync....")
-  const response = await api.post(
-    "/recruiter/refresh-token",
+  const response = await recruiterApi.post(
+    "/refresh-token",
     { refreshToken }
   );
   
@@ -111,7 +102,7 @@ const refreshTokenAsync = async (refreshToken: string) => {
 scheduleTokenRefresh();
 
 // Axios Request Interceptor
-api.interceptors.request.use(
+recruiterApi.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("accessToken");
     if (token) {
@@ -123,7 +114,7 @@ api.interceptors.request.use(
 );
 
 // Axios Response Interceptor
-api.interceptors.response.use(
+recruiterApi.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
@@ -145,7 +136,7 @@ api.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
 
         // Retry the original request
-        return api(originalRequest);
+        return recruiterApi(originalRequest);
       } catch (refreshError) {
         clearAuthData();
         window.location.href = "/RecruiterLogin";
@@ -157,4 +148,3 @@ api.interceptors.response.use(
   }
 );
 
-export default api;
