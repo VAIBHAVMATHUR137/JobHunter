@@ -271,7 +271,7 @@ function RecruiterSkillsAndExperience() {
     let updatedInternship;
     if (states.internshipExperience.length > 1) {
       updatedInternship = states.internshipExperience.filter(
-        (_: any, i: number) => i !== index
+        (_: InternshipExperience, i: number) => i !== index
       );
 
       dispatch(
@@ -287,7 +287,7 @@ function RecruiterSkillsAndExperience() {
     let updatedCertificate;
     if (states.certificateCourses.length > 1) {
       updatedCertificate = states.certificateCourses.filter(
-        (_: any, i: number) => i !== index
+        (_: CertificateCourse, i: number) => i !== index
       );
       dispatch(
         recruiterRegistrationUpdate({
@@ -301,7 +301,7 @@ function RecruiterSkillsAndExperience() {
     let updatedWorkEx;
     if (states.workExperience.length > 1) {
       updatedWorkEx = states.workExperience.filter(
-        (_: any, i: number) => i !== index
+        (_: JobExperience, i: number) => i !== index
       );
       dispatch(
         recruiterRegistrationUpdate({

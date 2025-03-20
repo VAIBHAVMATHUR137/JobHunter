@@ -101,7 +101,7 @@ const RecruiterEducationForm = () => {
   const removeCollegeEducation = (index: number) => {
     if (collegeEducationData.college.length > 1) {
       const updatedCollegeEducation = collegeEducationData.college.filter(
-        (_: any, i: number) => i !== index
+        (_: college_education, i: number) => i !== index
       );
       dispatch(
         recruiterRegistrationUpdate({

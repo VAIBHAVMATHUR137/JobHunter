@@ -4,7 +4,15 @@ import { recruiterApi } from "@/API/recruiterApi";
 import { recruiterRegistrationReset } from "./RecruiterStateSlice";
 import { createSlice } from "@reduxjs/toolkit";
 // Types
-
+interface LoginResponse {
+  accessToken: string;
+  refreshToken: string;
+  recruiter: {
+    id: string;
+    photo: string;
+    username: string;
+  };
+}
 interface UsernameRequest {
   username: string;
   password: string;
@@ -224,7 +232,7 @@ export const recruiterRegistration = createAsyncThunk<
 });
 
 export const loginRecruiter = createAsyncThunk<
-  { success: boolean; data: any },
+  { success: boolean; data: LoginResponse },
   LoginCredentials,
   { rejectValue: ErrorResponse }
 >("recruiter/login", async (credentials, { rejectWithValue }) => {
