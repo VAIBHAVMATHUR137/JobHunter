@@ -91,7 +91,7 @@ export const createRecruiter = expressAsyncHandler(
         current_job,
       });
       if (recruiter) {
-        res.status(201).json(recruiter);
+        res.status(201).json({"Message" : "Recruiter registered successfully !"});
       }
     } catch (error) {
       console.log(error);

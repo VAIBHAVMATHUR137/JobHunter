@@ -2,7 +2,6 @@ import type React from "react";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchRecruiterDetails } from "@/Slice/RecruiterThunk";
-
 import {
   Card,
   CardContent,
@@ -30,11 +29,12 @@ import type { AppDispatch } from "@/Slice/Store";
 const RecruiterDashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { recruiterData, isLoading, error } = useSelector(
-    (state: RootState) => state.recruiterApi
+  // Updated selector to match the new state structure in RecruiterThunk.ts
+  const { isLoading, error, recruiterData } = useSelector(
+    (state: RootState) => state.recruiter_profile
   );
-  const recruiterState = useSelector((state: RootState) => state.recruiterApi);
-  console.log("Full recruiter state: ", recruiterState);
+  
+  console.log("Full recruiter state: ", recruiterData);
 
   const tabMenu = ["Education", "Experience", "Certificate", "Internship"];
 
@@ -215,7 +215,7 @@ const RecruiterDashboard: React.FC = () => {
             <CardContent>
               <div className="flex flex-wrap gap-2">
                 {recruiterData.core_skills.map(
-                  (skill: string[], index: number) => (
+                  (skill: string, index: number) => (
                     <Badge
                       key={index}
                       variant="secondary"
@@ -230,7 +230,7 @@ const RecruiterDashboard: React.FC = () => {
           </Card>
         </div>
 
-        <Tabs defaultValue="education" className="mt-8">
+        <Tabs defaultValue="Education" className="mt-8">
           <TabsList className="grid w-5/6 grid-cols-4 gap-3 mx-auto mb-6 p-1 bg-gray-100 rounded-xl shadow-sm">
             {tabMenu.map((element: string) => (
               <TabsTrigger

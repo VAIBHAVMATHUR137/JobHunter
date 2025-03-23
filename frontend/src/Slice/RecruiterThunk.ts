@@ -1,8 +1,9 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import { recruiterApi } from "@/API/recruiterApi";
 import { recruiterRegistrationReset } from "./RecruiterStateSlice";
 import { createSlice } from "@reduxjs/toolkit";
+
 // Types
 interface LoginResponse {
   accessToken: string;
@@ -13,10 +14,129 @@ interface LoginResponse {
     username: string;
   };
 }
+const initialLoginResponse: LoginResponse = {
+  accessToken: "",
+  refreshToken: "",
+  recruiter: {
+    id: "",
+    photo: "",
+    username: "",
+  },
+};
 interface UsernameRequest {
   username: string;
   password: string;
 }
+
+interface SchoolEducation {
+  school_name: string;
+  percentage_obtained: string;
+  year_of_passing: string;
+  school_board: string;
+}
+const initialSchoolEducation: SchoolEducation = {
+  school_name: "",
+  percentage_obtained: "",
+  year_of_passing: "",
+  school_board: "",
+};
+
+//College education
+interface CollegeEducation {
+  programme_name: string;
+  specialization: string;
+  college_name: string;
+  university_name: string;
+  cgpa: string;
+  duration: string;
+  year_of_commencement: string;
+  year_of_conclusion: string;
+}
+
+const initialCollegeEducation: CollegeEducation = {
+  programme_name: "",
+  specialization: "",
+  college_name: "",
+  university_name: "",
+  cgpa: "",
+  duration: "",
+  year_of_commencement: "",
+  year_of_conclusion: "",
+};
+
+//Internship Experience
+interface InternshipExperience {
+  date_of_commencement: string;
+  date_of_conclusion: string;
+  company: string;
+  duration: string;
+  roles_and_responsibilities: string;
+  stipend: string;
+}
+
+const initialInternship: InternshipExperience = {
+  date_of_commencement: "",
+  date_of_conclusion: "",
+  company: "",
+  duration: "",
+  roles_and_responsibilities: "",
+  stipend: "",
+};
+
+//Job Experience
+interface JobExperience {
+  company: string;
+  designation: string;
+  date_of_commencement: string;
+  date_of_resignation: string;
+  duration_of_service: string;
+  job_description: string;
+  annual_ctc: string;
+}
+const initial_job_experience: JobExperience = {
+  company: "",
+  designation: "",
+  date_of_commencement: "",
+  date_of_resignation: "",
+  duration_of_service: "",
+  job_description: "",
+  annual_ctc: "",
+};
+//Certificate
+interface CertificateCourse {
+  platform_name: string;
+  mentor_name: string;
+  title_of_course: string;
+  learning_description: string;
+  date_of_commencement: string;
+  date_of_conclusion: string;
+}
+const initialCertificateState: CertificateCourse = {
+  platform_name: "",
+  mentor_name: "",
+  title_of_course: "",
+  learning_description: "",
+  date_of_commencement: "",
+  date_of_conclusion: "",
+};
+//Current Job
+interface CurrentJob {
+  company: string;
+  job_description: string;
+  date_of_commencement: string;
+  current_role: string;
+  years_of_experience: string;
+  current_location: string;
+}
+const initialCurrentJob: CurrentJob = {
+  company: "",
+  job_description: "",
+  date_of_commencement: "",
+  current_role: "",
+  years_of_experience: "",
+  current_location: "",
+};
+
 interface RecruiterFormData {
   firstName: string;
   lastName: string;
@@ -29,63 +149,37 @@ interface RecruiterFormData {
   introduction: string;
   number: string;
   photo: string;
-  tenth_standard_education: {
-    school_name: string;
-    percentage_obtained: string;
-    year_of_passing: string;
-    school_board: string;
-  };
-  twelth_standard_education: {
-    school_name: string;
-    percentage_obtained: string;
-    year_of_passing: string;
-    school_board: string;
-  };
-  college_education: Array<{
-    programme_name: string;
-    specialization: string;
-    college_name: string;
-    university_name: string;
-    cgpa: string;
-    duration: string;
-    year_of_commencement: string;
-    year_of_conclusion: string;
-  }>;
-  internship_experience: Array<{
-    date_of_commencement: string;
-    date_of_conclusion: string;
-    company: string;
-    duration: string;
-    roles_and_responsibilities: string;
-    stipend: string;
-  }>;
-  work_experience: Array<{
-    company: string;
-    designation: string;
-    date_of_commencement: string;
-    date_of_resignation: string;
-    duration_of_service: string;
-    job_description: string;
-    annual_ctc: string;
-  }>;
+  tenth_standard_education: SchoolEducation;
+  twelth_standard_education: SchoolEducation;
+  college_education: CollegeEducation[];
+  internship_experience: InternshipExperience[];
+  work_experience: JobExperience[];
   core_skills: string[];
-  certificate_courses: Array<{
-    platform_name: string;
-    mentor_name: string;
-    title_of_course: string;
-    learning_description: string;
-    date_of_commencement: string;
-    date_of_conclusion: string;
-  }>;
-  current_job: {
-    company: string;
-    job_description: string;
-    date_of_commencement: string;
-    current_role: string;
-    years_of_experience: string;
-    current_location: string;
-  };
+  certificate_courses: CertificateCourse[];
+  current_job: CurrentJob;
 }
+
+const initialRecruiterFormData: RecruiterFormData = {
+  firstName: "",
+  lastName: "",
+  title: "",
+  one_liner_intro: "",
+  number: "",
+  email: "",
+  username: "",
+  password: "",
+  gender: "male",
+  introduction: "",
+  photo: "",
+  tenth_standard_education: initialSchoolEducation,
+  twelth_standard_education: initialSchoolEducation,
+  college_education: [initialCollegeEducation],
+  internship_experience: [initialInternship],
+  work_experience: [initial_job_experience],
+  core_skills: [],
+  certificate_courses: [initialCertificateState],
+  current_job: initialCurrentJob,
+};
 
 interface LoginCredentials {
   username: string;
@@ -118,16 +212,57 @@ export const checkUsernameAvailability = createAsyncThunk(
     }
   }
 );
+interface usernameAvailability {
+  isLoading: boolean;
+  error: boolean;
+  isSuccess: boolean;
+  usernameAvailability: boolean;
+}
+const initialUsernameAvailabilityState: usernameAvailability = {
+  isLoading: false,
+  error: false,
+  isSuccess: false,
+  usernameAvailability: false,
+};
+const recruiterUsernameAvailabilitySlice = createSlice({
+  name: "usernameAvailabilitySlice",
+  initialState: initialUsernameAvailabilityState,
+  reducers: {
+    resetUsernameAvailability: (state) => {
+      state.isLoading = false;
+      state.error = false;
+      state.isSuccess = false;
+      state.usernameAvailability = false;
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(checkUsernameAvailability.pending, (state) => {
+      state.isLoading = true;
+      state.isSuccess = false;
+    });
+    builder.addCase(checkUsernameAvailability.fulfilled, (state) => {
+      state.isLoading = false;
+      state.isSuccess = true;
+      state.usernameAvailability = true;
+    });
+    builder.addCase(checkUsernameAvailability.rejected, (state) => {
+      state.isLoading = false;
+      state.error = true;
+      state.usernameAvailability = false;
+      state.isSuccess = false;
+    });
+  },
+});
 
 //Thunk to generate username
-export const checkUsername = createAsyncThunk<
-  { success: boolean },
+export const generateUsername = createAsyncThunk<
+  { success: boolean; username?: string },
   UsernameRequest,
   { rejectValue: ErrorResponse }
 >("recruiter/checkUsername", async (data, { rejectWithValue }) => {
   try {
     const response = await recruiterApi.post("/username/create", data);
-    return { success: response.status === 201 };
+    return { success: response.status === 201, username: data.username };
   } catch (error) {
     if (axios.isAxiosError(error)) {
       let status: number;
@@ -148,26 +283,73 @@ export const checkUsername = createAsyncThunk<
   return rejectWithValue({ message: "Unknown error occured", status: 500 });
 });
 
-// Thunk for recruiter registration
+//Slice for username generation
+interface usernameGenerator {
+  isLoading: boolean;
+  error: string | null;
+  isSuccess: boolean;
+  username: string;
+}
+const initialUsernameGeneratorState: usernameGenerator = {
+  isLoading: false,
+  error: null,
+  isSuccess: false,
+  username: "",
+};
+const recruiterUsernameGeneratorSlice = createSlice({
+  name: "recruiterUsernameRegistrationSlice",
+  initialState: initialUsernameGeneratorState,
+  reducers: {
+    setUserName: (state, action: PayloadAction<string>) => {
+      state.username = action.payload;
+    },
+    resetUserName: (state) => {
+      state.isLoading = false;
+      state.error = null;
+      state.isSuccess = false;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(generateUsername.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+        state.isSuccess = false;
+      })
+      .addCase(generateUsername.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.error = null;
+        state.isSuccess = true;
+        state.username = (action.payload?.username as string) || "";
+      })
+      .addCase(generateUsername.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload?.message || "Username check failed";
+        state.isSuccess = false;
+      });
+  },
+});
+
+//THUNK FOR RECRUITER REGISTRATION
 export const recruiterRegistration = createAsyncThunk<
-  { success: boolean; data: RecruiterFormData },
+  { success: boolean },
   RecruiterFormData,
   { rejectValue: ErrorResponse }
 >("recruiter/register", async (formData, { dispatch, rejectWithValue }) => {
   try {
-    const userNameCheck = await dispatch(
-      checkUsername({
+    const usernameGenerate = await dispatch(
+      generateUsername({
         username: formData.username,
         password: formData.password,
       })
     ).unwrap();
-    if (!userNameCheck.success) {
+    if (!usernameGenerate.success) {
       return rejectWithValue({
         message: "Username is already taken",
         status: 409,
       });
     }
-    //username stage verified, procees with registration
+    //username stage verified, proceed with registration
     const response = await recruiterApi.post("/createRecruiter", formData);
     //registration successful
     if (response.status === 201) {
@@ -197,7 +379,6 @@ export const recruiterRegistration = createAsyncThunk<
       });
       return {
         success: true,
-        data: response.data,
       };
     }
     return rejectWithValue({
@@ -231,7 +412,49 @@ export const recruiterRegistration = createAsyncThunk<
   });
 });
 
-export const loginRecruiter = createAsyncThunk<
+interface recruiterRegistration {
+  isLoading: boolean;
+  error: string | null;
+  isSuccess: boolean;
+}
+const initialRecruiterRegistrationState: recruiterRegistration = {
+  isLoading: false,
+  error: null,
+  isSuccess: false,
+};
+//SLICE FOR RECRUITER REGISTRATION
+const recruiterRegistrationSlice = createSlice({
+  name: "recruiterRegistrationSlice",
+  initialState: initialRecruiterRegistrationState,
+  //In reducers we deliberately did not introduces the function to set the username. It is because we already have the reducer setUsername in the username generator thunk. Registration of recruiter when once begin, username will also be generated by that thunk. So writing same reducer again is not advisable.
+  reducers: {
+    resetRecruiterRegistrationState: (state) => {
+      state.isLoading = false;
+      state.error = null;
+      state.isSuccess = false;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(recruiterRegistration.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(recruiterRegistration.fulfilled, (state) => {
+        state.error = null;
+        state.isLoading = false;
+        state.isSuccess = true;
+      })
+      .addCase(recruiterRegistration.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload?.message || "Registration failed";
+        state.isSuccess = false;
+      });
+  },
+});
+
+//Thunk for recruiter login
+export const recruiterLogin = createAsyncThunk<
   { success: boolean; data: LoginResponse },
   LoginCredentials,
   { rejectValue: ErrorResponse }
@@ -255,6 +478,54 @@ export const loginRecruiter = createAsyncThunk<
     });
   }
 });
+
+interface recruiterLogin {
+  isLoading: boolean;
+  error: string | null;
+  isSuccess: boolean;
+  isAuthenticated: boolean;
+  postLoginResponse: LoginResponse | string;
+}
+
+const initialRecruiterLogin: recruiterLogin = {
+  isLoading: false,
+  error: null,
+  isSuccess: false,
+  isAuthenticated: false,
+  postLoginResponse: initialLoginResponse,
+};
+
+const recruiterLoginSlice = createSlice({
+  name: "recruiterLoginSlice",
+  initialState: initialRecruiterLogin,
+  reducers: {
+    recruiterLogout: (state) => {
+      state.isAuthenticated = false;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(recruiterLogin.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+        state.isAuthenticated = false;
+      })
+      .addCase(recruiterLogin.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.error = null;
+        state.isAuthenticated = true;
+        state.isSuccess = true;
+        state.postLoginResponse = action.payload.data;
+      })
+      .addCase(recruiterLogin.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload?.message || "Login failed";
+        state.isAuthenticated = false;
+        state.isSuccess = false;
+      });
+  },
+});
+
 export const fetchRecruiterDetails = createAsyncThunk<
   RecruiterFormData,
   { username: string },
@@ -286,128 +557,64 @@ export const fetchRecruiterDetails = createAsyncThunk<
     });
   }
 });
-interface RecruiterApiState {
-  isLoading: boolean;
-  error: string | null;
-  isSuccess: boolean;
-  isAuthenticated: boolean;
-  recruiterData: any;
-  username: string | null;
-  usernameAvailable: boolean | null;
-  usernameMessage: string;
+interface fetchRecruiter{
+  isLoading:boolean;
+  error:string|null;
+  isSuccess:boolean;
+  recruiterData:RecruiterFormData
 }
-
-const initialState: RecruiterApiState = {
-  isLoading: false,
-  error: null,
-  isSuccess: false,
-  isAuthenticated: false,
-  recruiterData: null,
-  username: null,
-  usernameAvailable: null,
-  usernameMessage: "",
-};
-const recruiterApiSlice = createSlice({
-  name: "recruiterApi",
-  initialState,
-  reducers: {
-    resetApiState: (state) => {
+const initialRecruiterState:fetchRecruiter={
+  error:null,
+  isLoading:false,
+  isSuccess:false,
+  recruiterData:initialRecruiterFormData
+}
+export const recruiterProfileSlice=createSlice({
+  name:"recruiterProfileSlice",
+  initialState:initialRecruiterState,
+  reducers:{
+    resetProfile:(state)=>{
+      state.recruiterData=initialRecruiterFormData
+    }
+  },
+  extraReducers:(builder)=>{
+    builder
+    .addCase(fetchRecruiterDetails.pending,(state)=>{
+      state.isLoading=true;
+      state.error=null
+    })
+    .addCase(fetchRecruiterDetails.fulfilled,(state,action)=>{
+      state.error=null;
+      state.isLoading=false;
+      state.isSuccess=true;
+      state.recruiterData=action.payload
+    })
+    .addCase(fetchRecruiterDetails.rejected,(state,action)=>{
       state.isLoading = false;
-      state.error = null;
+      state.error =
+        action.payload?.message || "Failed to fetch recruiter details";
       state.isSuccess = false;
-    },
-    logout: (state) => {
-      state.isAuthenticated = false;
-      state.recruiterData = null;
-    },
-    setUsername: (state, action) => {
-      state.username = action.payload;
-    },
-  },
-  extraReducers: (builder) => {
-    // Create Username at the time of registration
-    builder
-      .addCase(checkUsername.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
-      .addCase(checkUsername.fulfilled, (state) => {
-        state.isLoading = false;
-      })
-      .addCase(checkUsername.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload?.message || "Username check failed";
-      });
-    //Verify if no same username exists in database
-    builder
-      .addCase(checkUsernameAvailability.fulfilled, (state, action) => {
-        state.usernameAvailable = true;
-        state.usernameMessage = action.payload?.message;
-      })
-      .addCase(checkUsernameAvailability.rejected, (state, action) => {
-        state.usernameAvailable = false;
-        state.usernameMessage = action.payload as string;
-      });
+      state.recruiterData = initialRecruiterFormData
+    })
+  }
+})
+export const { resetUsernameAvailability } =
+  recruiterUsernameAvailabilitySlice.actions;
+export const recruiterUsernameAvailabilityReducer =
+  recruiterUsernameAvailabilitySlice.reducer;
 
-    // Handle recruiter registration
-    builder
-      .addCase(recruiterRegistration.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-        state.isSuccess = false;
-      })
-      .addCase(recruiterRegistration.fulfilled, (state) => {
-        state.isLoading = false;
-        state.isSuccess = true;
-        state.error = null;
-      })
-      .addCase(recruiterRegistration.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload?.message || "Registration failed";
-        state.isSuccess = false;
-      });
+export const { setUserName, resetUserName } =
+  recruiterUsernameGeneratorSlice.actions;
+export const recruiterUsernameGeneratorReducer =
+  recruiterUsernameGeneratorSlice.reducer;
 
-    // Handle recruiter login
-    builder
-      .addCase(loginRecruiter.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-        state.isAuthenticated = false;
-      })
-      .addCase(loginRecruiter.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isAuthenticated = true;
-        state.recruiterData = action.payload.data;
-        state.username = action.payload.data.recruiter.username;
-        state.error = null;
-      })
-      .addCase(loginRecruiter.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload?.message || "Login failed";
-        state.isAuthenticated = false;
-      });
-    //handle recruiter data fetching
-    builder
-      .addCase(fetchRecruiterDetails.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-        state.isSuccess = false;
-      })
-      .addCase(fetchRecruiterDetails.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isSuccess = true;
-        state.recruiterData = action.payload;
-        state.username = action.payload.username;
-        state.error = null;
-      })
-      .addCase(fetchRecruiterDetails.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error =
-          action.payload?.message || "Failed to fetch recruiter details";
-        state.isSuccess = false;
-        state.recruiterData = null;
-      });
-  },
-});
-export const { resetApiState, logout, setUsername } = recruiterApiSlice.actions;
-export default recruiterApiSlice.reducer;
+export const { resetRecruiterRegistrationState } =
+  recruiterRegistrationSlice.actions;
+export const recruiter_registration_reducer =
+  recruiterRegistrationSlice.reducer;
+
+export const { recruiterLogout } = recruiterLoginSlice.actions;
+export const recruiter_login_reducer = recruiterLoginSlice.reducer;
+
+export const {resetProfile}=recruiterProfileSlice.actions;
+export const get_recruiter_profile=recruiterProfileSlice.reducer
