@@ -10,10 +10,7 @@ import {
 } from "./RecruiterStateSlice";
 import {
   recruiterUsernameGeneratorReducer,
-  recruiterUsernameAvailabilityReducer,
-  recruiter_registration_reducer,
-  recruiter_login_reducer,
-  get_recruiter_profile
+  get_recruiter_profile,
 } from "./RecruiterThunk";
 
 const store = configureStore({
@@ -23,11 +20,8 @@ const store = configureStore({
     candidateRegister: candidateRegistrationReducer,
     recruiterRegister: recruiterRegistrationReducer,
     jobPosting: jobPostingReducer,
-    recruiterUsernameAvailability: recruiterUsernameAvailabilityReducer,
     recruiterUsernameGenerator: recruiterUsernameGeneratorReducer,
-    recruiter_registration: recruiter_registration_reducer,
-    recruiter_login: recruiter_login_reducer,
-    recruiter_profile:get_recruiter_profile
+    recruiter_profile: get_recruiter_profile,
   },
 });
 

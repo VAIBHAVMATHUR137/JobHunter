@@ -1,7 +1,7 @@
 import type React from "react";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchRecruiterDetails } from "@/Slice/RecruiterThunk";
+import { delete_recruiter, deleteRecruiter, fetchRecruiterDetails } from "@/Slice/RecruiterThunk";
 import {
   Card,
   CardContent,
@@ -33,7 +33,7 @@ const RecruiterDashboard: React.FC = () => {
   const { isLoading, error, recruiterData } = useSelector(
     (state: RootState) => state.recruiter_profile
   );
-  
+
   console.log("Full recruiter state: ", recruiterData);
 
   const tabMenu = ["Education", "Experience", "Certificate", "Internship"];
@@ -113,7 +113,12 @@ const RecruiterDashboard: React.FC = () => {
     year_of_commencement: string;
     year_of_conclusion: string;
   }
+  const handleDelete = () => {
 
+  }
+  const logout = () => {
+
+  }
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
       <Navbar />
@@ -202,6 +207,11 @@ const RecruiterDashboard: React.FC = () => {
                 </div>
               </div>
             </CardContent>
+            <Button className="m-9" onClick={logout}>Delete Profile</Button>
+            <div>
+              <Button onClick={handleDelete}>Logout</Button>
+            </div>
+
           </Card>
 
           {/* Skills Card */}

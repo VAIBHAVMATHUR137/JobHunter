@@ -37,8 +37,9 @@ type basicFieldName = (typeof basicFormFields)[number];
 
 function JobPosting() {
   const recruiter = useSelector(
-    (state: RootState) => state.recruiterApi.username
+    (state: RootState) =>state.recruiter_profile.username
   );
+  console.log("username here is "+recruiter)
 
   const [isSuccess, setIsSuccess] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
@@ -50,16 +51,16 @@ function JobPosting() {
   const nav = useNavigate();
   const putTitle = (heading: string) => setTitle(heading);
   const putMessage = (message: string) => setMessage(message);
-  const accessToken = localStorage.getItem("accessToken");
+
   const recruiterEmail = localStorage.getItem("recruiterEmail");
   useEffect(() => {
-    if (!accessToken) {
+    if (!recruiter) {
       setShowAlert(true);
       putTitle("Authentication Required");
       putMessage("Please login as a recruiter to post jobs");
       setTimeout(() => nav("/RecruiterLogin"), 1500);
     }
-  }, [accessToken, nav]);
+  }, [recruiter, nav]);
   const formatSkillsForBackend = () => {
     const skills = Object.values(jobData.skills_required).filter(
       (skill) => skill.trim() !== ""

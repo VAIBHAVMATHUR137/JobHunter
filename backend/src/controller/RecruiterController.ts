@@ -8,7 +8,6 @@ import dotenv from "dotenv";
 
 import RecruiterUserName from "../schema/RecruiterUserNameSchema";
 
-
 dotenv.config();
 const SECRET_ACCESS_TOKEN = process.env.SECRET_ACCESS_TOKEN;
 
@@ -91,7 +90,9 @@ export const createRecruiter = expressAsyncHandler(
         current_job,
       });
       if (recruiter) {
-        res.status(201).json({"Message" : "Recruiter registered successfully !"});
+        res
+          .status(201)
+          .json({ Message: "Recruiter registered successfully !" });
       }
     } catch (error) {
       console.log(error);
@@ -112,13 +113,20 @@ export const deleteRecruiter = expressAsyncHandler(
         .json({ message: "No such recruiter exists in our database" });
       return;
     }
+    try {
+      await Promise.all([
+        Recruiter.deleteOne({ username }),
+        RecruiterUserName.deleteOne({ username }),
+      ]);
 
-    await Promise.all([
-      Recruiter.deleteOne({ username }), // Delete from Recruiter collection
-      RecruiterUserName.deleteOne({ username }), // Delete from RecruiterUserName collection
-    ]);
-
-    res.status(200).json({ message: "Recruiter deleted successfully" });
+      res.status(200).json({ message: "Recruiter deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting recruiter:", error);
+      res.status(500).json({
+        message: "Delete operation for recruiter failed",
+      });
+      return;
+    }
   }
 );
 
@@ -179,11 +187,10 @@ export const recruiterLogin = expressAsyncHandler(
       accessToken,
       refreshToken,
       recruiter: {
-        role:"recruiter",
+        role: "recruiter",
         id: recruiter.id,
         photo: recruiter.photo,
         username: recruiter.username,
-        
       },
     });
   }
@@ -240,8 +247,14 @@ export const refreshAccessToken = expressAsyncHandler(
         { expiresIn: "30d" }
       );
       // Save the new refresh token in DB (optional rotation)
-      await client.set(`Recruiter_${recruiter.username}_Refresh Token`, newRefreshToken);
-      await client.set(`Recruiter_${recruiter.username}_Access Token`, newAccessToken);
+      await client.set(
+        `Recruiter_${recruiter.username}_Refresh Token`,
+        newRefreshToken
+      );
+      await client.set(
+        `Recruiter_${recruiter.username}_Access Token`,
+        newAccessToken
+      );
       // Send tokens in the response
       res.status(200).json({
         accessToken: newAccessToken,
