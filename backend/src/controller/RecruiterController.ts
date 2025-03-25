@@ -1,6 +1,6 @@
 import Recruiter from "../schema/RecruiterSchema";
 import { client } from "../index";
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, response } from "express";
 import expressAsyncHandler from "express-async-handler";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -196,6 +196,34 @@ export const recruiterLogin = expressAsyncHandler(
   }
 );
 
+//Logout controller function
+export const recruiterLogout = expressAsyncHandler(
+  async (req: Request, res: Response) => {
+    const { username } = req.body;
+
+    if (!username) {
+      res.status(400).json({ message: "Username is required" });
+      return;
+    }
+    try {
+      await Promise.all([
+        client.del(`Recruiter_${username}_Access Token`),
+        client.del(`Recruiter_${username}_Refresh Token`),
+      ]);
+
+      res.status(200).json({
+        message: "Logout successful",
+        status: "Tokens invalidated",
+      });
+    } catch (error) {
+      console.error("Logout error:", error);
+      res.status(500).json({
+        message: "Error during logout process",
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+  }
+);
 export const refreshAccessToken = expressAsyncHandler(
   async (req: Request, res: Response) => {
     const { refreshToken } = req.body;

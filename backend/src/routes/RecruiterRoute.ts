@@ -5,6 +5,7 @@ import {
   deleteRecruiter,
   recruiterLogin,
   refreshAccessToken,
+  recruiterLogout,
 } from "../controller/RecruiterController";
 import {
   recruiterValidationRules,
@@ -39,5 +40,6 @@ router.post(
 router.post("/username/check", searchUserName(RecruiterUserName,CandidateUserName));
 
 router.post("/username/create", createUniqueUserName(RecruiterUserName));
+router.post('/logout/',recruiterLogout)
 
 export default router;
