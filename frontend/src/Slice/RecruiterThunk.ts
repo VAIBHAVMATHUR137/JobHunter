@@ -605,7 +605,26 @@ const deleteRecruiterSlice = createSlice({
       });
   },
 });
-
+export const recruiterLogout = createAsyncThunk<
+  boolean,
+  string,
+  { rejectValue: ErrorResponse }
+>("recruiter/logout", async (username: string, { rejectWithValue }) => {
+  try {
+    const response = await recruiterApi.post("/logout", {username});
+    if (response.status === 200) {
+      console.log("Logout successful");
+      return response.data.message;
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error))
+      return rejectWithValue({
+        message:
+          error.response?.data?.message || "Cannot perform logout operation",
+        status: error.status || 500,
+      });
+  }
+});
 export const recruiterUsernameGeneratorReducer =
   recruiterUsernameGeneratorSlice.reducer;
 

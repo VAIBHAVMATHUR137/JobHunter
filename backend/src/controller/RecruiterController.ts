@@ -14,7 +14,7 @@ const SECRET_ACCESS_TOKEN = process.env.SECRET_ACCESS_TOKEN;
 //Fetching a particular recruiter, registered at the portal
 export const fetchIndividualRecruiter = expressAsyncHandler(
   async (req: Request, res: Response) => {
-    const { username } = req.params; // Get username from request parameters
+    const { username } = req.params;
 
     if (!username) {
       res.status(400).json({ message: "Username is required" });
@@ -187,7 +187,6 @@ export const recruiterLogin = expressAsyncHandler(
       accessToken,
       refreshToken,
       recruiter: {
-
         id: recruiter.id,
         photo: recruiter.photo,
         username: recruiter.username,
@@ -213,13 +212,11 @@ export const recruiterLogout = expressAsyncHandler(
 
       res.status(200).json({
         message: "Logout successful",
-        status: "Tokens invalidated",
       });
     } catch (error) {
       console.error("Logout error:", error);
       res.status(500).json({
         message: "Error during logout process",
-        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }

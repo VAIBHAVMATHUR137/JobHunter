@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   deleteRecruiter,
   fetchRecruiterDetails,
+  recruiterLogout,
 
 } from "@/Slice/RecruiterThunk";
 import {
@@ -128,7 +129,9 @@ const RecruiterDashboard: React.FC = () => {
   const handleDelete = () => {
     dispatch(deleteRecruiter(username));
   };
-  const logout = () => {};
+  const logout = () => {
+    dispatch(recruiterLogout(username))
+  };
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
       <Navbar />
