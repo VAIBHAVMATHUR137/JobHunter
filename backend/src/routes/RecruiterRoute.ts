@@ -40,6 +40,6 @@ router.post(
 router.post("/username/check", searchUserName(RecruiterUserName,CandidateUserName));
 
 router.post("/username/create", createUniqueUserName(RecruiterUserName));
-router.post('/logout/',recruiterLogout)
+router.post('/logout',recruiterLogout)
 
 export default router;

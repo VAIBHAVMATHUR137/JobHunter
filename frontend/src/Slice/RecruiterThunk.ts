@@ -212,40 +212,6 @@ export const checkUsernameAvailability = createAsyncThunk(
     }
   }
 );
-interface usernameAvailability {
-  isLoading: boolean;
-  error: boolean;
-  isSuccess: boolean;
-  usernameAvailability: boolean;
-}
-const initialUsernameAvailabilityState: usernameAvailability = {
-  isLoading: false,
-  error: false,
-  isSuccess: false,
-  usernameAvailability: false,
-};
-const recruiterUsernameAvailabilitySlice = createSlice({
-  name: "usernameAvailabilitySlice",
-  initialState: initialUsernameAvailabilityState,
-  reducers: {},
-  extraReducers: (builder) => {
-    builder.addCase(checkUsernameAvailability.pending, (state) => {
-      state.isLoading = true;
-      state.isSuccess = false;
-    });
-    builder.addCase(checkUsernameAvailability.fulfilled, (state) => {
-      state.isLoading = false;
-      state.isSuccess = true;
-      state.usernameAvailability = true;
-    });
-    builder.addCase(checkUsernameAvailability.rejected, (state) => {
-      state.isLoading = false;
-      state.error = true;
-      state.usernameAvailability = false;
-      state.isSuccess = false;
-    });
-  },
-});
 
 //Thunk to generate username
 export const generateUsername = createAsyncThunk<
@@ -443,6 +409,7 @@ export const recruiterLogin = createAsyncThunk<
 >("recruiter/login", async (credentials, { rejectWithValue }) => {
   try {
     const response = await recruiterApi.post("/login", credentials);
+
     return {
       success: true,
       data: response.data,
@@ -467,6 +434,7 @@ interface recruiterLogin {
   isSuccess: boolean;
   isAuthenticated: boolean;
   postLoginResponse: LoginResponse | string;
+  username: string;
 }
 
 const initialRecruiterLogin: recruiterLogin = {
@@ -475,12 +443,17 @@ const initialRecruiterLogin: recruiterLogin = {
   isSuccess: false,
   isAuthenticated: false,
   postLoginResponse: initialLoginResponse,
+  username: "",
 };
 
 const recruiterLoginSlice = createSlice({
   name: "recruiterLoginSlice",
   initialState: initialRecruiterLogin,
-  reducers: {},
+  reducers: {
+    setUsername: (state, action: PayloadAction<string>) => {
+      state.username = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(recruiterLogin.pending, (state) => {
@@ -494,6 +467,7 @@ const recruiterLoginSlice = createSlice({
         state.isAuthenticated = true;
         state.isSuccess = true;
         state.postLoginResponse = action.payload.data;
+        state.username = action.payload.data.recruiter.username;
       })
       .addCase(recruiterLogin.rejected, (state, action) => {
         state.isLoading = false;
@@ -553,9 +527,6 @@ export const recruiterProfileSlice = createSlice({
   name: "recruiterProfileSlice",
   initialState: initialRecruiterState,
   reducers: {
-    resetProfile: (state) => {
-      state.recruiterData = initialRecruiterFormData;
-    },
     recruiterProfile: (state, action) => {
       state.recruiterData = action.payload.data;
     },
@@ -642,9 +613,6 @@ const deleteRecruiterSlice = createSlice({
   },
 });
 
-export const recruiterUsernameAvailabilityReducer =
-  recruiterUsernameAvailabilitySlice.reducer;
-
 export const { setUserName } = recruiterUsernameGeneratorSlice.actions;
 export const recruiterUsernameGeneratorReducer =
   recruiterUsernameGeneratorSlice.reducer;
@@ -652,9 +620,9 @@ export const recruiterUsernameGeneratorReducer =
 export const recruiter_registration_reducer =
   recruiterRegistrationSlice.reducer;
 
+export const { setUsername } = recruiterLoginSlice.actions;
 export const recruiter_login_reducer = recruiterLoginSlice.reducer;
 
-export const { resetProfile } = recruiterProfileSlice.actions;
 export const get_recruiter_profile = recruiterProfileSlice.reducer;
 
 export const delete_recruiter = deleteRecruiterSlice.reducer;

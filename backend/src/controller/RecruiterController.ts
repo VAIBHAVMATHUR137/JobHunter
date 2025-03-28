@@ -187,7 +187,7 @@ export const recruiterLogin = expressAsyncHandler(
       accessToken,
       refreshToken,
       recruiter: {
-        role: "recruiter",
+
         id: recruiter.id,
         photo: recruiter.photo,
         username: recruiter.username,

@@ -1,6 +1,6 @@
 import { ReactNode, useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { setUserName } from "@/Slice/RecruiterThunk";
+import { setUsername } from "@/Slice/RecruiterThunk";
 import { recruiterApi } from "@/API/recruiterApi";
 import { AuthContext } from "./CreateContext";
 
@@ -22,14 +22,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
-    const username = localStorage.getItem("username");
 
     if (token) {
       setAccessToken(token);
-
+      const username = localStorage.getItem("username");
       // If username exists in localStorage, update Redux store
       if (username) {
-        dispatch(setUserName(username));
+        dispatch(setUsername(username));
+        console.log("Username is " + username);
       }
     }
   }, [dispatch]);
@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       localStorage.setItem("username", response.data.recruiter.username);
       localStorage.setItem("photo", response.data.recruiter.photo);
       // Update Redux store with username
-      dispatch(setUserName(response.data.recruiter.username));
+      dispatch(setUsername(response.data.recruiter.username));
     }
     return response;
   };

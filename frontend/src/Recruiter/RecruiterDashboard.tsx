@@ -1,7 +1,11 @@
 import type React from "react";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { delete_recruiter, deleteRecruiter, fetchRecruiterDetails } from "@/Slice/RecruiterThunk";
+import {
+  deleteRecruiter,
+  fetchRecruiterDetails,
+
+} from "@/Slice/RecruiterThunk";
 import {
   Card,
   CardContent,
@@ -9,6 +13,8 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
+
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -33,8 +39,14 @@ const RecruiterDashboard: React.FC = () => {
   const { isLoading, error, recruiterData } = useSelector(
     (state: RootState) => state.recruiter_profile
   );
+  const username: string = useSelector(
+    (state: RootState) => state.recruiterLoginThunk.username
+  );
 
   console.log("Full recruiter state: ", recruiterData);
+
+  console.log(username)
+
 
   const tabMenu = ["Education", "Experience", "Certificate", "Internship"];
 
@@ -114,14 +126,13 @@ const RecruiterDashboard: React.FC = () => {
     year_of_conclusion: string;
   }
   const handleDelete = () => {
-
-  }
-  const logout = () => {
-
-  }
+    dispatch(deleteRecruiter(username));
+  };
+  const logout = () => {};
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
       <Navbar />
+
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         <header className="mb-12">
           <div className="text-center space-y-2">
@@ -207,11 +218,12 @@ const RecruiterDashboard: React.FC = () => {
                 </div>
               </div>
             </CardContent>
-            <Button className="m-9" onClick={logout}>Delete Profile</Button>
+            <Button className="m-9" onClick={handleDelete}>
+              Delete Profile
+            </Button>
             <div>
-              <Button onClick={handleDelete}>Logout</Button>
+              <Button onClick={logout}>Logout</Button>
             </div>
-
           </Card>
 
           {/* Skills Card */}
