@@ -60,8 +60,7 @@ export const createUniqueUserName = <
         });
 
         res.status(201).json({
-          message: "Username created successfully",
-          user,
+          message: "Username created successfully"
         });
       } catch (error) {
         if (!res.statusCode || res.statusCode === 200) {

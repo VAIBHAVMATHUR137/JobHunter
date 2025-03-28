@@ -215,13 +215,13 @@ export const checkUsernameAvailability = createAsyncThunk(
 
 //Thunk to generate username
 export const generateUsername = createAsyncThunk<
-  { success: boolean; username?: string },
+  { success: boolean },
   UsernameRequest,
   { rejectValue: ErrorResponse }
 >("recruiter/checkUsername", async (data, { rejectWithValue }) => {
   try {
     const response = await recruiterApi.post("/username/create", data);
-    return { success: response.status === 201, username: data.username };
+    return { success: response.status === 201 };
   } catch (error) {
     if (axios.isAxiosError(error)) {
       let status: number;
@@ -247,22 +247,16 @@ interface usernameGenerator {
   isLoading: boolean;
   error: string | null;
   isSuccess: boolean;
-  username: string;
 }
 const initialUsernameGeneratorState: usernameGenerator = {
   isLoading: false,
   error: null,
   isSuccess: false,
-  username: "",
 };
 const recruiterUsernameGeneratorSlice = createSlice({
   name: "recruiterUsernameRegistrationSlice",
   initialState: initialUsernameGeneratorState,
-  reducers: {
-    setUserName: (state, action: PayloadAction<string>) => {
-      state.username = action.payload;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(generateUsername.pending, (state) => {
@@ -270,11 +264,10 @@ const recruiterUsernameGeneratorSlice = createSlice({
         state.error = null;
         state.isSuccess = false;
       })
-      .addCase(generateUsername.fulfilled, (state, action) => {
+      .addCase(generateUsername.fulfilled, (state) => {
         state.isLoading = false;
         state.error = null;
         state.isSuccess = true;
-        state.username = (action.payload?.username as string) || "";
       })
       .addCase(generateUsername.rejected, (state, action) => {
         state.isLoading = false;
@@ -613,7 +606,6 @@ const deleteRecruiterSlice = createSlice({
   },
 });
 
-export const { setUserName } = recruiterUsernameGeneratorSlice.actions;
 export const recruiterUsernameGeneratorReducer =
   recruiterUsernameGeneratorSlice.reducer;
 
