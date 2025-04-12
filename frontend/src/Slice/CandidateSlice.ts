@@ -1,136 +1,168 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-//non-primitive type declaration for skills achieved by the candidate
-type candidateSkills = {
-  skillOne: string;
-  skillTwo: string;
-  skillThree: string;
-  skillFour: string;
-  skillFive: string;
+// Define types for School Education
+interface SchoolEducation {
+  school_name: string;
+  percentage_obtained: string;
+  year_of_passing: string;
+  school_board: string;
+}
+const initialSchoolEducation: SchoolEducation = {
+  school_name: "",
+  percentage_obtained: "",
+  year_of_passing: "",
+  school_board: "",
 };
-
-//non-primitive type declaration for preferred location of job by candidate
-type candidatePreferredLocation = {
-  firstPreferrence: string;
-  secondPreferrence: string;
-  thirdPreferrence: string;
-};
-
-//non-primitive type declaration for preferred skills required for a job
-type skillsRequired = {
-  skillRequiredOne: string;
-  skillRequiredTwo: string;
-  skillRequiredThree: string;
-  skillRequiredFour: string;
-  skillRequiredFive: string;
-};
-
-//Common login interface declaration for both candidate and recruiter
+//Male or female
+type Gender = "male" | "female" | "transgender";
+const initialGender: Gender = "male";
+//Common login interface declaration for both candidate and candidate
 interface loginFormState {
   username: string;
   password: string;
 }
+const initialLoginState: loginFormState = {
+  username: "",
+  password: "",
+};
+//College Education
+interface CollegeEducation {
+  programme_name: string;
+  specialization: string;
+  college_name: string;
+  university_name: string;
+  cgpa: string;
+  duration: string;
+  year_of_commencement: string;
+  year_of_conclusion: string;
+}
+
+const initialCollegeEducation: CollegeEducation = {
+  programme_name: "",
+  specialization: "",
+  college_name: "",
+  university_name: "",
+  cgpa: "",
+  duration: "",
+  year_of_commencement: "",
+  year_of_conclusion: "",
+};
+
+//Internship Experience
+interface InternshipExperience {
+  date_of_commencement: string;
+  date_of_conclusion: string;
+  company: string;
+  duration: string;
+  roles_and_responsibilities: string;
+  stipend: string;
+}
+
+const initialInternship: InternshipExperience = {
+  date_of_commencement: "",
+  date_of_conclusion: "",
+  company: "",
+  duration: "",
+  roles_and_responsibilities: "",
+  stipend: "",
+};
+
+//Job Experience
+interface JobExperience {
+  company: string;
+  designation: string;
+  date_of_commencement: string;
+  date_of_resignation: string;
+  duration_of_service: string;
+  job_description: string;
+  annual_ctc: string;
+}
+const initial_job_experience: JobExperience = {
+  company: "",
+  designation: "",
+  date_of_commencement: "",
+  date_of_resignation: "",
+  duration_of_service: "",
+  job_description: "",
+  annual_ctc: "",
+};
+//Certificate
+interface CertificateCourse {
+  platform_name: string;
+  mentor_name: string;
+  title_of_course: string;
+  learning_description: string;
+  date_of_commencement: string;
+  date_of_conclusion: string;
+}
+const initialCertificateState: CertificateCourse = {
+  platform_name: "",
+  mentor_name: "",
+  title_of_course: "",
+  learning_description: "",
+  date_of_commencement: "",
+  date_of_conclusion: "",
+};
+//Current Job
+interface CurrentJob {
+  company: string;
+  job_description: string;
+  date_of_commencement: string;
+  current_role: string;
+  years_of_experience: string;
+  current_location: string;
+}
+const initialCurrentJob: CurrentJob = {
+  company: "",
+  job_description: "",
+  date_of_commencement: "",
+  current_role: "",
+  years_of_experience: "",
+  current_location: "",
+};
 
 //interface for first time registration/signin by the candidate
 interface candidateAuthentication {
   firstName: string;
   lastName: string;
-  email: string;
+  title: string;
+  one_liner_intro: string;
   number: string;
-  password: string;
-  current_location: string;
-  degree: string;
-  skills: candidateSkills;
-  college_name: string;
-  college_tier: string;
-  preferred_location: candidatePreferredLocation;
-  notice_period: string;
-  years_of_experience: string;
-  github: string;
-  xProfile?: string;
-  linkedin: string;
-  portfolio?: string;
-  photo: string;
-  resume: string;
+  email: string;
   username: string;
+  password: string;
+  gender: Gender;
+  introduction: string;
+  photo: string;
+  tenth_standard_education: SchoolEducation;
+  twelth_standard_education: SchoolEducation;
+  college_education: CollegeEducation[];
+  internship_experience: InternshipExperience[];
+  work_experience: JobExperience[];
+  core_skills: string[];
+  certificate_courses: CertificateCourse[];
+  current_job: CurrentJob;
 }
-
-//interface for the job posting form
-interface jobPosting {
-  job_role: string;
-  CTC: number;
-  experience_required: string;
-  years_of_experience_required: number;
-  degree_required: string;
-  bond: string;
-  job_location: string;
-  company: string;
-  skills_required: skillsRequired;
-  recruiterId: string;
-  recruiter_email: string;
-}
-const initialSkillsForJob: skillsRequired = {
-  skillRequiredOne: "",
-  skillRequiredTwo: "",
-  skillRequiredThree: "",
-  skillRequiredFour: "",
-  skillRequiredFive: "",
-};
-const initialJobPosting: jobPosting = {
-  job_role: "",
-  CTC: 0,
-  experience_required: "",
-  years_of_experience_required: 0,
-  degree_required: "",
-  bond: "",
-  job_location: "",
-  company: "",
-  skills_required: initialSkillsForJob,
-  recruiterId: "",
-  recruiter_email: "",
-};
-//initial skills of candidate
-const initialSkills: candidateSkills = {
-  skillOne: "",
-  skillTwo: "",
-  skillThree: "",
-  skillFour: "",
-  skillFive: "",
-};
-//initial preferred location by the candidate
-const initialPreferredLocations: candidatePreferredLocation = {
-  firstPreferrence: "",
-  secondPreferrence: "",
-  thirdPreferrence: "",
-};
-//initial state of candidate during login
-const initialCandidateLoginState: loginFormState = {
-  username: "",
-  password: "",
-};
-
-//initial state of candidate during first time registration
 const initialCandidateRegisterState: candidateAuthentication = {
   firstName: "",
   lastName: "",
-  email: "",
+  title: "",
+  one_liner_intro: "",
   number: "",
-  password: "",
-  current_location: "",
-  degree: "",
-  skills: initialSkills,
-  college_name: "",
-  college_tier: "",
-  preferred_location: initialPreferredLocations,
-  notice_period: "",
-  years_of_experience: "",
-  github: "",
-  xProfile: "",
-  linkedin: "",
-  portfolio: "",
-  photo: "",
-  resume: "",
+  email: "",
   username: "",
+  password: "",
+  gender: initialGender,
+  introduction: "",
+  photo: "",
+  tenth_standard_education: initialSchoolEducation,
+  twelth_standard_education: initialSchoolEducation,
+  college_education: [initialCollegeEducation],
+  internship_experience: [initialInternship],
+  work_experience: [initial_job_experience],
+  core_skills: [],
+  certificate_courses: [initialCertificateState],
+  current_job: initialCurrentJob,
 };
 
 //common reducer to update the field
@@ -139,7 +171,10 @@ const loginUpdateField = <T extends keyof loginFormState>(
   action: PayloadAction<{ field: T; value: loginFormState[T] }>
 ) => {
   const { field, value } = action.payload;
-  state[field] = value;
+  return {
+    ...state,
+    [field]: value,
+  };
 };
 
 //common reducer to reset the field
@@ -147,10 +182,11 @@ const loginResetField = <T extends keyof loginFormState>(
   state: loginFormState,
   action: PayloadAction<{ field: T; value: loginFormState[T] }>
 ) => {
-  const { field } = action.payload;
-  state[field] = "";
+  return {
+    ...state,
+    [action.payload.field]: initialLoginState[action.payload.field],
+  };
 };
-
 //Update the candidate registration field
 const candidateRegistrationUpdateField = <
   T extends keyof candidateAuthentication
@@ -159,77 +195,47 @@ const candidateRegistrationUpdateField = <
   action: PayloadAction<{ field: T; value: candidateAuthentication[T] }>
 ) => {
   const { field, value } = action.payload;
-  state[field] = value;
+  return {
+    ...state,
+    [field]: value,
+  };
 };
-
-// RESET field: Handle both string and object types correctly
-const candidateRegistrationResetField = <
+//RESET the candidate registration field
+const candidateRegistartionResetField = <
   T extends keyof candidateAuthentication
 >(
   state: candidateAuthentication,
-  action: PayloadAction<{ field: T; value: candidateAuthentication[T] }>
+  action: PayloadAction<{ field: T }>
 ) => {
- 
-    state[action.payload.field]=initialCandidateRegisterState[action.payload.field]
+  return {
+    ...state,
+    [action.payload.field]: initialCandidateRegisterState[action.payload.field],
+  };
 };
-
-//Common reducer to update the job posting field
-const jobPostingUpdateField = <T extends keyof jobPosting>(
-  state: jobPosting,
-  action: PayloadAction<{ field: T; value: jobPosting[T] }>
-) => {
-  const { field, value } = action.payload;
-  state[field] = value;
-};
-
-//Common reducer to reset the job posting field
-const jobPostingResetField = <T extends keyof jobPosting>(
-  state: jobPosting,
-  action: PayloadAction<{ field: T; value: jobPosting[T] }>
-) => {
-state[action.payload.field]=initialJobPosting[action.payload.field]
-};
-//Seperate slice for candidate to Login
+//seperate slice for candidate to Login
 const candidateLoginSlice = createSlice({
-  name: "candidateLoginSlice",
-  initialState: initialCandidateLoginState,
+  name: "candidateLoginState",
+  initialState: initialLoginState,
   reducers: {
     candidateLoginUpdateField: loginUpdateField,
     candidateLoginResetField: loginResetField,
   },
 });
-
-//seperate slice for candidate to Register first time
+//Seperate slice for Candidate to Register first time
 const candidateRegistrationSlice = createSlice({
   name: "candidateRegistrationSlice",
   initialState: initialCandidateRegisterState,
   reducers: {
-    candidateRegistartionUpdate: candidateRegistrationUpdateField,
-    candidateRegistartionReset: candidateRegistrationResetField,
+    candidateRegistrationUpdate: candidateRegistrationUpdateField,
+    candidateRegistrationReset: candidateRegistartionResetField,
   },
 });
 
-//Slice for posting a job by the recruiter
-const jobpostingSlice = createSlice({
-  name: "jobPostingSlice",
-  initialState: initialJobPosting,
-  reducers: {
-    jobPostingUpdate: jobPostingUpdateField,
-    jobPostingReset: jobPostingResetField,
-  },
-});
 //Actions for candidate login fields
 export const { candidateLoginUpdateField, candidateLoginResetField } =
   candidateLoginSlice.actions;
-
 //Actions for candidate registration fields
-export const { candidateRegistartionReset, candidateRegistartionUpdate } =
+export const { candidateRegistrationReset, candidateRegistrationUpdate } =
   candidateRegistrationSlice.actions;
-
-//Actions for job posting field
-export const { jobPostingUpdate, jobPostingReset } = jobpostingSlice.actions;
 export const candidateLoginReducer = candidateLoginSlice.reducer;
-
 export const candidateRegistrationReducer = candidateRegistrationSlice.reducer;
-
-export const jobPostingReducer = jobpostingSlice.reducer;
