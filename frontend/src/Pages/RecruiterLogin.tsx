@@ -64,7 +64,7 @@ function RecruiterLogin() {
         formData.password
       );
       
-      if (response.status === 200) {
+      if (response) {
         setShowAlert(true);
         setTitle("Welcome Recruiter");
         setMessage("Successfully logged in");
@@ -77,7 +77,7 @@ function RecruiterLogin() {
 
         // Navigate to dashboard with username
         setTimeout(() => 
-          nav(`/RecruiterDashboard/${response.data.recruiter.username}`), 
+          nav(`/RecruiterDashboard/${response.recruiter.username}`), 
           1500
         );
       }

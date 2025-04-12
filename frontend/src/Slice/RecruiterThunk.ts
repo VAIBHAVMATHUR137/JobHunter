@@ -508,6 +508,7 @@ interface fetchRecruiter {
   isSuccess: boolean;
   recruiterData: RecruiterFormData;
   username: string;
+
 }
 const initialRecruiterState: fetchRecruiter = {
   error: null,
@@ -515,15 +516,12 @@ const initialRecruiterState: fetchRecruiter = {
   isSuccess: false,
   recruiterData: initialRecruiterFormData,
   username: "",
+  
 };
 export const recruiterProfileSlice = createSlice({
   name: "recruiterProfileSlice",
   initialState: initialRecruiterState,
-  reducers: {
-    recruiterProfile: (state, action) => {
-      state.recruiterData = action.payload.data;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchRecruiterDetails.pending, (state) => {
@@ -539,8 +537,7 @@ export const recruiterProfileSlice = createSlice({
       })
       .addCase(fetchRecruiterDetails.rejected, (state, action) => {
         state.isLoading = false;
-        state.error =
-          action.payload?.message || "Failed to fetch recruiter details";
+        state.error =action.payload?.message || "Failed to fetch recruiter details";
         state.isSuccess = false;
         state.recruiterData = initialRecruiterFormData;
         state.username = "";
@@ -571,47 +568,14 @@ export const deleteRecruiter = createAsyncThunk<
     status: 500,
   });
 });
-interface deleteRecruiter {
-  isPending: boolean;
-  isSuccess: boolean;
-  error: string | null;
-}
-const initialDeleteRecruiterState: deleteRecruiter = {
-  isPending: false,
-  isSuccess: false,
-  error: null,
-};
-const deleteRecruiterSlice = createSlice({
-  name: "deleteRecruiterSlice",
-  initialState: initialDeleteRecruiterState,
-  reducers: {},
-  extraReducers: (builder) => {
-    builder
-      .addCase(deleteRecruiter.pending, (state) => {
-        state.isPending = true;
-        state.error = null;
-      })
-      .addCase(deleteRecruiter.fulfilled, (state) => {
-        state.isPending = false;
-        state.error = null;
-        state.isSuccess = true;
-      })
-      .addCase(deleteRecruiter.rejected, (state, action) => {
-        state.isPending = false;
-        state.isSuccess = false;
-        state.error =
-          action.payload?.message ||
-          "Cannot delete recruiter due to technical issues";
-      });
-  },
-});
+
 export const recruiterLogout = createAsyncThunk<
   boolean,
   string,
   { rejectValue: ErrorResponse }
 >("recruiter/logout", async (username: string, { rejectWithValue }) => {
   try {
-    const response = await recruiterApi.post("/logout", {username});
+    const response = await recruiterApi.post("/logout", { username });
     if (response.status === 200) {
       console.log("Logout successful");
       return response.data.message;
@@ -636,4 +600,3 @@ export const recruiter_login_reducer = recruiterLoginSlice.reducer;
 
 export const get_recruiter_profile = recruiterProfileSlice.reducer;
 
-export const delete_recruiter = deleteRecruiterSlice.reducer;
