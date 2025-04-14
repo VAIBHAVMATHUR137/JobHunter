@@ -1,6 +1,6 @@
 import axios from "axios";
-export const recruiterApi = axios.create({
-  baseURL: "http://localhost:5000/recruiter"
+export const candidateApi = axios.create({
+  baseURL: "http://localhost:5000/candidate",
 });
 
 // Function to decode the token and extract expiration time
@@ -17,7 +17,7 @@ const getTokenExpirationTime = (token: string): number | null => {
 
 // Function to schedule token refresh
 const scheduleTokenRefresh = () => {
-  console.log("schedule token refresh working.....")
+  console.log("schedule token refresh working...");
   const accessToken = localStorage.getItem("accessToken");
   const refreshToken = localStorage.getItem("refreshToken");
 
@@ -28,24 +28,24 @@ const scheduleTokenRefresh = () => {
 
   if (expirationTime) {
     const timeLeft = expirationTime - currentTime;
-    console.log("Time left is "+ timeLeft)
+    console.log("Time left is " + timeLeft);
 
     // Schedule a refresh slightly before the token expires (30 seconds before expiry)
-    const refreshTime = Math.max(timeLeft - 30000, 0); 
-
+    const refreshTime = Math.max(timeLeft - 30000, 0);
+    console.log("Refresh time is " + refreshTime);
     if (refreshTime > 0) {
       setTimeout(async () => {
         try {
-          const response = await recruiterApi.post(
-            `/refresh-token`,
-            { refreshToken }
-          );
+          const response = await candidateApi.post(`/refresh-token`, {
+            refreshToken,
+          });
 
-          const { accessToken: newAccessToken, refreshToken: newRefreshToken } = response.data;
+          const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
+            response.data;
           console.log({
-            "New Access Token":newAccessToken,
-            "New Refresh Token":newRefreshToken
-          })
+            "New Access Token": newAccessToken,
+            "New Refresh Token": newRefreshToken,
+          });
           // Store the new tokens
           localStorage.setItem("accessToken", newAccessToken);
           localStorage.setItem("refreshToken", newRefreshToken);
@@ -55,14 +55,14 @@ const scheduleTokenRefresh = () => {
         } catch (error) {
           console.error("Failed to refresh token:", error);
           clearAuthData();
-          window.location.href = "/RecruiterLogin";
+          window.location.href = "/CandidateLogin";
         }
       }, refreshTime);
     } else {
       // Token is already expired or about to expire, refresh immediately
       refreshTokenAsync(refreshToken).catch(() => {
         clearAuthData();
-        window.location.href = "/RecruiterLogin";
+        window.location.href = "/CandidateLogin";
       });
     }
   }
@@ -70,7 +70,7 @@ const scheduleTokenRefresh = () => {
 
 // Helper function to clear auth data
 const clearAuthData = () => {
-  console.log("Clear Auth data working.....")
+  console.log("Clear Auth data working.....");
   localStorage.removeItem("accessToken");
   localStorage.removeItem("refreshToken");
   localStorage.removeItem("username");
@@ -79,21 +79,18 @@ const clearAuthData = () => {
 
 // Function to refresh token asynchronously
 const refreshTokenAsync = async (refreshToken: string) => {
-  console.log("Starting function refreshTokenAsync....")
-  const response = await recruiterApi.post(
-    "/refresh-token",
-    { refreshToken }
-  );
-  
+  console.log("Starting function refreshTokenAsync....");
+  const response = await candidateApi.post("/refresh-token", { refreshToken });
+
   const { accessToken, refreshToken: newRefreshToken } = response.data;
   console.log({
-    "new access token":accessToken,
-    "new refresh token":newRefreshToken
-  })
-  
+    "new access token": accessToken,
+    "new refresh token": newRefreshToken,
+  });
+
   localStorage.setItem("accessToken", accessToken);
   localStorage.setItem("refreshToken", newRefreshToken);
-  
+
   return { accessToken, refreshToken: newRefreshToken };
 };
 
@@ -101,7 +98,7 @@ const refreshTokenAsync = async (refreshToken: string) => {
 scheduleTokenRefresh();
 
 // Axios Request Interceptor
-recruiterApi.interceptors.request.use(
+candidateApi.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("accessToken");
     if (token) {
@@ -113,7 +110,7 @@ recruiterApi.interceptors.request.use(
 );
 
 // Axios Response Interceptor
-recruiterApi.interceptors.response.use(
+candidateApi.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
@@ -135,7 +132,7 @@ recruiterApi.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
 
         // Retry the original request
-        return recruiterApi(originalRequest);
+        return candidateApi(originalRequest);
       } catch (refreshError) {
         clearAuthData();
         window.location.href = "/RecruiterLogin";
@@ -146,4 +143,3 @@ recruiterApi.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
