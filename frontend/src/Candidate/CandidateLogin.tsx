@@ -2,9 +2,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../Slice/Store";
 import { ChangeEvent, FormEvent, useState, useEffect } from "react";
 import {
-  recruiterLoginUpdateField,
-  recruiterLoginResetField,
-} from "../Slice/RecruiterStateSlice";
+  candidateLoginUpdateField,
+  candidateLoginResetField,
+} from "../Slice/CandidateSlice";
 import { AlertDialogDemo } from "@/components/ui/AlertDialogDemo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,12 +22,12 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 import { useContext } from "react";
-import { AuthContext } from "@/context/CreateContext";
+import { RecruiterAuthContext } from "@/context/CreateContext";
 
 const formFields = ["username", "password"] as const;
 type FieldName = (typeof formFields)[number];
 
-function RecruiterLogin() {
+function CandidateLogin() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [title, setTitle] = useState<string>("");
@@ -37,10 +37,10 @@ function RecruiterLogin() {
 
   const formData = useSelector((state: RootState) => state.recruiterLogin);
   const dispatch = useDispatch<AppDispatch>();
-  const auth = useContext(AuthContext);
+  const auth = useContext(RecruiterAuthContext);
 
   if (!auth) {
-    throw new Error("RecruiterLogin must be used within an AuthProvider");
+    throw new Error("CandidateLogin must be used within an AuthProvider");
   }
 
   useEffect(() => {
@@ -52,7 +52,7 @@ function RecruiterLogin() {
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    dispatch(recruiterLoginUpdateField({ field: name as FieldName, value }));
+    dispatch(candidateLoginUpdateField({ field: name as FieldName, value }));
   };
 
   const handleSubmit = async (event: FormEvent) => {
@@ -72,7 +72,7 @@ function RecruiterLogin() {
 
         // Reset form fields
         formFields.forEach((field) => {
-          dispatch(recruiterLoginResetField({ field, value: "" }));
+          dispatch(candidateLoginResetField({ field, value: "" }));
         });
 
         // Navigate to dashboard with username
@@ -127,7 +127,7 @@ function RecruiterLogin() {
       <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
         <Card className="w-full max-w-md shadow-lg">
           <CardHeader>
-            <CardTitle className="text-center">Recruiter Login</CardTitle>
+            <CardTitle className="text-center">Candidate Login</CardTitle>
             <CardDescription className="text-center">
               Enter your credentials
             </CardDescription>
@@ -174,4 +174,4 @@ function RecruiterLogin() {
   );
 }
 
-export default RecruiterLogin;
+export default CandidateLogin;

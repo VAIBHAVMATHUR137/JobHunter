@@ -578,6 +578,7 @@ export const recruiterLogout = createAsyncThunk<
     const response = await recruiterApi.post("/logout", { username });
     if (response.status === 200) {
       console.log("Logout successful");
+
       return response.data.message;
     }
   } catch (error) {

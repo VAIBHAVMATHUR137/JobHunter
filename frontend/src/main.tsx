@@ -7,15 +7,15 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./Pages/Home";
 import Error from "./Pages/Error";
 import RecruiterConventionalEducation from "./Recruiter/RecruiterConventionalEducation";
-// import CandidateLogin from "./Pages/CandidateLogin";
+import CandidateLogin from "./Candidate/CandidateLogin";
 
-import RecruiterLogin from "./Pages/RecruiterLogin";
+import RecruiterLogin from "./Recruiter/RecruiterLogin";
 
 import CommonAuthentication from "./Pages/CommonAuthentication";
 
 import RecruiterDashboard from "./Recruiter/RecruiterDashboard";
-import JobPosting from "./Pages/JobPosting";
-import { AuthProvider } from "./context/Context";
+
+import { RecruiterAuthProvider } from "./context/RecruiterContext";
 import RecruiterSkillsAndExperience from "./Recruiter/RecruiterSkillsAndExperience";
 import RecruiterPresent from "./Recruiter/RecruiterPresent";
 const router = createBrowserRouter([
@@ -64,18 +64,19 @@ const router = createBrowserRouter([
     errorElement: <Error />,
   },
   {
-    path: "/JobPosting",
-    element: <JobPosting />,
-    errorElement: <Error />,
-  },
+    path:"/CandidateLogin",
+    element:<CandidateLogin/>,
+    errorElement:<Error/>
+  }
+
 ],
 
 );
 
 createRoot(document.getElementById("root")!).render(
   <Provider store={store}>
-    <AuthProvider>
+    <RecruiterAuthProvider>
       <RouterProvider router={router} />
-    </AuthProvider>
+    </RecruiterAuthProvider>
   </Provider>
 );

@@ -2,7 +2,6 @@ import { configureStore } from "@reduxjs/toolkit";
 import {
   candidateLoginReducer,
   candidateRegistrationReducer,
-  jobPostingReducer,
 } from "./CandidateSlice";
 import {
   recruiterLoginReducer,
@@ -11,7 +10,7 @@ import {
 import {
   recruiterUsernameGeneratorReducer,
   get_recruiter_profile,
-  recruiter_login_reducer
+  recruiter_login_reducer,
 } from "./RecruiterThunk";
 
 const store = configureStore({
@@ -20,10 +19,9 @@ const store = configureStore({
     recruiterLogin: recruiterLoginReducer,
     candidateRegister: candidateRegistrationReducer,
     recruiterRegister: recruiterRegistrationReducer,
-    jobPosting: jobPostingReducer,
     recruiterUsernameGenerator: recruiterUsernameGeneratorReducer,
     recruiter_profile: get_recruiter_profile,
-    recruiterLoginThunk:recruiter_login_reducer
+    recruiterLoginThunk: recruiter_login_reducer,
   },
 });
 

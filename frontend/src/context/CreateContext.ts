@@ -1,6 +1,6 @@
 import { createContext } from "react";
 
-interface LoginResponse {
+interface RecruiterLoginResponse {
   accessToken: string;
   refreshToken: string;
   recruiter: {
@@ -10,18 +10,41 @@ interface LoginResponse {
   };
 }
 
-// Changed the return type to be more flexible
-interface AuthContextType {
+interface CandidateLoginResponse {
+  accessToken: string;
+  refreshToken: string;
+  candidate: {
+    id: string;
+    photo: string;
+    username: string;
+  };
+}
+
+interface RecruiterAuthContextType {
   accessToken: string | null;
   setAccessToken: (token: string | null) => void;
   recruiterLoginHandler: (
     username: string,
     password: string
-  ) => Promise<LoginResponse>;
+  ) => Promise<RecruiterLoginResponse>;
   isAuthenticated: boolean;
   logout: () => void;
 }
 
-export const AuthContext = createContext<AuthContextType | undefined>(
-  undefined
-);
+interface CandidateAuthContextType {
+  accessToken: string | null;
+  setAccessToken: (token: string | null) => void;
+  candidateLoginHandler: (
+    username: string,
+    password: string
+  ) => Promise<CandidateLoginResponse>;
+  isAuthenticated: boolean;
+  logout: () => void;
+}
+export const RecruiterAuthContext = createContext<
+  RecruiterAuthContextType | undefined
+>(undefined);
+
+export const CandidateAuthContext = createContext<
+  CandidateAuthContextType | undefined
+>(undefined);

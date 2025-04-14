@@ -1,10 +1,10 @@
 import { ReactNode, useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { setUsername, recruiterLogin } from "@/Slice/RecruiterThunk";
-import { AuthContext } from "./CreateContext";
+import { RecruiterAuthContext } from "./CreateContext";
 import { AppDispatch } from "@/Slice/Store";
 
-interface LoginResponse {
+interface RecruiterLoginResponse {
   accessToken: string;
   refreshToken: string;
   recruiter: {
@@ -14,7 +14,8 @@ interface LoginResponse {
   };
 }
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
+
+export const RecruiterAuthProvider = ({ children }: { children: ReactNode }) => {
   const [accessToken, setAccessToken] = useState<string | null>(
     localStorage.getItem("accessToken")
   );
@@ -34,11 +35,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [dispatch]);
 
-  const recruiterLoginHandler = async (username: string, password: string): Promise<LoginResponse> => {
+  const recruiterLoginHandler = async (
+    username: string,
+    password: string
+  ): Promise<RecruiterLoginResponse> => {
     try {
+      const response = await dispatch(
+        recruiterLogin({ username, password })
+      ).unwrap();
 
-      const response = await dispatch(recruiterLogin({ username, password })).unwrap();
-      
       // If login successful, handle token storage
       if (response.success) {
         const loginData = response.data;
@@ -47,10 +52,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         localStorage.setItem("refreshToken", loginData.refreshToken);
         localStorage.setItem("username", loginData.recruiter.username);
         localStorage.setItem("photo", loginData.recruiter.photo);
-        
+
         // Update Redux store with username
         dispatch(setUsername(loginData.recruiter.username));
-        
+
         return loginData;
       } else {
         throw new Error("Login failed");
@@ -72,7 +77,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const isAuthenticated = !!accessToken;
 
   return (
-    <AuthContext.Provider
+    <RecruiterAuthContext.Provider
       value={{
         accessToken,
         setAccessToken,
@@ -82,8 +87,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }}
     >
       {children}
-    </AuthContext.Provider>
+    </RecruiterAuthContext.Provider>
   );
 };
 
-export default AuthProvider;
+export default RecruiterAuthProvider;

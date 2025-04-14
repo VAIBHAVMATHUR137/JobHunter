@@ -1,11 +1,10 @@
 import type React from "react";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   deleteRecruiter,
   fetchRecruiterDetails,
   recruiterLogout,
-
 } from "@/Slice/RecruiterThunk";
 import {
   Card,
@@ -14,8 +13,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-
-
+import { RecruiterAuthContext } from "@/context/CreateContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -33,8 +31,11 @@ import {
 import Navbar from "@/components/ui/navbar";
 
 import type { AppDispatch } from "@/Slice/Store";
+import { useNavigate } from "react-router-dom";
+
 const RecruiterDashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const nav=useNavigate()
 
   // Updated selector to match the new state structure in RecruiterThunk.ts
   const { isLoading, error, recruiterData } = useSelector(
@@ -46,10 +47,18 @@ const RecruiterDashboard: React.FC = () => {
 
   console.log("Full recruiter state: ", recruiterData);
 
-  console.log(username)
+  console.log(username);
 
 
   const tabMenu = ["Education", "Experience", "Certificate", "Internship"];
+  const authContext = useContext(RecruiterAuthContext);
+  
+  // Check if context exists before destructuring
+  if (!authContext) {
+    throw new Error("RecruiterAuthContext must be used within a RecruiterAuthProvider");
+  }
+  
+  const { logout } = authContext;
 
   useEffect(() => {
     const username = localStorage.getItem("username");
@@ -129,8 +138,13 @@ const RecruiterDashboard: React.FC = () => {
   const handleDelete = () => {
     dispatch(deleteRecruiter(username));
   };
-  const logout = () => {
-    dispatch(recruiterLogout(username))
+  const userLogout = () => {
+    dispatch(recruiterLogout(username));
+    logout()
+    setTimeout(()=>{
+      nav("/")
+    },1500)
+
   };
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
@@ -225,7 +239,7 @@ const RecruiterDashboard: React.FC = () => {
               Delete Profile
             </Button>
             <div>
-              <Button onClick={logout}>Logout</Button>
+              <Button onClick={userLogout}>Logout</Button>
             </div>
           </Card>
 
