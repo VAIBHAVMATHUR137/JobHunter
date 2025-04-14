@@ -24,14 +24,14 @@ import CandidateUserName from "../schema/CandidateUserNameSchema";
 
 const router = express.Router();
 
-router.get("/getCandidate/:username", fetchIndividualCandidate);
+router.get("/fetch/:username", fetchIndividualCandidate);
 router.post(
-  "/createCandidate",
+  "/create",
   createCandidate,
   candidateValidationRules,
   validateCandidate
 );
-router.delete("/deleteCandidate/:username", deleteCandidate);
+router.delete("/delete/:username", deleteCandidate);
 router.post(
   "/login",
   candidateLogin,

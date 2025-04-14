@@ -18,6 +18,7 @@ import RecruiterDashboard from "./Recruiter/RecruiterDashboard";
 import { RecruiterAuthProvider } from "./context/RecruiterContext";
 import RecruiterSkillsAndExperience from "./Recruiter/RecruiterSkillsAndExperience";
 import RecruiterPresent from "./Recruiter/RecruiterPresent";
+import CandidateAuthProvider from "./context/CandidateContext";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -25,32 +26,31 @@ const router = createBrowserRouter([
     errorElement: <Error />,
   },
   {
-    path:"/RecruiterPersonalInformation",
-    element:<RecruiterPersonalInformation />,
-    errorElement:<Error/>
+    path: "/RecruiterPersonalInformation",
+    element: <RecruiterPersonalInformation />,
+    errorElement: <Error />,
   },
   {
-    path:"/RecruiterConventionalEducation",
-    element:<RecruiterConventionalEducation/>,
-    errorElement:<Error/>
+    path: "/RecruiterConventionalEducation",
+    element: <RecruiterConventionalEducation />,
+    errorElement: <Error />,
   },
   {
-    path:"/RecruiterSkillsAndExperience",
-    element:<RecruiterSkillsAndExperience/>,
-    errorElement:<Error/>
+    path: "/RecruiterSkillsAndExperience",
+    element: <RecruiterSkillsAndExperience />,
+    errorElement: <Error />,
   },
   {
-    path:"/RecruiterPresent",
-    element:<RecruiterPresent/>,
-    errorElement:<Error/>
+    path: "/RecruiterPresent",
+    element: <RecruiterPresent />,
+    errorElement: <Error />,
   },
- 
+
   {
     path: "/RecruiterLogin",
     element: <RecruiterLogin />,
     errorElement: <Error />,
   },
-  
 
   {
     path: "/CommonAuthentication",
@@ -64,19 +64,18 @@ const router = createBrowserRouter([
     errorElement: <Error />,
   },
   {
-    path:"/CandidateLogin",
-    element:<CandidateLogin/>,
-    errorElement:<Error/>
-  }
-
-],
-
-);
+    path: "/CandidateLogin",
+    element: <CandidateLogin />,
+    errorElement: <Error />,
+  },
+]);
 
 createRoot(document.getElementById("root")!).render(
   <Provider store={store}>
     <RecruiterAuthProvider>
-      <RouterProvider router={router} />
+      <CandidateAuthProvider>
+        <RouterProvider router={router} />
+      </CandidateAuthProvider>
     </RecruiterAuthProvider>
   </Provider>
 );

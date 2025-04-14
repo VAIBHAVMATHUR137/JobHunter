@@ -1,14 +1,14 @@
 import { createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
-import { recruiterApi } from "@/API/recruiterApi";
-import { recruiterRegistrationReset } from "./RecruiterStateSlice";
+import { candidateApi } from "@/API/candidateApi";
+import { candidateRegistrationReset } from "./CandidateStateSlice";
 import { createSlice } from "@reduxjs/toolkit";
 
 // Types
 interface LoginResponse {
   accessToken: string;
   refreshToken: string;
-  recruiter: {
+  candidate: {
     id: string;
     photo: string;
     username: string;
@@ -17,7 +17,7 @@ interface LoginResponse {
 const initialLoginResponse: LoginResponse = {
   accessToken: "",
   refreshToken: "",
-  recruiter: {
+  candidate: {
     id: "",
     photo: "",
     username: "",
@@ -137,7 +137,7 @@ const initialCurrentJob: CurrentJob = {
   current_location: "",
 };
 
-interface RecruiterFormData {
+interface CandidateFormData {
   firstName: string;
   lastName: string;
   title: string;
@@ -159,7 +159,7 @@ interface RecruiterFormData {
   current_job: CurrentJob;
 }
 
-const initialRecruiterFormData: RecruiterFormData = {
+const initialCandidateFormData: CandidateFormData = {
   firstName: "",
   lastName: "",
   title: "",
@@ -193,10 +193,10 @@ interface ErrorResponse {
 }
 //Thunk to check username in database
 export const checkUsernameAvailability = createAsyncThunk(
-  "recruiter/checkUsernameAvailability",
+  "candidate/checkUsernameAvailability",
   async (username: string, { rejectWithValue }) => {
     try {
-      const response = await recruiterApi.post("/username/check", {
+      const response = await candidateApi.post("/username/check", {
         username,
       });
       if (response.status === 200) {
@@ -218,9 +218,9 @@ export const generateUsername = createAsyncThunk<
   { success: boolean },
   UsernameRequest,
   { rejectValue: ErrorResponse }
->("recruiter/checkUsername", async (data, { rejectWithValue }) => {
+>("candidate/checkUsername", async (data, { rejectWithValue }) => {
   try {
-    const response = await recruiterApi.post("/username/create", data);
+    const response = await candidateApi.post("/username/create", data);
     return { success: response.status === 201 };
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -253,8 +253,8 @@ const initialUsernameGeneratorState: usernameGenerator = {
   error: null,
   isSuccess: false,
 };
-const recruiterUsernameGeneratorSlice = createSlice({
-  name: "recruiterUsernameRegistrationSlice",
+export const candidateUsernameGeneratorSlice = createSlice({
+  name: "candidaterUsernameRegistrationSlice",
   initialState: initialUsernameGeneratorState,
   reducers: {},
   extraReducers: (builder) => {
@@ -277,12 +277,12 @@ const recruiterUsernameGeneratorSlice = createSlice({
   },
 });
 
-//THUNK FOR RECRUITER REGISTRATION
-export const recruiterRegistration = createAsyncThunk<
+//THUNK FOR CANDIDATE REGISTRATION
+export const candidateRegistration = createAsyncThunk<
   { success: boolean },
-  RecruiterFormData,
+  CandidateFormData,
   { rejectValue: ErrorResponse }
->("recruiter/register", async (formData, { dispatch, rejectWithValue }) => {
+>("candidate/register", async (formData, { dispatch, rejectWithValue }) => {
   try {
     const usernameGenerate = await dispatch(
       generateUsername({
@@ -297,7 +297,7 @@ export const recruiterRegistration = createAsyncThunk<
       });
     }
     //username stage verified, proceed with registration
-    const response = await recruiterApi.post("/create", formData);
+    const response = await candidateApi.post("/create", formData);
     //registration successful
     if (response.status === 201) {
       //RESET form on successful registration
@@ -322,7 +322,7 @@ export const recruiterRegistration = createAsyncThunk<
         "current_job",
       ] as const;
       resetFields.forEach((field) => {
-        dispatch(recruiterRegistrationReset({ field }));
+        dispatch(candidateRegistrationReset({ field }));
       });
       return {
         success: true,
@@ -338,7 +338,7 @@ export const recruiterRegistration = createAsyncThunk<
       let message = "Unknown error occured";
       switch (status) {
         case 409:
-          message = "Recruiter with same email or cell number already exists";
+          message = "Candidate with same email or cell number already exists";
           break;
         case 400:
           message = "Invalid data provided, please check your data";
@@ -359,34 +359,34 @@ export const recruiterRegistration = createAsyncThunk<
   });
 });
 
-interface recruiterRegistration {
+interface candidateRegistration {
   isLoading: boolean;
   error: string | null;
   isSuccess: boolean;
 }
-const initialRecruiterRegistrationState: recruiterRegistration = {
+const initialCandidateRegistrationState: candidateRegistration = {
   isLoading: false,
   error: null,
   isSuccess: false,
 };
-//SLICE FOR RECRUITER REGISTRATION
-const recruiterRegistrationSlice = createSlice({
-  name: "recruiterRegistrationSlice",
-  initialState: initialRecruiterRegistrationState,
+//SLICE FOR CANDIDATE REGISTRATION
+export const candidateRegistrationSlice = createSlice({
+  name: "candidateRegistrationSlice",
+  initialState: initialCandidateRegistrationState,
 
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(recruiterRegistration.pending, (state) => {
+      .addCase(candidateRegistration.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(recruiterRegistration.fulfilled, (state) => {
+      .addCase(candidateRegistration.fulfilled, (state) => {
         state.error = null;
         state.isLoading = false;
         state.isSuccess = true;
       })
-      .addCase(recruiterRegistration.rejected, (state, action) => {
+      .addCase(candidateRegistration.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload?.message || "Registration failed";
         state.isSuccess = false;
@@ -394,14 +394,14 @@ const recruiterRegistrationSlice = createSlice({
   },
 });
 
-//Thunk for recruiter login
-export const recruiterLogin = createAsyncThunk<
+//Thunk for candidate login
+export const candidateLogin = createAsyncThunk<
   { success: boolean; data: LoginResponse },
   LoginCredentials,
   { rejectValue: ErrorResponse }
->("recruiter/login", async (credentials, { rejectWithValue }) => {
+>("candidate/login", async (credentials, { rejectWithValue }) => {
   try {
-    const response = await recruiterApi.post("/login", credentials);
+    const response = await candidateApi.post("/login", credentials);
 
     return {
       success: true,
@@ -421,7 +421,7 @@ export const recruiterLogin = createAsyncThunk<
   }
 });
 
-interface recruiterLogin {
+interface candidateLogin {
   isLoading: boolean;
   error: string | null;
   isSuccess: boolean;
@@ -430,7 +430,7 @@ interface recruiterLogin {
   username: string;
 }
 
-const initialRecruiterLogin: recruiterLogin = {
+const initialCandidateLogin: candidateLogin = {
   isLoading: false,
   error: null,
   isSuccess: false,
@@ -439,9 +439,9 @@ const initialRecruiterLogin: recruiterLogin = {
   username: "",
 };
 
-const recruiterLoginSlice = createSlice({
-  name: "recruiterLoginSlice",
-  initialState: initialRecruiterLogin,
+const candidateLoginSlice = createSlice({
+  name: "candidateLoginSlice",
+  initialState: initialCandidateLogin,
   reducers: {
     setUsername: (state, action: PayloadAction<string>) => {
       state.username = action.payload;
@@ -449,20 +449,20 @@ const recruiterLoginSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(recruiterLogin.pending, (state) => {
+      .addCase(candidateLogin.pending, (state) => {
         state.isLoading = true;
         state.error = null;
         state.isAuthenticated = false;
       })
-      .addCase(recruiterLogin.fulfilled, (state, action) => {
+      .addCase(candidateLogin.fulfilled, (state, action) => {
         state.isLoading = false;
         state.error = null;
         state.isAuthenticated = true;
         state.isSuccess = true;
         state.postLoginResponse = action.payload.data;
-        state.username = action.payload.data.recruiter.username;
+        state.username = action.payload.data.candidate.username;
       })
-      .addCase(recruiterLogin.rejected, (state, action) => {
+      .addCase(candidateLogin.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload?.message || "Login failed";
         state.isAuthenticated = false;
@@ -471,27 +471,27 @@ const recruiterLoginSlice = createSlice({
   },
 });
 
-export const fetchRecruiterDetails = createAsyncThunk<
-  RecruiterFormData,
+export const fetchCandidateDetails = createAsyncThunk<
+  CandidateFormData,
   { username: string },
   { rejectValue: { message: string; status: number } }
->("recruiter/fetchDetails", async ({ username }, { rejectWithValue }) => {
+>("candidate/fetchDetails", async ({ username }, { rejectWithValue }) => {
   try {
-    const response = await recruiterApi.get(`/fetch/${username}`);
+    const response = await candidateApi.get(`/fetch/${username}`);
 
     if (response.status === 200) {
       return response.data;
     }
 
     return rejectWithValue({
-      message: "Failed to fetch recruiter details",
+      message: "Failed to fetch candidate details",
       status: response.status,
     });
   } catch (error) {
     if (axios.isAxiosError(error)) {
       return rejectWithValue({
         message:
-          error.response?.data?.message || "Failed to fetch recruiter details",
+          error.response?.data?.message || "Failed to fetch candidate details",
         status: error.response?.status || 500,
       });
     }
@@ -502,55 +502,54 @@ export const fetchRecruiterDetails = createAsyncThunk<
     });
   }
 });
-interface fetchRecruiter {
+interface fetchCandidate {
   isLoading: boolean;
   error: string | null;
   isSuccess: boolean;
-  recruiterData: RecruiterFormData;
+  candidateData: CandidateFormData;
   username: string;
-
 }
-const initialRecruiterState: fetchRecruiter = {
+const initialCandidateState: fetchCandidate = {
   error: null,
   isLoading: false,
   isSuccess: false,
-  recruiterData: initialRecruiterFormData,
+  candidateData: initialCandidateFormData,
   username: "",
-  
 };
-export const recruiterProfileSlice = createSlice({
-  name: "recruiterProfileSlice",
-  initialState: initialRecruiterState,
+export const candidateProfileSlice = createSlice({
+  name: "candidateProfileSlice",
+  initialState: initialCandidateState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchRecruiterDetails.pending, (state) => {
+      .addCase(fetchCandidateDetails.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(fetchRecruiterDetails.fulfilled, (state, action) => {
+      .addCase(fetchCandidateDetails.fulfilled, (state, action) => {
         state.error = null;
         state.isLoading = false;
         state.isSuccess = true;
-        state.recruiterData = action.payload;
+        state.candidateData = action.payload;
         state.username = action.payload.username;
       })
-      .addCase(fetchRecruiterDetails.rejected, (state, action) => {
+      .addCase(fetchCandidateDetails.rejected, (state, action) => {
         state.isLoading = false;
-        state.error =action.payload?.message || "Failed to fetch recruiter details";
+        state.error =
+          action.payload?.message || "Failed to fetch candidate details";
         state.isSuccess = false;
-        state.recruiterData = initialRecruiterFormData;
+        state.candidateData = initialCandidateFormData;
         state.username = "";
       });
   },
 });
-export const deleteRecruiter = createAsyncThunk<
+export const deletCandidate = createAsyncThunk<
   boolean,
   string,
   { rejectValue: ErrorResponse }
->("recruiter/delete", async (username: string, { rejectWithValue }) => {
+>("candidate/delete", async (username: string, { rejectWithValue }) => {
   try {
-    const response = await recruiterApi.delete(`/delete/${username}`);
+    const response = await candidateApi.delete(`/delete/${username}`);
 
     return response.data;
   } catch (error) {
@@ -558,24 +557,24 @@ export const deleteRecruiter = createAsyncThunk<
     if (axios.isAxiosError(error) && error.response) {
       // Return the error message from the server
       return rejectWithValue({
-        message: error.response?.data?.message || "Failed to delete recruiter",
+        message: error.response?.data?.message || "Failed to delete candidate",
         status: 500,
       });
     }
   }
   return rejectWithValue({
-    message: "Network error occured while deleting the recruiter",
+    message: "Network error occured while deleting the candidate",
     status: 500,
   });
 });
 
-export const recruiterLogout = createAsyncThunk<
+export const candidateLogout = createAsyncThunk<
   boolean,
   string,
   { rejectValue: ErrorResponse }
->("recruiter/logout", async (username: string, { rejectWithValue }) => {
+>("candidate/logout", async (username: string, { rejectWithValue }) => {
   try {
-    const response = await recruiterApi.post("/logout", { username });
+    const response = await candidateApi.post("/logout", { username });
     if (response.status === 200) {
       console.log("Logout successful");
 
@@ -590,14 +589,13 @@ export const recruiterLogout = createAsyncThunk<
       });
   }
 });
-export const recruiterUsernameGeneratorReducer =
-  recruiterUsernameGeneratorSlice.reducer;
+export const candidateUsernameGeneratorReducer =
+  candidateUsernameGeneratorSlice.reducer;
 
-export const recruiter_registration_reducer =
-  recruiterRegistrationSlice.reducer;
+export const candidate_registration_reducer =
+  candidateRegistrationSlice.reducer;
 
-export const { setUsername } = recruiterLoginSlice.actions;
-export const recruiter_login_reducer = recruiterLoginSlice.reducer;
+export const { setUsername } = candidateLoginSlice.actions;
+export const candidate_login_reducer = candidateLoginSlice.reducer;
 
-export const get_recruiter_profile = recruiterProfileSlice.reducer;
-
+export const get_candidate_profile = candidateProfileSlice.reducer;

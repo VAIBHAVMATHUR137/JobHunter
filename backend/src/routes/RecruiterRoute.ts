@@ -22,14 +22,14 @@ import CandidateUserName from "../schema/CandidateUserNameSchema";
 
 const router = express.Router();
 
-router.get("/fetchRecruiter/:username", fetchIndividualRecruiter);
+router.get("/fetch/:username", fetchIndividualRecruiter);
 router.post(
-  "/createRecruiter",
+  "/create",
   recruiterValidationRules,
   validateRecruiter,
   createRecruiter
 );
-router.delete("/deleteRecruiter/:username", deleteRecruiter);
+router.delete("/delete/:username", deleteRecruiter);
 router.post("/login", loginValidationRules, validateRecruiter, recruiterLogin);
 router.post(
   "/refresh-token",
