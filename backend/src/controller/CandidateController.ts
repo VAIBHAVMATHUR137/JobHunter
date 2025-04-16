@@ -131,70 +131,65 @@ export const deleteCandidate = expressAsyncHandler(
 
 export const candidateLogin = expressAsyncHandler(
   async (req: Request, res: Response) => {
-    async (req: Request, res: Response) => {
-      const { username, password } = req.body;
+    const { username, password } = req.body;
 
-      // Input validation
-      if (!username || !password) {
-        res.status(401).json({ Message: "All fields are mandatory" });
-        return;
-      }
+    // Input validation
+    if (!username || !password) {
+      res.status(401).json({ Message: "All fields are mandatory" });
+      return;
+    }
 
-      const candidate = await Candidate.findOne({ username });
+    const candidate = await Candidate.findOne({ username });
 
-      if (!candidate) {
-        res.status(404).json({ Message: "Candidate not found" });
-        return;
-      }
+    if (!candidate) {
+      res.status(404).json({ Message: "Candidate not found" });
+      return;
+    }
 
-      const isPasswordValid = await bcrypt.compare(
-        password,
-        candidate.password
-      );
-      if (!isPasswordValid) {
-        res.status(401).json({ Message: "Invalid Password" });
-        return;
-      }
+    const isPasswordValid = await bcrypt.compare(password, candidate.password);
+    if (!isPasswordValid) {
+      res.status(401).json({ Message: "Invalid Password" });
+      return;
+    }
 
-      // Generate access and refresh tokens
-      const accessToken = jwt.sign(
-        {
-          candidate: {
-            username: candidate.username,
-            id: candidate.id,
-            role: "candidate",
-          },
-        },
-        process.env.SECRET_ACCESS_TOKEN!,
-        { expiresIn: "3m" }
-      );
-
-      const refreshToken = jwt.sign(
-        { username: candidate.username, id: candidate.id },
-        process.env.SECRET_REFRESH_TOKEN!,
-        { expiresIn: "30d" }
-      );
-
-      await client.set(
-        `Candidate_${candidate.username}_Refresh Token`,
-        refreshToken
-      );
-      await client.set(
-        `Candidate_${candidate.username}_Access Token`,
-        accessToken
-      );
-
-      // Send tokens in the response body only
-      res.status(200).json({
-        accessToken,
-        refreshToken,
+    // Generate access and refresh tokens
+    const accessToken = jwt.sign(
+      {
         candidate: {
-          id: candidate.id,
-          photo: candidate.photo,
           username: candidate.username,
+          id: candidate.id,
+          role: "candidate",
         },
-      });
-    };
+      },
+      process.env.SECRET_ACCESS_TOKEN!,
+      { expiresIn: "3m" }
+    );
+
+    const refreshToken = jwt.sign(
+      { username: candidate.username, id: candidate.id },
+      process.env.SECRET_REFRESH_TOKEN!,
+      { expiresIn: "30d" }
+    );
+
+    await client.set(
+      `Candidate_${candidate.username}_Refresh Token`,
+      refreshToken
+    );
+    await client.set(
+      `Candidate_${candidate.username}_Access Token`,
+      accessToken
+    );
+
+    // Send tokens in the response body only
+    res.status(200).json({
+      accessToken,
+      refreshToken,
+      candidate: {
+        id: candidate.id,
+        photo: candidate.photo,
+        username: candidate.username,
+      },
+    });
   }
 );
 

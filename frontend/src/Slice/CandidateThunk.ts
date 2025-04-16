@@ -543,7 +543,7 @@ export const candidateProfileSlice = createSlice({
       });
   },
 });
-export const deletCandidate = createAsyncThunk<
+export const deleteCandidate = createAsyncThunk<
   boolean,
   string,
   { rejectValue: ErrorResponse }

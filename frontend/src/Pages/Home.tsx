@@ -1,9 +1,9 @@
-import { Link } from 'react-router-dom'
-import { Briefcase, Users, TrendingUp } from 'lucide-react'
+import { Link } from "react-router-dom";
+import { Briefcase, Users, TrendingUp } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import Navbar from '@/components/ui/navbar'
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Navbar from "@/components/ui/navbar";
 
 export default function Home() {
   return (
@@ -28,9 +28,7 @@ export default function Home() {
                   </Link>
                 </Button>
                 <Button variant="outline" size="lg" asChild>
-                  <Link to="/CandidateSignup">
-                    Register as Job Seeker
-                  </Link>
+                  <Link to="/CandidatePersonalInformation">Register as Job Seeker</Link>
                 </Button>
               </div>
             </div>
@@ -48,7 +46,10 @@ export default function Home() {
                   <CardTitle>Extensive Job Listings</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p>Access thousands of job opportunities from top companies across various industries.</p>
+                  <p>
+                    Access thousands of job opportunities from top companies
+                    across various industries.
+                  </p>
                 </CardContent>
               </Card>
               <Card>
@@ -57,7 +58,10 @@ export default function Home() {
                   <CardTitle>Personalized Matches</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p>Our AI-powered system matches you with jobs that fit your skills and preferences.</p>
+                  <p>
+                    Our AI-powered system matches you with jobs that fit your
+                    skills and preferences.
+                  </p>
                 </CardContent>
               </Card>
               <Card>
@@ -66,7 +70,10 @@ export default function Home() {
                   <CardTitle>Career Growth</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p>Get insights and resources to help you advance in your career and achieve your goals.</p>
+                  <p>
+                    Get insights and resources to help you advance in your
+                    career and achieve your goals.
+                  </p>
                 </CardContent>
               </Card>
             </div>
@@ -80,13 +87,12 @@ export default function Home() {
                   Ready to Start Your Journey?
                 </h2>
                 <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl">
-                  Join thousands of job seekers and recruiters who have found their perfect match with us.
+                  Join thousands of job seekers and recruiters who have found
+                  their perfect match with us.
                 </p>
               </div>
               <Button size="lg" asChild>
-                <Link to="/CommonAuthentication">
-                  Sign Up Now
-                </Link>
+                <Link to="/CommonAuthentication">Sign Up Now</Link>
               </Button>
             </div>
           </div>
@@ -98,15 +104,15 @@ export default function Home() {
             © 2024 JobSearch Inc. All rights reserved.
           </p>
           <nav className="sm:ml-auto flex gap-4 sm:gap-6">
-            <Link to="#" className="text-xs hover:underline underline-offset-4">
+            <Link to="/" className="text-xs hover:underline underline-offset-4">
               Terms of Service
             </Link>
-            <Link to="#" className="text-xs hover:underline underline-offset-4">
+            <Link to="/" className="text-xs hover:underline underline-offset-4">
               Privacy
             </Link>
           </nav>
         </div>
       </footer>
     </div>
-  )
+  );
 }

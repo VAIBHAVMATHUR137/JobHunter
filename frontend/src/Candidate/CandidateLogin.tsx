@@ -22,7 +22,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 import { useContext } from "react";
-import { RecruiterAuthContext } from "@/context/CreateContext";
+import { CandidateAuthContext } from "@/context/CreateContext";
 
 const formFields = ["username", "password"] as const;
 type FieldName = (typeof formFields)[number];
@@ -35,9 +35,9 @@ function CandidateLogin() {
   const [formComplete, setIsFormComplete] = useState(false);
   const nav = useNavigate();
 
-  const formData = useSelector((state: RootState) => state.recruiterLogin);
+  const formData = useSelector((state: RootState) => state.candidateLogin);
   const dispatch = useDispatch<AppDispatch>();
-  const auth = useContext(RecruiterAuthContext);
+  const auth = useContext(CandidateAuthContext);
 
   if (!auth) {
     throw new Error("CandidateLogin must be used within an AuthProvider");
@@ -57,16 +57,17 @@ function CandidateLogin() {
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    
+
     try {
-      const response = await auth.recruiterLoginHandler(
+      const response = await auth.candidateLoginHandler(
         formData.username, 
         formData.password
       );
       
       if (response) {
+        console.log(response)
         setShowAlert(true);
-        setTitle("Welcome Recruiter");
+        setTitle("Welcome Job Seeker");
         setMessage("Successfully logged in");
         setIsSuccess(true);
 
@@ -77,7 +78,7 @@ function CandidateLogin() {
 
         // Navigate to dashboard with username
         setTimeout(() => 
-          nav(`/RecruiterDashboard/${response.recruiter.username}`), 
+          nav(`/CandidateDashboard/${response.candidate.username}`), 
           1500
         );
       }
@@ -92,7 +93,7 @@ function CandidateLogin() {
             errorMessage = "Invalid data entered";
             break;
           case 404:
-            errorMessage = "Recruiter credentials not found";
+            errorMessage = "candidate credentials not found";
             break;
           case 401:
             errorMessage = "Incorrect Password";
