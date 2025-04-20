@@ -18,13 +18,16 @@ const getTokenExpirationTime = (token: string): number | null => {
 // Function to schedule token refresh
 const scheduleTokenRefresh = () => {
   console.log("schedule token refresh working.....")
-  const accessToken = localStorage.getItem("accessToken");
-  const refreshToken = localStorage.getItem("refreshToken");
+  const accessToken = localStorage.getItem("recruiterAccessToken");
+  const refreshToken = localStorage.getItem("recruiterRefreshToken");
 
   if (!accessToken || !refreshToken) return;
+  console.log("access token for recruiter is fetched from local storage")
 
   const expirationTime = getTokenExpirationTime(accessToken);
+  console.log("expiration time is "+ expirationTime)
   const currentTime = Date.now();
+
 
   if (expirationTime) {
     const timeLeft = expirationTime - currentTime;
@@ -32,6 +35,7 @@ const scheduleTokenRefresh = () => {
 
     // Schedule a refresh slightly before the token expires (30 seconds before expiry)
     const refreshTime = Math.max(timeLeft - 30000, 0); 
+    console.log("Refresh time is " + refreshTime);
 
     if (refreshTime > 0) {
       setTimeout(async () => {
@@ -47,8 +51,8 @@ const scheduleTokenRefresh = () => {
             "New Refresh Token":newRefreshToken
           })
           // Store the new tokens
-          localStorage.setItem("accessToken", newAccessToken);
-          localStorage.setItem("refreshToken", newRefreshToken);
+          localStorage.setItem("recruiterAccessToken", newAccessToken);
+          localStorage.setItem("recruiterRefreshToken", newRefreshToken);
 
           // Reschedule the next refresh
           scheduleTokenRefresh();
@@ -71,10 +75,10 @@ const scheduleTokenRefresh = () => {
 // Helper function to clear auth data
 const clearAuthData = () => {
   console.log("Clear Auth data working.....")
-  localStorage.removeItem("accessToken");
-  localStorage.removeItem("refreshToken");
-  localStorage.removeItem("username");
-  localStorage.removeItem("photo");
+  localStorage.removeItem("recruiterAccessToken");
+  localStorage.removeItem("recruiterRefreshToken");
+  localStorage.removeItem("recruiterUsername");
+  localStorage.removeItem("recruiterPhoto");
 };
 
 // Function to refresh token asynchronously
@@ -103,7 +107,7 @@ scheduleTokenRefresh();
 // Axios Request Interceptor
 recruiterApi.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem("recruiterAccessToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

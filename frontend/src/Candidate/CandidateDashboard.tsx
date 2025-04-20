@@ -58,9 +58,9 @@ const CandidateDashboard: React.FC = () => {
   const { logout } = authContext;
 
   useEffect(() => {
-    const username = localStorage.getItem("username");
+    const username = localStorage.getItem("candidateUsername");
    
-    if (username) dispatch(fetchCandidateDetails({ username }));
+    if(username) dispatch(fetchCandidateDetails({ username }));
   }, [dispatch]);
 
   if (isLoading) {

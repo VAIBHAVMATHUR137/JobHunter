@@ -77,7 +77,7 @@ function RecruiterLogin() {
 
         // Navigate to dashboard with username
         setTimeout(() => 
-          nav(`/RecruiterDashboard/${response.recruiter.username}`), 
+          nav(`/RecruiterDashboard`), 
           1500
         );
       }

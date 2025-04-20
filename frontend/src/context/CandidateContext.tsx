@@ -20,13 +20,13 @@ export const CandidateAuthProvider = ({
   children: ReactNode;
 }) => {
   const [accessToken, setAccessToken] = useState<string | null>(
-    localStorage.getItem("accessToken")
+    localStorage.getItem("candidateAccessToken")
   );
   const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem("candidateAccessToken");
     if (token) {
-      const username = localStorage.getItem("username");
+      const username = localStorage.getItem("candidateUsername");
       if (username) dispatch(setUsername(username));
       setAccessToken(token);
     }
@@ -42,10 +42,10 @@ export const CandidateAuthProvider = ({
       if (response.success) {
         const loginData = response.data;
         setAccessToken(loginData.accessToken);
-        localStorage.setItem("accessToken", loginData.accessToken);
-        localStorage.setItem("refreshToken", loginData.refreshToken);
-        localStorage.setItem("username", loginData.candidate.username);
-        localStorage.setItem("photo", loginData.candidate.photo);
+        localStorage.setItem("candidateAccessToken", loginData.accessToken);
+        localStorage.setItem("candidateRefreshToken", loginData.refreshToken);
+        localStorage.setItem("candidateUsername", loginData.candidate.username);
+        localStorage.setItem("candidatePhoto", loginData.candidate.photo);
 
         // Update Redux store with username
         dispatch(setUsername(loginData.candidate.username));
@@ -60,10 +60,10 @@ export const CandidateAuthProvider = ({
     }
   };
   const logout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("username");
-    localStorage.removeItem("photo");
+    localStorage.removeItem("candidateAccessToken");
+    localStorage.removeItem("candidateRefreshToken");
+    localStorage.removeItem("candidateUsername");
+    localStorage.removeItem("candidatePhoto");
     setAccessToken(null);
   };
   const isAuthenticated = !!accessToken;

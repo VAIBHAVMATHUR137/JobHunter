@@ -7,7 +7,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export default function Navbar() {
   const userImage = localStorage.getItem("photo");
-  const username=localStorage.getItem("username")
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center justify-center">
@@ -47,7 +47,7 @@ export default function Navbar() {
           <div className="w-full flex-1 md:w-auto md:flex-none">
             {userImage ? (
               <Avatar>
-                <Link to={`/RecruiterDashboard/${username}`}>
+                <Link to={`/RecruiterDashboard`}>
                   <AvatarImage src={userImage} />
                 </Link>
               </Avatar>
@@ -57,7 +57,7 @@ export default function Navbar() {
                 className="ml-auto h-8 w-full md:w-[120px]"
                 asChild
               >
-                <Link to="/CommonAuthentication" >Login</Link>
+                <Link to="/CommonAuthentication">Login</Link>
               </Button>
             )}
           </div>

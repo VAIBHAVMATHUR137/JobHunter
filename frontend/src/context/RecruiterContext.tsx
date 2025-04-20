@@ -17,16 +17,16 @@ interface RecruiterLoginResponse {
 
 export const RecruiterAuthProvider = ({ children }: { children: ReactNode }) => {
   const [accessToken, setAccessToken] = useState<string | null>(
-    localStorage.getItem("accessToken")
+    localStorage.getItem("recruiterAccessToken")
   );
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem("recruiterAccessToken");
 
     if (token) {
       setAccessToken(token);
-      const username = localStorage.getItem("username");
+      const username = localStorage.getItem("recruiterUsername");
 
       if (username) {
         dispatch(setUsername(username));
@@ -48,10 +48,10 @@ export const RecruiterAuthProvider = ({ children }: { children: ReactNode }) => 
       if (response.success) {
         const loginData = response.data;
         setAccessToken(loginData.accessToken);
-        localStorage.setItem("accessToken", loginData.accessToken);
-        localStorage.setItem("refreshToken", loginData.refreshToken);
-        localStorage.setItem("username", loginData.recruiter.username);
-        localStorage.setItem("photo", loginData.recruiter.photo);
+        localStorage.setItem("recruiterAccessToken", loginData.accessToken);
+        localStorage.setItem("recruiterRefreshToken", loginData.refreshToken);
+        localStorage.setItem("recruiterUsername", loginData.recruiter.username);
+        localStorage.setItem("recruiterPhoto", loginData.recruiter.photo);
 
         // Update Redux store with username
         dispatch(setUsername(loginData.recruiter.username));
@@ -67,10 +67,10 @@ export const RecruiterAuthProvider = ({ children }: { children: ReactNode }) => 
   };
 
   const logout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("username");
-    localStorage.removeItem("photo");
+    localStorage.removeItem("recruiterAccessToken");
+    localStorage.removeItem("recruiterRefreshToken");
+    localStorage.removeItem("recruiterUsername");
+    localStorage.removeItem("recruiterPhoto");
     setAccessToken(null);
   };
 

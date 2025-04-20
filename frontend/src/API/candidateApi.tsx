@@ -18,12 +18,14 @@ const getTokenExpirationTime = (token: string): number | null => {
 // Function to schedule token refresh
 const scheduleTokenRefresh = () => {
   console.log("schedule token refresh working...");
-  const accessToken = localStorage.getItem("accessToken");
-  const refreshToken = localStorage.getItem("refreshToken");
+  const accessToken = localStorage.getItem("candidateAccessToken");
+  const refreshToken = localStorage.getItem("candidateRefreshToken");
 
   if (!accessToken || !refreshToken) return;
 
+  console.log("access token for candidate is fetched from local storage")
   const expirationTime = getTokenExpirationTime(accessToken);
+  console.log("expiration time is "+ expirationTime)
   const currentTime = Date.now();
 
   if (expirationTime) {
@@ -47,8 +49,8 @@ const scheduleTokenRefresh = () => {
             "New Refresh Token": newRefreshToken,
           });
           // Store the new tokens
-          localStorage.setItem("accessToken", newAccessToken);
-          localStorage.setItem("refreshToken", newRefreshToken);
+          localStorage.setItem("candidateAccessToken", newAccessToken);
+          localStorage.setItem("candidateRefreshToken", newRefreshToken);
 
           // Reschedule the next refresh
           scheduleTokenRefresh();
@@ -71,10 +73,10 @@ const scheduleTokenRefresh = () => {
 // Helper function to clear auth data
 const clearAuthData = () => {
   console.log("Clear Auth data working.....");
-  localStorage.removeItem("accessToken");
-  localStorage.removeItem("refreshToken");
-  localStorage.removeItem("username");
-  localStorage.removeItem("photo");
+  localStorage.removeItem("candidateAccessToken");
+  localStorage.removeItem("candidateRefreshToken");
+  localStorage.removeItem("candidateUsername");
+  localStorage.removeItem("candidatePhoto");
 };
 
 // Function to refresh token asynchronously
@@ -100,7 +102,7 @@ scheduleTokenRefresh();
 // Axios Request Interceptor
 candidateApi.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem("candidateAccessToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -120,7 +122,7 @@ candidateApi.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const refreshToken = localStorage.getItem("refreshToken");
+        const refreshToken = localStorage.getItem("candidateRefreshToken");
 
         if (!refreshToken) {
           throw new Error("No refresh token available");
@@ -135,7 +137,7 @@ candidateApi.interceptors.response.use(
         return candidateApi(originalRequest);
       } catch (refreshError) {
         clearAuthData();
-        window.location.href = "/RecruiterLogin";
+        window.location.href = "/CandidateLogin";
         return Promise.reject(refreshError);
       }
     }

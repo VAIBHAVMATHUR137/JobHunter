@@ -61,7 +61,7 @@ const RecruiterDashboard: React.FC = () => {
   const { logout } = authContext;
 
   useEffect(() => {
-    const username = localStorage.getItem("username");
+    const username = localStorage.getItem("recruiterUsername");
     console.log("Fetched username from localStorage: ", username);
     if (username) dispatch(fetchRecruiterDetails({ username }));
   }, [dispatch]);
