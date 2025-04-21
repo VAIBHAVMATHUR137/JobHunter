@@ -78,7 +78,7 @@ function CandidateLogin() {
 
         // Navigate to dashboard with username
         setTimeout(() => 
-          nav(`/CandidateDashboard/${response.candidate.username}`), 
+          nav('/CandidateDashboard'), 
           1500
         );
       }

@@ -91,7 +91,7 @@ const router = createBrowserRouter([
     errorElement: <Error />,
   },
   {
-    path: "/CandidateDashboard/:username",
+    path: "/CandidateDashboard",
     element: <CandidateDashboard />,
     errorElement: <Error />,
   },
