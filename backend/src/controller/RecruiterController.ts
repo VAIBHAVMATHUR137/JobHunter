@@ -10,7 +10,16 @@ import RecruiterUserName from "../schema/RecruiterUserNameSchema";
 
 dotenv.config();
 const SECRET_ACCESS_TOKEN = process.env.SECRET_ACCESS_TOKEN;
-
+export const fetchAllRecruiters=expressAsyncHandler(
+  async (req:Request, res:Response)=>{
+    try {
+      const allRecruiters=await Recruiter.find();
+      res.status(200).json(allRecruiters)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+)
 //Fetching a particular recruiter, registered at the portal
 export const fetchIndividualRecruiter = expressAsyncHandler(
   async (req: Request, res: Response) => {

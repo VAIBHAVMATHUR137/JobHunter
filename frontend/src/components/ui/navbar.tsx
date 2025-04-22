@@ -18,7 +18,7 @@ export default function Navbar() {
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">
             <Link to="/CommonAuthentication">Find Jobs</Link>
-            <Link to="/CommonAuthentication">Companies</Link>
+            <Link to="/TopRecruiters">Companies</Link>
             <Link to="/CommonAuthentication">Resources</Link>
             <Link to="/JobPosting">Post a job</Link>
           </nav>

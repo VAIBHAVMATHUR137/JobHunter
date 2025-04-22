@@ -508,7 +508,6 @@ interface fetchRecruiter {
   isSuccess: boolean;
   recruiterData: RecruiterFormData;
   username: string;
-
 }
 const initialRecruiterState: fetchRecruiter = {
   error: null,
@@ -516,7 +515,6 @@ const initialRecruiterState: fetchRecruiter = {
   isSuccess: false,
   recruiterData: initialRecruiterFormData,
   username: "",
-  
 };
 export const recruiterProfileSlice = createSlice({
   name: "recruiterProfileSlice",
@@ -537,13 +535,89 @@ export const recruiterProfileSlice = createSlice({
       })
       .addCase(fetchRecruiterDetails.rejected, (state, action) => {
         state.isLoading = false;
-        state.error =action.payload?.message || "Failed to fetch recruiter details";
+        state.error =
+          action.payload?.message || "Failed to fetch recruiter details";
         state.isSuccess = false;
         state.recruiterData = initialRecruiterFormData;
         state.username = "";
       });
   },
 });
+
+
+//Thunk to fetch all the details
+export const fetchAllRecruiters = createAsyncThunk<
+  RecruiterFormData[],
+  void,
+  { rejectValue: { message: string; status: number } }
+>("recruiter/fetchAll", async (_, { rejectWithValue }) => {
+  try {
+    const response = await recruiterApi.get("/fetchAll");
+
+    if (response.status === 200) {
+      return response.data;
+    }
+
+    return rejectWithValue({
+      message: "Failed to fetch recruiter details",
+      status: response.status,
+    });
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return rejectWithValue({
+        message:
+          error.response?.data?.message || "Failed to fetch recruiter details",
+        status: error.response?.status || 500,
+      });
+    }
+    return rejectWithValue({
+      message: "An unknown error occurred",
+      status: 500,
+    });
+  }
+});
+
+interface fetchAllRecruiters {
+  isLoading: boolean;
+  error: string | null;
+  isSuccess: boolean;
+  recruiterData: RecruiterFormData[];
+}
+
+const initialAllRecruiterState: fetchAllRecruiters = {
+  error: null,
+  isLoading: false,
+  isSuccess: false,
+  recruiterData: [initialRecruiterFormData],
+};
+
+export const allRecruitersSlice = createSlice({
+  name: "allRecruitersSlice",
+  initialState: initialAllRecruiterState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchAllRecruiters.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchAllRecruiters.fulfilled, (state, action) => {
+        state.error = null;
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.recruiterData = action.payload;
+      })
+      .addCase(fetchAllRecruiters.rejected, (state) => {
+        state.isLoading = false;
+        state.error = "Failed to fetch recruiter details";
+        state.isSuccess = false;
+        state.recruiterData = [initialRecruiterFormData];
+      });
+  },
+});
+
+
+//Thunk to delete recruiter
 export const deleteRecruiter = createAsyncThunk<
   boolean,
   string,
@@ -600,4 +674,4 @@ export const { setUsername } = recruiterLoginSlice.actions;
 export const recruiter_login_reducer = recruiterLoginSlice.reducer;
 
 export const get_recruiter_profile = recruiterProfileSlice.reducer;
-
+export const get_all_recruiters=allRecruitersSlice.reducer;

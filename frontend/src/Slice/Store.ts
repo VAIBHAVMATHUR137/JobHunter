@@ -11,6 +11,7 @@ import {
   recruiterUsernameGeneratorReducer,
   get_recruiter_profile,
   recruiter_login_reducer,
+  get_all_recruiters,
 } from "./RecruiterThunk";
 import {
   candidateUsernameGeneratorReducer,
@@ -30,6 +31,7 @@ const store = configureStore({
     candidateUsernameGenerator: candidateUsernameGeneratorReducer,
     candidate_profile: get_candidate_profile,
     candidateLoginThunk: candidate_login_reducer,
+    fetch_all_recruiters:get_all_recruiters
   },
 });
 

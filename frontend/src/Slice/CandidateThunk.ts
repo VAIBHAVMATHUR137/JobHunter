@@ -516,6 +516,7 @@ const initialCandidateState: fetchCandidate = {
   candidateData: initialCandidateFormData,
   username: "",
 };
+
 export const candidateProfileSlice = createSlice({
   name: "candidateProfileSlice",
   initialState: initialCandidateState,

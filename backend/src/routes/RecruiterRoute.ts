@@ -6,6 +6,7 @@ import {
   recruiterLogin,
   refreshAccessToken,
   recruiterLogout,
+  fetchAllRecruiters,
 } from "../controller/RecruiterController";
 import {
   recruiterValidationRules,
@@ -41,5 +42,6 @@ router.post("/username/check", searchUserName(RecruiterUserName,CandidateUserNam
 
 router.post("/username/create", createUniqueUserName(RecruiterUserName));
 router.post('/logout',recruiterLogout)
+router.get('/fetchAll', fetchAllRecruiters)
 
 export default router;

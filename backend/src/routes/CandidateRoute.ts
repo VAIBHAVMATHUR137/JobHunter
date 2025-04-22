@@ -4,7 +4,8 @@ import {
   createCandidate,
   candidateLogin,
   refreshAccessToken,
-  candidateLogout,
+  candidateLogout
+
 } from "../controller/CandidateController";
 import express from "express";
 import {
@@ -21,6 +22,7 @@ import {
 
 import RecruiterUserName from "../schema/RecruiterUserNameSchema";
 import CandidateUserName from "../schema/CandidateUserNameSchema";
+
 
 const router = express.Router();
 
@@ -52,4 +54,6 @@ router.post(
 
 router.post("/username/create", createUniqueUserName(CandidateUserName));
 router.post("/logout", candidateLogout);
+
+
 export default router;

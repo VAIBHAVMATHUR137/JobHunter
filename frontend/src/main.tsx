@@ -12,7 +12,7 @@ import CandidatePersonalInformation from "./Candidate/CandidatePersonalInformati
 import RecruiterLogin from "./Recruiter/RecruiterLogin";
 import CandidateSkillsAndExperience from "./Candidate/CandidateSkillsAndExperience";
 import CommonAuthentication from "./Pages/CommonAuthentication";
-
+import RecruiterListing from "./Pages/RecruiterListing";
 import RecruiterDashboard from "./Recruiter/RecruiterDashboard";
 import CandidatePresent from "./Candidate/CandidatePresent";
 import { RecruiterAuthProvider } from "./context/RecruiterContext";
@@ -95,6 +95,11 @@ const router = createBrowserRouter([
     element: <CandidateDashboard />,
     errorElement: <Error />,
   },
+  {
+    path:"/TopRecruiters",
+    element:<RecruiterListing/>,
+    errorElement:<Error/>
+  }
 ]);
 
 createRoot(document.getElementById("root")!).render(
