@@ -1,6 +1,7 @@
 import type React from "react";
 import { useContext, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { recruiterApi } from "@/API/recruiterApi";
 import {
   deleteRecruiter,
   fetchRecruiterDetails,
@@ -36,6 +37,17 @@ import { useNavigate } from "react-router-dom";
 const RecruiterDashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const nav=useNavigate()
+async function getDash(){
+  try {
+    const response = await recruiterApi.get("/dashboard"); // automatically attaches accessToken
+  
+    console.log(response.data)
+  } catch (error) {
+    console.error("Failed to fetch recruiter dashboard:", error);
+    throw error;
+  }
+}
+getDash()
 
   // Updated selector to match the new state structure in RecruiterThunk.ts
   const { isLoading, error, recruiterData } = useSelector(

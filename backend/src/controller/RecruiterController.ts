@@ -10,6 +10,25 @@ import RecruiterUserName from "../schema/RecruiterUserNameSchema";
 
 dotenv.config();
 const SECRET_ACCESS_TOKEN = process.env.SECRET_ACCESS_TOKEN;
+export const fetchRecruiterDashboard = expressAsyncHandler(
+  async (req: Request, res: Response) => {
+    // Get username from authenticated user instead of body
+    const username = req.user?.username;
+    
+    if (!username) {
+      res.status(401).json({ "Message": "Authentication required" });
+      return;
+    }
+    
+    const recruiterData = await Recruiter.findOne({ username });
+    if (!recruiterData) {
+      res.status(404).json({ "Message": "Recruiter not found" });
+      return;
+    }
+    res.status(200).json(recruiterData);
+    console.log(recruiterData.username)
+  }
+);
 export const fetchAllRecruiters=expressAsyncHandler(
   async (req:Request, res:Response)=>{
     try {

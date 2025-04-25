@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Navbar from "@/components/ui/navbar";
 
 export default function Home() {
+
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />

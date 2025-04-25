@@ -11,6 +11,7 @@ interface CandidatePayload {
     email: string;
     id: string;
     role: 'candidate';
+    username:string
   };
 }
 
@@ -19,6 +20,7 @@ interface RecruiterPayload {
     email: string;
     id: string;
     role: 'recruiter';
+    username:string
   };
 }
 
@@ -32,6 +34,7 @@ declare global {
         email: string;
         id: string;
         role: 'candidate' | 'recruiter';
+        username:string
       };
     }
   }
@@ -56,13 +59,15 @@ const validateToken = expressAsyncHandler(
           req.user = {
             email: decoded.candidate.email,
             id: decoded.candidate.id,
-            role: 'candidate'
+            role: 'candidate',
+            username:decoded.candidate.username
           };
         } else if ('recruiter' in decoded) {
           req.user = {
             email: decoded.recruiter.email,
             id: decoded.recruiter.id,
-            role: 'recruiter'
+            role: 'recruiter',
+            username:decoded.recruiter.username
           };
         } else {
           res.status(401);

@@ -21,6 +21,7 @@ import RecruiterPresent from "./Recruiter/RecruiterPresent";
 import CandidateAuthProvider from "./context/CandidateContext";
 import CandidateEducationForm from "./Candidate/CandidateConventionalEducation";
 import CandidateDashboard from "./Candidate/CandidateDashboard";
+import RecruiterProfile from "./Recruiter/RecruiterProfile";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -98,6 +99,11 @@ const router = createBrowserRouter([
   {
     path:"/TopRecruiters",
     element:<RecruiterListing/>,
+    errorElement:<Error/>
+  },
+  {
+    path:"/Recruiter/:username",
+    element:<RecruiterProfile/>,
     errorElement:<Error/>
   }
 ]);

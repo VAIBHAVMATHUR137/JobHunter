@@ -7,6 +7,7 @@ import {
   refreshAccessToken,
   recruiterLogout,
   fetchAllRecruiters,
+  fetchRecruiterDashboard,
 } from "../controller/RecruiterController";
 import {
   recruiterValidationRules,
@@ -20,6 +21,8 @@ import {
 } from "../controller/UserNameController";
 import RecruiterUserName from "../schema/RecruiterUserNameSchema";
 import CandidateUserName from "../schema/CandidateUserNameSchema";
+
+import validateToken from "../middleware/validateToken";
 
 const router = express.Router();
 
@@ -43,5 +46,6 @@ router.post("/username/check", searchUserName(RecruiterUserName,CandidateUserNam
 router.post("/username/create", createUniqueUserName(RecruiterUserName));
 router.post('/logout',recruiterLogout)
 router.get('/fetchAll', fetchAllRecruiters)
+router.get("/dashboard",validateToken,fetchRecruiterDashboard)
 
 export default router;

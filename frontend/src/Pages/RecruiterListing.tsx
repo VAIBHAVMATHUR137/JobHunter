@@ -1,5 +1,3 @@
-"use client"
-
 import Navbar from "@/components/ui/navbar"
 import type { AppDispatch, RootState } from "@/Slice/Store"
 import { fetchAllRecruiters } from "@/Slice/RecruiterThunk"
@@ -8,15 +6,22 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Briefcase } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 
 function RecruiterListing() {
   const dispatch = useDispatch<AppDispatch>()
+  const navigate = useNavigate()
 
   useEffect(() => {
     dispatch(fetchAllRecruiters()).unwrap()
   }, [dispatch])
 
   const res = useSelector((state: RootState) => state.fetch_all_recruiters)
+
+  // Function to handle card click and navigate to recruiter profile
+  const handleRecruiterCardClick = (username: string) => {
+    navigate(`/Recruiter/${username}`)
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -36,7 +41,8 @@ function RecruiterListing() {
             {res.recruiterData.map((recruiter) => (
               <Card
                 key={recruiter.username}
-                className="w-full h-48 shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden"
+                className="w-full h-48 shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden cursor-pointer hover:scale-105 "
+                onClick={() => handleRecruiterCardClick(recruiter.username)}
               >
                 <div className="flex flex-col items-center h-full">
                   <div className="w-full h-24 flex justify-center items-center pt-4">
