@@ -36,23 +36,36 @@ import { useNavigate } from "react-router-dom";
 
 const RecruiterDashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const nav=useNavigate()
-async function getDash(){
-  try {
-    const response = await recruiterApi.get("/dashboard"); // automatically attaches accessToken
-  
-    console.log(response.data)
-  } catch (error) {
-    console.error("Failed to fetch recruiter dashboard:", error);
-    throw error;
+  const nav = useNavigate();
+
+  async function getDash() {
+    try {
+      const response = await recruiterApi.get("/dashboard");
+
+      console.log(response.data);
+    } catch (error) {
+      console.error("Failed to fetch recruiter dashboard:", error);
+      throw error;
+    }
   }
-}
-getDash()
+  getDash();
 
   // Updated selector to match the new state structure in RecruiterThunk.ts
   const { isLoading, error, recruiterData } = useSelector(
     (state: RootState) => state.recruiter_profile
   );
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      const storagePhoto = localStorage.getItem("recruiterPhoto");
+
+      if (storagePhoto !== recruiterData.photo) {
+        userLogout();
+      }
+    }, 2000);
+  
+    return () => clearTimeout(timeoutId);
+  }, [recruiterData.photo]);
+  
   const username: string = useSelector(
     (state: RootState) => state.recruiterLoginThunk.username
   );
@@ -61,15 +74,16 @@ getDash()
 
   console.log(username);
 
-
   const tabMenu = ["Education", "Experience", "Certificate", "Internship"];
   const authContext = useContext(RecruiterAuthContext);
-  
+
   // Check if context exists before destructuring
   if (!authContext) {
-    throw new Error("RecruiterAuthContext must be used within a RecruiterAuthProvider");
+    throw new Error(
+      "RecruiterAuthContext must be used within a RecruiterAuthProvider"
+    );
   }
-  
+
   const { logout } = authContext;
 
   useEffect(() => {
@@ -152,11 +166,10 @@ getDash()
   };
   const userLogout = () => {
     dispatch(recruiterLogout(username));
-    logout()
-    setTimeout(()=>{
-      nav("/")
-    },1500)
-
+    logout();
+    setTimeout(() => {
+      nav("/");
+    }, 1500);
   };
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
