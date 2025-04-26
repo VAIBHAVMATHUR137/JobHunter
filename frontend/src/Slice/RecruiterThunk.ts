@@ -543,7 +543,78 @@ export const recruiterProfileSlice = createSlice({
       });
   },
 });
+export const recruiterDashboard = createAsyncThunk<
+  RecruiterFormData,
+  {username:string},
+  { rejectValue: { message: string; status: number } }
+>("/recruiter/dashboard", async (_, { rejectWithValue }) => {
+  try {
+    const response = await recruiterApi.get("/dashboard");
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      return rejectWithValue({
+        message: "Failed to fetch recruiter details",
+        status: response.status,
+      });
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return rejectWithValue({
+        message:
+          error.response?.data?.message || "Failed to fetch recruiter details",
+        status: error.response?.status || 500,
+      });
+    }
+    return rejectWithValue({
+      message: "An unknown error occurred",
+      status: 500,
+    });
+  }
+});
+interface recruiterDashboardInterface {
+  isLoading: boolean;
+  error: string | null;
+  isSuccess: boolean;
+  recruiterData: RecruiterFormData;
+  username:string
+}
+const initialDashboardState: recruiterDashboardInterface = {
+  isLoading: false,
+  error: null,
+  isSuccess: false,
+  recruiterData: initialRecruiterFormData,
+  username:""
+};
+export const recruiterDashboardSlice = createSlice({
+  name: "recruiterDashboardSlice",
+  initialState: initialDashboardState,
+  reducers: {
 
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(recruiterDashboard.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(recruiterDashboard.fulfilled, (state, action) => {
+        state.error = null;
+        state.isSuccess = true;
+        state.isLoading = false;
+        state.recruiterData = action.payload;
+        state.username=action.payload.username
+      })
+      .addCase(recruiterDashboard.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error =
+          action.payload?.message || "Failed to fetch recruiter details";
+        state.isSuccess = false;
+        state.recruiterData = initialRecruiterFormData;
+        state.username=""
+      });
+  },
+});
 
 //Thunk to fetch all the details
 export const fetchAllRecruiters = createAsyncThunk<
@@ -616,7 +687,6 @@ export const allRecruitersSlice = createSlice({
   },
 });
 
-
 //Thunk to delete recruiter
 export const deleteRecruiter = createAsyncThunk<
   boolean,
@@ -674,4 +744,6 @@ export const { setUsername } = recruiterLoginSlice.actions;
 export const recruiter_login_reducer = recruiterLoginSlice.reducer;
 
 export const get_recruiter_profile = recruiterProfileSlice.reducer;
-export const get_all_recruiters=allRecruitersSlice.reducer;
+export const get_all_recruiters = allRecruitersSlice.reducer;
+export const recruiterDashboardReducer = recruiterDashboardSlice.reducer;
+

@@ -1,11 +1,13 @@
 import type React from "react";
 import { useContext, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { recruiterApi } from "@/API/recruiterApi";
+
 import {
   deleteRecruiter,
   fetchRecruiterDetails,
+  recruiterDashboard,
   recruiterLogout,
+
 } from "@/Slice/RecruiterThunk";
 import {
   Card,
@@ -38,21 +40,19 @@ const RecruiterDashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const nav = useNavigate();
 
-  async function getDash() {
-    try {
-      const response = await recruiterApi.get("/dashboard");
+  useEffect(() => {
+    const username = localStorage.getItem("recruiterUsername");
 
-      console.log(response.data);
-    } catch (error) {
-      console.error("Failed to fetch recruiter dashboard:", error);
-      throw error;
+    if (username) {
+      dispatch(fetchRecruiterDetails({ username }));
+      dispatch(recruiterDashboard({ username }))
+
     }
-  }
-  getDash();
+  }, [dispatch]);
 
   // Updated selector to match the new state structure in RecruiterThunk.ts
   const { isLoading, error, recruiterData } = useSelector(
-    (state: RootState) => state.recruiter_profile
+    (state: RootState) => state.recruiterDashboard
   );
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -62,17 +62,15 @@ const RecruiterDashboard: React.FC = () => {
         userLogout();
       }
     }, 2000);
-  
+
     return () => clearTimeout(timeoutId);
   }, [recruiterData.photo]);
-  
+
   const username: string = useSelector(
     (state: RootState) => state.recruiterLoginThunk.username
   );
 
-  console.log("Full recruiter state: ", recruiterData);
 
-  console.log(username);
 
   const tabMenu = ["Education", "Experience", "Certificate", "Internship"];
   const authContext = useContext(RecruiterAuthContext);
@@ -85,12 +83,6 @@ const RecruiterDashboard: React.FC = () => {
   }
 
   const { logout } = authContext;
-
-  useEffect(() => {
-    const username = localStorage.getItem("recruiterUsername");
-    console.log("Fetched username from localStorage: ", username);
-    if (username) dispatch(fetchRecruiterDetails({ username }));
-  }, [dispatch]);
 
   if (isLoading) {
     return (
@@ -171,6 +163,8 @@ const RecruiterDashboard: React.FC = () => {
       nav("/");
     }, 1500);
   };
+
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
       <Navbar />

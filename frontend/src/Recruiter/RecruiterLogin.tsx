@@ -23,6 +23,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useContext } from "react";
 import { RecruiterAuthContext } from "@/context/CreateContext";
+import { recruiterDashboard } from "@/Slice/RecruiterThunk";
 
 const formFields = ["username", "password"] as const;
 type FieldName = (typeof formFields)[number];
@@ -69,6 +70,7 @@ function RecruiterLogin() {
         setTitle("Welcome Recruiter");
         setMessage("Successfully logged in");
         setIsSuccess(true);
+        dispatch(recruiterDashboard({username:formData.username}))
 
         // Reset form fields
         formFields.forEach((field) => {
