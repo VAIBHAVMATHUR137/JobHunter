@@ -3,6 +3,9 @@ export const recruiterApi = axios.create({
   baseURL: "http://localhost:5000/recruiter"
 });
 
+// Track the refresh timer so we can clear it on logout
+let tokenRefreshTimer: ReturnType<typeof setTimeout> | null = null;
+
 // Function to decode the token and extract expiration time
 const getTokenExpirationTime = (token: string): number | null => {
   if (!token) return null;
@@ -28,7 +31,6 @@ const scheduleTokenRefresh = () => {
   console.log("expiration time is "+ expirationTime)
   const currentTime = Date.now();
 
-
   if (expirationTime) {
     const timeLeft = expirationTime - currentTime;
     console.log("Time left is "+ timeLeft)
@@ -37,8 +39,11 @@ const scheduleTokenRefresh = () => {
     const refreshTime = Math.max(timeLeft - 30000, 0); 
     console.log("Refresh time is " + refreshTime);
 
+    // Clear any existing timer
+    clearRefreshTimer();
+
     if (refreshTime > 0) {
-      setTimeout(async () => {
+      tokenRefreshTimer = setTimeout(async () => {
         try {
           const response = await recruiterApi.post(
             `/refresh-token`,
@@ -72,6 +77,15 @@ const scheduleTokenRefresh = () => {
   }
 };
 
+// Function to clear the refresh timer
+export const clearRefreshTimer = () => {
+  if (tokenRefreshTimer) {
+    clearTimeout(tokenRefreshTimer);
+    tokenRefreshTimer = null;
+    console.log("Token refresh timer cleared");
+  }
+};
+
 // Helper function to clear auth data
 const clearAuthData = () => {
   console.log("Clear Auth data working.....")
@@ -79,6 +93,9 @@ const clearAuthData = () => {
   localStorage.removeItem("recruiterRefreshToken");
   localStorage.removeItem("recruiterUsername");
   localStorage.removeItem("recruiterPhoto");
+  
+  // Clear any pending timer
+  clearRefreshTimer();
 };
 
 // Function to refresh token asynchronously
@@ -151,3 +168,5 @@ recruiterApi.interceptors.response.use(
   }
 );
 
+// Export the important functions
+export { clearAuthData, scheduleTokenRefresh };

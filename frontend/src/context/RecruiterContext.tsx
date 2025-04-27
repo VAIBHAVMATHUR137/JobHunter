@@ -1,8 +1,9 @@
 import { ReactNode, useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { setUsername, recruiterLogin } from "@/Slice/RecruiterThunk";
+import { setUsername, recruiterLogin, recruiterLogout } from "@/Slice/RecruiterThunk";
 import { RecruiterAuthContext } from "./CreateContext";
 import { AppDispatch } from "@/Slice/Store";
+import { clearRefreshTimer } from "../API/recruiterApi" // Import the function to clear the timer
 
 interface RecruiterLoginResponse {
   accessToken: string;
@@ -14,13 +15,13 @@ interface RecruiterLoginResponse {
   };
 }
 
-
 export const RecruiterAuthProvider = ({ children }: { children: ReactNode }) => {
   const [accessToken, setAccessToken] = useState<string | null>(
     localStorage.getItem("recruiterAccessToken")
   );
   const dispatch = useDispatch<AppDispatch>();
-
+  const username = localStorage.getItem("recruiterUsername");
+  
   useEffect(() => {
     const token = localStorage.getItem("recruiterAccessToken");
 
@@ -67,10 +68,21 @@ export const RecruiterAuthProvider = ({ children }: { children: ReactNode }) => 
   };
 
   const logout = () => {
+    // Clear the refresh timer to prevent token regeneration
+    clearRefreshTimer();
+    
+    // Dispatch logout action if username exists
+    if(username) {
+      dispatch(recruiterLogout(username));
+    }
+    
+    // Clear localStorage
     localStorage.removeItem("recruiterAccessToken");
     localStorage.removeItem("recruiterRefreshToken");
     localStorage.removeItem("recruiterUsername");
     localStorage.removeItem("recruiterPhoto");
+    
+    // Update state
     setAccessToken(null);
   };
 

@@ -49,6 +49,7 @@ const RecruiterDashboard: React.FC = () => {
 
     }
   }, [dispatch]);
+  
 
   // Updated selector to match the new state structure in RecruiterThunk.ts
   const { isLoading, error, recruiterData } = useSelector(
@@ -56,15 +57,16 @@ const RecruiterDashboard: React.FC = () => {
   );
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      const storagePhoto = localStorage.getItem("recruiterPhoto");
 
-      if (storagePhoto !== recruiterData.photo) {
+      const storageUsername = localStorage.getItem("recruiterUsername");
+      
+      if ( storageUsername !== recruiterData.username) {
         userLogout();
       }
     }, 2000);
-
+  
     return () => clearTimeout(timeoutId);
-  }, [recruiterData.photo]);
+  }, [ recruiterData.username]);
 
   const username: string = useSelector(
     (state: RootState) => state.recruiterLoginThunk.username
