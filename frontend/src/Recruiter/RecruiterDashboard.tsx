@@ -44,7 +44,7 @@ const RecruiterDashboard: React.FC = () => {
     const username = localStorage.getItem("recruiterUsername");
 
     if (username) {
-      dispatch(fetchRecruiterDetails({ username }));
+    
       dispatch(recruiterDashboard({ username }))
 
     }

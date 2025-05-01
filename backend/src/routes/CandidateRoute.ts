@@ -1,13 +1,15 @@
 import {
-  fetchIndividualCandidate,
-  deleteCandidate,
-  createCandidate,
-  candidateLogin,
-  refreshAccessToken,
-  candidateLogout
-
-} from "../controller/CandidateController";
+  userDashboard,
+  fetchAllUsers,
+  getProfile,
+  createUser,
+  deleteUser,
+  userLogin,
+  userLogout,
+  updateToken,
+} from "../controller/UserController";
 import express from "express";
+import validateToken from "../middleware/validateToken";
 import {
   createUniqueUserName,
   searchUserName,
@@ -22,30 +24,30 @@ import {
 
 import RecruiterUserName from "../schema/RecruiterUserNameSchema";
 import CandidateUserName from "../schema/CandidateUserNameSchema";
-
+import Candidate from "../schema/CandidateSchema";
 
 const router = express.Router();
 
-router.get("/fetch/:username", fetchIndividualCandidate);
+router.get("/fetch/:username", getProfile(Candidate));
 router.post(
   "/create",
-  createCandidate,
+  createUser(Candidate),
   candidateValidationRules,
   validateCandidate
 );
-router.delete("/delete/:username", deleteCandidate);
+router.delete("/delete/:username", deleteUser(Candidate, CandidateUserName));
 router.post(
   "/login",
-  candidateLogin,
+
   loginValidationRules,
   validateCandidate,
-  candidateLogin
+  userLogin(Candidate, "candidate")
 );
 router.post(
   "/refresh-token",
   refreshTokenValidationRules,
   validateCandidate,
-  refreshAccessToken
+  updateToken(Candidate, "candidate")
 );
 router.post(
   "/username/check",
@@ -53,7 +55,10 @@ router.post(
 );
 
 router.post("/username/create", createUniqueUserName(CandidateUserName));
-router.post("/logout", candidateLogout);
+router.post("/logout", userLogout(Candidate, "candidate"));
 
+router.get("/fetchAll", fetchAllUsers(Candidate));
+router.get("/dashboard", validateToken, userDashboard(Candidate));
+router.get("/fetch/:username", getProfile(Candidate));
 
 export default router;
