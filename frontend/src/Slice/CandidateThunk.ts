@@ -590,6 +590,76 @@ export const candidateLogout = createAsyncThunk<
       });
   }
 });
+
+//Thunk to fetch all candidates
+export const fetchAllCandidates = createAsyncThunk<
+  CandidateFormData[],
+  void,
+  { rejectValue: { message: string; status: number } }
+>("candidate/fetchAll", async (_, { rejectWithValue }) => {
+  try {
+    const response = await candidateApi.get("/fetchAll");
+
+    if (response.status === 200) {
+      return response.data;
+    }
+
+    return rejectWithValue({
+      message: "Failed to fetch candidate details",
+      status: response.status,
+    });
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return rejectWithValue({
+        message:
+          error.response?.data?.message || "Failed to fetch candidate details",
+        status: error.response?.status || 500,
+      });
+    }
+  }
+  return rejectWithValue({
+    message: "An unknown error occurred",
+    status: 500,
+  });
+});
+
+interface fetchAllCandidates {
+  isLoading: boolean;
+  error: string | null;
+  isSuccess: boolean;
+  candidateData: CandidateFormData[];
+}
+const initialAllCandidatesState: fetchAllCandidates = {
+  isLoading: false,
+  error: null,
+  isSuccess: false,
+  candidateData: [initialCandidateFormData],
+};
+
+export const allCandidatesSlice = createSlice({
+  name: "allCandidatesSlice",
+  initialState: initialAllCandidatesState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchAllCandidates.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchAllCandidates.fulfilled, (state, action) => {
+        state.error = null;
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.candidateData = action.payload;
+      })
+      .addCase(fetchAllCandidates.rejected, (state) => {
+        state.isLoading = false;
+        state.error = "Failed to fetch candidate details";
+        state.isSuccess = false;
+        state.candidateData = [initialCandidateFormData];
+      });
+  },
+});
 export const candidateUsernameGeneratorReducer =
   candidateUsernameGeneratorSlice.reducer;
 
@@ -598,5 +668,5 @@ export const candidate_registration_reducer =
 
 export const { setUsername } = candidateLoginSlice.actions;
 export const candidate_login_reducer = candidateLoginSlice.reducer;
-
+export const get_all_candidates=allCandidatesSlice.reducer;
 export const get_candidate_profile = candidateProfileSlice.reducer;

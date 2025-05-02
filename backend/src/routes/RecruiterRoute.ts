@@ -56,6 +56,7 @@ router.post(
 );
 router.post("/username/create", createUniqueUserName(RecruiterUserName));
 router.post("/logout", userLogout(Recruiter, "recruiter"));
+
 router.get("/fetchAll", fetchAllUsers(Recruiter));
 router.get("/dashboard", validateToken, userDashboard(Recruiter));
 router.get("/fetch/:username", getProfile(Recruiter));
