@@ -3,8 +3,9 @@ import { useContext, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   deleteCandidate,
-  fetchCandidateDetails,
+
   candidateLogout,
+  candidateDashboard,
 } from "@/Slice/CandidateThunk";
 import {
   Card,
@@ -38,13 +39,33 @@ const CandidateDashboard: React.FC = () => {
   const nav=useNavigate()
 
 
+
+
+  useEffect(()=>{
+    const username=localStorage.getItem("candidateUsername");
+    if(username){
+      dispatch(candidateDashboard({username})).unwrap()
+    }
+  },[dispatch])
   const { isLoading, error, candidateData } = useSelector(
-    (state: RootState) => state.candidate_profile
+    (state: RootState) => state.candidateDashboard
   );
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+
+      const storageUsername = localStorage.getItem("candidateUsername");
+      
+      if ( storageUsername !== candidateData.username) {
+        userLogout();
+      }
+    }, 2000);
+  
+    return () => clearTimeout(timeoutId);
+  }, [ candidateData.username]);
+
   const username: string = useSelector(
     (state: RootState) => state.candidateLoginThunk.username
   );
-
 
 
   const tabMenu = ["Education", "Experience", "Certificate", "Internship"];
@@ -57,11 +78,7 @@ const CandidateDashboard: React.FC = () => {
   
   const { logout } = authContext;
 
-  useEffect(() => {
-    const username = localStorage.getItem("candidateUsername");
-   
-    if(username) dispatch(fetchCandidateDetails({ username }));
-  }, [dispatch]);
+
 
   if (isLoading) {
     return (

@@ -1,9 +1,14 @@
 import { ReactNode, useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { candidateLogin, setUsername } from "@/Slice/CandidateThunk";
+import {
+  candidateLogin,
+  candidateLogout,
+  setUsername,
+} from "@/Slice/CandidateThunk";
 
 import { AppDispatch } from "@/Slice/Store";
 import { CandidateAuthContext } from "./CreateContext";
+import { clearRefreshTimer } from "@/API/recruiterApi";
 
 interface CandidateLoginResponse {
   accessToken: string;
@@ -22,13 +27,16 @@ export const CandidateAuthProvider = ({
   const [accessToken, setAccessToken] = useState<string | null>(
     localStorage.getItem("candidateAccessToken")
   );
+  const username = localStorage.getItem("candidateUsername");
   const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
     const token = localStorage.getItem("candidateAccessToken");
     if (token) {
-      const username = localStorage.getItem("candidateUsername");
-      if (username) dispatch(setUsername(username));
       setAccessToken(token);
+      const username = localStorage.getItem("candidateUsername");
+      if (username) {
+        dispatch(setUsername(username));
+      }
     }
   }, [dispatch]);
   const candidateLoginHandler = async (
@@ -60,6 +68,10 @@ export const CandidateAuthProvider = ({
     }
   };
   const logout = () => {
+    clearRefreshTimer();
+    if (username) {
+      dispatch(candidateLogout(username));
+    }
     localStorage.removeItem("candidateAccessToken");
     localStorage.removeItem("candidateRefreshToken");
     localStorage.removeItem("candidateUsername");

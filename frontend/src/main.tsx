@@ -23,6 +23,7 @@ import CandidateEducationForm from "./Candidate/CandidateConventionalEducation";
 import CandidateDashboard from "./Candidate/CandidateDashboard";
 import RecruiterProfile from "./Recruiter/RecruiterProfile";
 import CandidateListing from "./Pages/CandidateListing";
+import CandidateProfile from "./Candidate/CandidateProfile";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -105,6 +106,11 @@ const router = createBrowserRouter([
   {
     path:"/Recruiter/:username",
     element:<RecruiterProfile/>,
+    errorElement:<Error/>
+  },
+  {
+    path:"/Candidate/:username",
+    element:<CandidateProfile/>,
     errorElement:<Error/>
   },
   {

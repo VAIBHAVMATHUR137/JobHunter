@@ -19,6 +19,7 @@ import {
   get_candidate_profile,
   candidate_login_reducer,
   get_all_candidates,
+  candidateDashboardReducer,
 } from "./CandidateThunk";
 
 const store = configureStore({
@@ -36,6 +37,7 @@ const store = configureStore({
     fetch_all_recruiters: get_all_recruiters,
     fetch_all_candidates: get_all_candidates,
     recruiterDashboard: recruiterDashboardReducer,
+    candidateDashboard:candidateDashboardReducer
   },
 });
 
