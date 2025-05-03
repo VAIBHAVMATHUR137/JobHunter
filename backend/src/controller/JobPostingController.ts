@@ -47,7 +47,7 @@ export const editjobPosting = expressAsyncHandler(
     }
 
     // Convert IDs to strings for comparison
-    if (jobPosting.recruiterId.toString() !== req.user?.id) {
+    if (jobPosting.username.toString() !== req.user?.id) {
       res.status(403);
       throw new Error("You can only edit your own job postings");
     }
@@ -66,55 +66,45 @@ export const editjobPosting = expressAsyncHandler(
 export const postNewJob = expressAsyncHandler(
   async (req: Request, res: Response) => {
     const {
+      designation,
       job_role,
       CTC,
-      experience_required,
-      years_of_experience_required,
+      experience_required_in_months,
+      fresher_eligible,
       degree_required,
       bond,
+      work_environment,
       job_location,
-      company,
+      company_name,
       skills_required,
+      type_of_employment,
+      perks_and_benefits,
+      required_languages,
+      visa_sponsorship_available,
+      username
     } = req.body;
 
-    if (
-      !job_role ||
-      !CTC ||
-      !experience_required ||
-      !years_of_experience_required ||
-      !degree_required ||
-      !bond ||
-      !job_location ||
-      !company ||
-      !skills_required
-    ) {
-      res.status(400);
-      throw new Error(
-        "All fields are mandatory for a recruiter to post a new job"
-      );
-    }
 
-    // Validate experience logic
-    if (experience_required === "FALSE" && years_of_experience_required > 0) {
-      res.status(400);
-      throw new Error(
-        "This is a fresher job and cannot demand experience from candidate"
-      );
-    }
+
 
     // Add recruiter information to the job posting
     const job = await JobPosting.create({
+      designation,
       job_role,
       CTC,
-      experience_required,
-      years_of_experience_required,
+      experience_required_in_months,
+      fresher_eligible,
       degree_required,
       bond,
+      work_environment,
       job_location,
-      company,
+      company_name,
       skills_required,
-      recruiterId: req.user?.id,
-      recruiterEmail: req.user?.email, 
+      type_of_employment,
+      perks_and_benefits,
+      required_languages,
+      visa_sponsorship_available,
+      username
     });
 
     res.status(201).json(job);
@@ -132,7 +122,7 @@ export const deleteExistingJob = expressAsyncHandler(
     }
 
     // Convert IDs to strings for comparison
-    if (jobposting.recruiterId.toString() !== req.user?.id) {
+    if (jobposting.username.toString() !== req.user?.id) {
       res.status(403);
       throw new Error("You can only delete your own job postings");
     }
