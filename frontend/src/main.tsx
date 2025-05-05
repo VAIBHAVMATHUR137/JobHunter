@@ -24,6 +24,7 @@ import CandidateDashboard from "./Candidate/CandidateDashboard";
 import RecruiterProfile from "./Recruiter/RecruiterProfile";
 import CandidateListing from "./Pages/CandidateListing";
 import CandidateProfile from "./Candidate/CandidateProfile";
+import JobPosting from "./Pages/JobPosting";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -116,6 +117,11 @@ const router = createBrowserRouter([
   {
     path:"/ExceptionalCandidates",
     element:<CandidateListing/>,
+    errorElement:<Error/>
+  },
+  {
+    path:"/JobPosting",
+    element:<JobPosting/>,
     errorElement:<Error/>
   }
 ]);

@@ -9,10 +9,7 @@ export const jobPostingValidationRules = [
     .notEmpty()
     .withMessage("Designation is required"),
   
-  body("job_role")
-    .trim()
-    .notEmpty()
-    .withMessage("Job role is required"),
+
   
   // CTC Validation
   body("CTC")
@@ -22,23 +19,26 @@ export const jobPostingValidationRules = [
     .withMessage("CTC is required"),
   
   body("CTC.minCTC")
-    .isNumeric()
-    .withMessage("Minimum CTC must be a number")
-    .custom((value, { req }) => {
-      if (value < 0) {
-        throw new Error("Minimum CTC cannot be negative");
-      }
-      return true;
-    }),
+    .isString()
+    .withMessage("Minimum CTC must be a string")
+    .notEmpty()
+    .withMessage("Minimum CTC is required"),
   
   body("CTC.maxCTC")
-    .isNumeric()
-    .withMessage("Maximum CTC must be a number")
+    .isString()
+    .withMessage("Maximum CTC must be a string")
+    .notEmpty()
+    .withMessage("Maximum CTC is required")
     .custom((value, { req }) => {
-      if (value < 0) {
+      const minCTC = parseFloat(req.body.CTC.minCTC);
+      const maxCTC = parseFloat(value);
+      if (isNaN(minCTC) || isNaN(maxCTC)) {
+        throw new Error("CTC values must be valid numbers");
+      }
+      if (maxCTC < 0) {
         throw new Error("Maximum CTC cannot be negative");
       }
-      if (req.body.CTC && value < req.body.CTC.minCTC) {
+      if (maxCTC < minCTC) {
         throw new Error("Maximum CTC cannot be less than minimum CTC");
       }
       return true;
@@ -50,7 +50,7 @@ export const jobPostingValidationRules = [
     .notEmpty()
     .withMessage("Experience requirement is required"),
   
-  body("fresher_eligible")
+  body("isFresherEligible")
     .isBoolean()
     .withMessage("Fresher eligibility must be a boolean value"),
   
@@ -75,15 +75,22 @@ export const jobPostingValidationRules = [
     .withMessage("Work environment must be either Remote, Hybrid, or On-site"),
   
   body("job_location")
-    .trim()
+    .isArray()
+    .withMessage("Job location must be an array")
     .notEmpty()
-    .withMessage("Job location is required"),
+    .withMessage("At least one job location must be specified"),
   
   // Company Information
   body("company_name")
     .trim()
     .notEmpty()
     .withMessage("Company name is required"),
+  
+  // Job Description
+  body("job_description")
+    .trim()
+    .notEmpty()
+    .withMessage("Job description is required"),
   
   // Skills and Requirements
   body("skills_required")
@@ -110,14 +117,26 @@ export const jobPostingValidationRules = [
     .notEmpty()
     .withMessage("At least one language must be specified"),
   
-  body("visa_sponsorship_available")
+  body("isVisaSponsored")
     .isBoolean()
     .withMessage("Visa sponsorship availability must be a boolean value"),
   
   body("username")
     .trim()
     .notEmpty()
-    .withMessage("Username is required")
+    .withMessage("Username is required"),
+    
+  body("name")
+    .trim()
+    .notEmpty()
+    .withMessage("Name is required"),
+    
+  body("email")
+    .trim()
+    .notEmpty()
+    .withMessage("Email is required")
+    .isEmail()
+    .withMessage("Email must be valid")
 ];
 
 // Validate job posting middleware
@@ -140,17 +159,15 @@ export const validateJobPostingBusinessLogic: RequestHandler = (
   res: Response,
   next: NextFunction
 ): void => {
-  const { fresher_eligible, experience_required_in_months } = req.body;
+  const { isFresherEligible, experience_required_in_months } = req.body;
   
   // Validate fresher eligibility logic
-  if (fresher_eligible === true && parseInt(experience_required_in_months) > 0) {
+  if (isFresherEligible === true && parseInt(experience_required_in_months) > 0) {
     res.status(400).json({
       error: "Inconsistent data: Job cannot be fresher eligible and require experience at the same time"
     });
     return;
   }
-  
-
   
   next();
 };
@@ -158,9 +175,9 @@ export const validateJobPostingBusinessLogic: RequestHandler = (
 // Job posting search validation
 export const jobSearchValidationRules = [
   body("skills").optional().isArray().withMessage("Skills must be an array"),
-  body("location").optional().isString().withMessage("Location must be a string"),
-  body("minCTC").optional().isNumeric().withMessage("Minimum CTC must be a number"),
-  body("maxCTC").optional().isNumeric().withMessage("Maximum CTC must be a number"),
+  body("location").optional().isArray().withMessage("Location must be an array"),
+  body("minCTC").optional().isString().withMessage("Minimum CTC must be a string"),
+  body("maxCTC").optional().isString().withMessage("Maximum CTC must be a string"),
   body("type_of_employment").optional().isIn(["Full-time", "Part-time", "Contract-based", "Project-based", "Internship"]).withMessage("Invalid employment type"),
   body("work_environment").optional().isIn(["Remote", "Hybrid", "On-site"]).withMessage("Invalid work environment")
 ];

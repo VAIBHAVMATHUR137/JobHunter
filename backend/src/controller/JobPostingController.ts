@@ -2,15 +2,6 @@ import JobPosting from "../schema/JobPostingSchema";
 import { Request, Response } from "express";
 import expressAsyncHandler from "express-async-handler";
 
-// Custom Middleware to ensure only recruiters can access the job posting 
-export const recruiterOnly = (req: Request, res: Response, next: Function) => {
-  if (req.user?.role !== 'recruiter') {
-    res.status(403).json({"Message":"Access denied: Only recruiters can perform this action"});
-    return;
-  }
-  next();
-};
-
 //Fetch all the jobs posted by a particular recruiter
 export const fetchAllJobsPosted = expressAsyncHandler(
   async (req: Request, res: Response) => {
@@ -52,11 +43,9 @@ export const editjobPosting = expressAsyncHandler(
       throw new Error("You can only edit your own job postings");
     }
 
-    const updatedJob = await JobPosting.findByIdAndUpdate(
-      jobId,
-      req.body,
-      { new: true }
-    );
+    const updatedJob = await JobPosting.findByIdAndUpdate(jobId, req.body, {
+      new: true,
+    });
 
     res.status(200).json(updatedJob);
   }
@@ -67,44 +56,47 @@ export const postNewJob = expressAsyncHandler(
   async (req: Request, res: Response) => {
     const {
       designation,
-      job_role,
+
       CTC,
       experience_required_in_months,
-      fresher_eligible,
+      isFresherEligible,
       degree_required,
       bond,
       work_environment,
       job_location,
+      job_description,
       company_name,
       skills_required,
       type_of_employment,
       perks_and_benefits,
       required_languages,
-      visa_sponsorship_available,
-      username
+      isVisaSponsored,
+      username,
+      name,
+      email,
     } = req.body;
-
-
-
 
     // Add recruiter information to the job posting
     const job = await JobPosting.create({
       designation,
-      job_role,
+
       CTC,
       experience_required_in_months,
-      fresher_eligible,
+      isFresherEligible,
       degree_required,
       bond,
       work_environment,
       job_location,
+      job_description,
       company_name,
       skills_required,
       type_of_employment,
       perks_and_benefits,
       required_languages,
-      visa_sponsorship_available,
-      username
+      isVisaSponsored,
+      username,
+      name,
+      email,
     });
 
     res.status(201).json(job);
@@ -115,7 +107,7 @@ export const postNewJob = expressAsyncHandler(
 export const deleteExistingJob = expressAsyncHandler(
   async (req: Request, res: Response) => {
     const jobposting = await JobPosting.findById(req.params.id);
-    
+
     if (!jobposting) {
       res.status(404);
       throw new Error("Job posting not found");
@@ -129,8 +121,7 @@ export const deleteExistingJob = expressAsyncHandler(
 
     await JobPosting.deleteOne({ _id: req.params.id });
     res.status(200).json({
-      message: `Job posting for the role of ${jobposting.job_role} has been deleted`,
+      message: `Job posting for the role of ${jobposting.designation} has been deleted`,
     });
   }
 );
-
