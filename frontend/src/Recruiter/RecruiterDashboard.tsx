@@ -55,6 +55,7 @@ const RecruiterDashboard: React.FC = () => {
   const { isLoading, error, recruiterData } = useSelector(
     (state: RootState) => state.recruiterDashboard
   );
+
   useEffect(() => {
     const timeoutId = setTimeout(() => {
 

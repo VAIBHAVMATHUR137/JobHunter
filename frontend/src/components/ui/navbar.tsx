@@ -15,7 +15,7 @@ export default function Navbar() {
   }, []);
 
   const navLinks = [
-    { name: "Find Jobs", to: "/CommonAuthentication" },
+    { name: "Find Jobs", to: "/AllJobs" },
     { name: "Companies", to: "/TopRecruiters" },
     { name: "Resources", to: "/ExceptionalCandidates" },
     { name: "Post a job", to: "/JobPosting" },

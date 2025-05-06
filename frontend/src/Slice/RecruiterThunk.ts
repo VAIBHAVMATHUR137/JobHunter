@@ -549,7 +549,7 @@ export const recruiterDashboard = createAsyncThunk<
   { rejectValue: { message: string; status: number } }
 >("/recruiter/dashboard", async (_, { rejectWithValue }) => {
   try {
-    const response = await recruiterApi.get("/dashboard");
+    const response = await recruiterApi.get("/dashboard")
     if (response.status === 200) {
       return response.data;
     } else {

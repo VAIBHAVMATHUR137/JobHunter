@@ -29,6 +29,7 @@ interface RecruiterAuthContextType {
   ) => Promise<RecruiterLoginResponse>;
   isAuthenticated: boolean;
   logout: () => void;
+
 }
 
 interface CandidateAuthContextType {

@@ -25,6 +25,7 @@ import RecruiterProfile from "./Recruiter/RecruiterProfile";
 import CandidateListing from "./Pages/CandidateListing";
 import CandidateProfile from "./Candidate/CandidateProfile";
 import JobPosting from "./Pages/JobPosting";
+import AllJobs from "./Pages/AllJobs";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -122,6 +123,11 @@ const router = createBrowserRouter([
   {
     path:"/JobPosting",
     element:<JobPosting/>,
+    errorElement:<Error/>
+  },
+  {
+    path:"/AllJobs",
+    element:<AllJobs/>,
     errorElement:<Error/>
   }
 ]);

@@ -20,8 +20,9 @@ export const RecruiterAuthProvider = ({ children }: { children: ReactNode }) => 
     localStorage.getItem("recruiterAccessToken")
   );
   const dispatch = useDispatch<AppDispatch>();
+
+
   const username = localStorage.getItem("recruiterUsername");
-  
   useEffect(() => {
     const token = localStorage.getItem("recruiterAccessToken");
 

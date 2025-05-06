@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "@/Slice/Store";
 import { Plus, Minus } from "lucide-react";
-import { resetJob, updateJob } from "@/Slice/JobPostingSlice";
+import { updateJob } from "@/Slice/JobPostingSlice";
 import Navbar from "@/components/ui/navbar";
 import {
   Card,
@@ -170,7 +170,6 @@ function JobPosting() {
     }
   };
   const handleSubmit = async () => {
-    const token = localStorage.getItem("recruiterAccessToken");
     try {
       // Create job data object from the Redux state
       const jobData = {
@@ -197,8 +196,7 @@ function JobPosting() {
       // Correctly structure the axios request with headers as a separate config object
       const response = await axios.post(
         "http://localhost:5000/job/create",
-        jobData, 
-
+        jobData
       );
 
       console.log(response.status);
@@ -210,6 +208,7 @@ function JobPosting() {
       alert("Failed to post job. Please check the console for details.");
     }
   };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
@@ -247,7 +246,8 @@ function JobPosting() {
                     <Label htmlFor="company_name">Company Name</Label>
                     <Input
                       id="company_name"
-                      placeholder="e.g. Google"
+                      disabled
+                      readOnly
                       value={recruiterDetails.recruiterData.current_job.company}
                       onChange={(e) => {
                         dispatch(
@@ -763,6 +763,8 @@ function JobPosting() {
                   <Input
                     id="recruiter_name"
                     value={recruiterDetails.recruiterData.firstName}
+                    disabled
+                    readOnly
                     onChange={(e) => {
                       dispatch(
                         updateJob({
@@ -778,6 +780,8 @@ function JobPosting() {
                   <Label htmlFor="recruiter_username">Username</Label>
                   <Input
                     id="username"
+                    disabled
+                    readOnly
                     value={recruiterDetails.username}
                     onChange={(e) => {
                       dispatch(
@@ -796,6 +800,8 @@ function JobPosting() {
                   </Label>
                   <Input
                     id="recruiter_email"
+                    disabled
+                    readOnly
                     value={recruiterDetails.recruiterData.email}
                     onChange={(e) => {
                       dispatch(
