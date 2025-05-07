@@ -136,7 +136,12 @@ export const jobPostingValidationRules = [
     .notEmpty()
     .withMessage("Email is required")
     .isEmail()
-    .withMessage("Email must be valid")
+    .withMessage("Email must be valid"),
+  
+    body("jobID")
+    .trim()
+    .notEmpty()
+    .withMessage("jobID is required")
 ];
 
 // Validate job posting middleware

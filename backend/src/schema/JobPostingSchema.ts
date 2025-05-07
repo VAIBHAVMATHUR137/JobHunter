@@ -30,7 +30,8 @@ interface IndividualJobPosting extends Document {
   isVisaSponsored: boolean;
   username:string;
   name:string;
-  email:string
+  email:string;
+  jobID:string
 }
 
 const jobPostingSchema: Schema = new mongoose.Schema({
@@ -121,6 +122,11 @@ const jobPostingSchema: Schema = new mongoose.Schema({
   email:{
     type:String,
     required:true
+  },
+  jobID:{
+    type:String,
+    required:true,
+    unique:true
   }
 });
 

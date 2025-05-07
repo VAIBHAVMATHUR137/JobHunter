@@ -17,7 +17,8 @@ export const fetchAllJobsPosted = expressAsyncHandler(
 //Fetch a particular job posted by recruiter
 export const fetchParticularJobPosted = expressAsyncHandler(
   async (req: Request, res: Response) => {
-    const jobposted = await JobPosting.findById(req.params.id);
+    const jobID=req.params.id
+    const jobposted = await JobPosting.findById(jobID);
     if (!jobposted) {
       res.status(404);
       throw new Error("No such job exists");
@@ -26,30 +27,7 @@ export const fetchParticularJobPosted = expressAsyncHandler(
   }
 );
 
-//Edit requirements of job already posted by recruiter
-export const editjobPosting = expressAsyncHandler(
-  async (req: Request, res: Response) => {
-    const jobId = req.params.id;
-    const jobPosting = await JobPosting.findById(jobId);
 
-    if (!jobPosting) {
-      res.status(404);
-      throw new Error("Job posting not found");
-    }
-
-    // Convert IDs to strings for comparison
-    if (jobPosting.username.toString() !== req.user?.id) {
-      res.status(403);
-      throw new Error("You can only edit your own job postings");
-    }
-
-    const updatedJob = await JobPosting.findByIdAndUpdate(jobId, req.body, {
-      new: true,
-    });
-
-    res.status(200).json(updatedJob);
-  }
-);
 
 //Post a new job by recruiter
 export const postNewJob = expressAsyncHandler(
@@ -74,6 +52,7 @@ export const postNewJob = expressAsyncHandler(
       username,
       name,
       email,
+      jobID
     } = req.body;
 
     // Add recruiter information to the job posting
@@ -97,6 +76,7 @@ export const postNewJob = expressAsyncHandler(
       username,
       name,
       email,
+      jobID
     });
 
     res.status(201).json(job);
