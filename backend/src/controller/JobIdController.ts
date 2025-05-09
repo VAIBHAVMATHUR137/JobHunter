@@ -1,18 +1,18 @@
 import { Request, Response } from "express";
 import expressAsyncHandler from "express-async-handler";
-import { jobID } from "../schema/JobIDschema";
+import { jobIDSchema } from "../schema/JobIDschema";
 
 export const createJobID = () =>
   expressAsyncHandler(async (req: Request, res: Response) => {
     try {
-      const { username, jobID: id } = req.body;
-      
-      if (!username || !id) {
+      const { username, jobID } = req.body;
+
+      if (!username || !jobID) {
         res.status(400).json({ message: "Username and jobID are required" });
         return;
       }
-      
-      const newJob = await jobID.create({ username, jobID: id });
+
+      const newJob = await jobIDSchema.create({ username, jobID });
       res.status(201).json(newJob);
     } catch (error: any) {
       console.error(error);
@@ -28,21 +28,21 @@ export const createJobID = () =>
 export const screenJobID = () =>
   expressAsyncHandler(async (req: Request, res: Response) => {
     try {
-      const { id } = req.params;
-      
-      if (!id) {
+      const { jobID } = req.params;
+
+      if (!jobID) {
         res.status(400).json({ message: "Job ID is required" });
         return;
       }
-      
-      const jobRecord = await jobID.findOne({ jobID: id });
-      
-      if (!jobRecord) {
-        res.status(404).json({ message: "No job found with this ID" });
+
+      const jobRecord = await jobIDSchema.findOne({ jobID });
+
+      if (jobRecord) {
+        res.status(409).json({ message: "This jobID already exists" });
         return;
       }
-      
-      res.status(200).json(jobRecord);
+
+      res.status(200).json({ Message: "This jobID is available" });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Something went wrong on the server" });
@@ -52,20 +52,20 @@ export const screenJobID = () =>
 export const deleteJobID = () =>
   expressAsyncHandler(async (req: Request, res: Response) => {
     try {
-      const { id } = req.params;
-      
-      if (!id) {
+      const { jobID } = req.params;
+
+      if (!jobID) {
         res.status(400).json({ message: "Job ID is required" });
         return;
       }
-      
-      const result = await jobID.deleteOne({ jobID: id });
-      
+
+      const result = await jobIDSchema.deleteOne({ jobID});
+
       if (result.deletedCount === 0) {
         res.status(404).json({ message: "No such job exists" });
         return;
       }
-      
+
       res.status(200).json({ message: "Job deleted successfully" });
     } catch (error) {
       console.error(error);

@@ -7,27 +7,25 @@ import {
 } from "../controller/JobPostingController";
 
 import {
-  jobPostingValidationRules,
-  validateJobPosting,
-  validateJobPostingBusinessLogic,
-} from "../middleware/JobPostingValidator";
-import { createJobID, deleteJobID, screenJobID } from "../controller/JobIdController";
+  createJobID,
+  deleteJobID,
+  screenJobID,
+} from "../controller/JobIdController";
 const router = express.Router();
 
 // Public routes (accessible to both candidates and recruiters)
 router.get("/fetch", fetchAllJobsPosted);
-router.get("/fetchIndividualJob/:id", fetchParticularJobPosted);
+router.get("/fetchIndividualJob/:jobID", fetchParticularJobPosted);
 
 // Recruiter-only routes
 router.post(
   "/create",
-
   postNewJob
 );
 
-router.delete("/delete/:id", deleteExistingJob);
-router.delete('/deleteID/:id',deleteJobID())
-router.post('/createID',createJobID())
-router.get('/screenID/:id',screenJobID())
+router.delete("/delete/:jobID", deleteExistingJob);
+router.delete("/deleteID/:jobID", deleteJobID());
+router.post("/createID", createJobID());
+router.get("/screenID/:jobID", screenJobID());
 
 export default router;

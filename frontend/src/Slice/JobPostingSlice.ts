@@ -34,7 +34,8 @@ interface JobPosting {
   isVisaSponsored: boolean;
   username: string;
   name:string;
-  email:string
+  email:string;
+  jobID:string
 }
 const initialJobPosting: JobPosting = {
   designation:"",
@@ -54,7 +55,8 @@ const initialJobPosting: JobPosting = {
   isVisaSponsored: false,
   username: "",
   name:"",
-  email:""
+  email:"",
+  jobID:""
 };
 
 export const updateJobPosting = <T extends keyof JobPosting>(

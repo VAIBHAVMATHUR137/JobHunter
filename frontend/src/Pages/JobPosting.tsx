@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "@/Slice/Store";
 import { Plus, Minus } from "lucide-react";
 import { updateJob } from "@/Slice/JobPostingSlice";
+import { jobIDGenerator } from "@/components/ui/idGenerator";
 import Navbar from "@/components/ui/navbar";
 import {
   Card,
@@ -25,16 +26,44 @@ import {
 import { useEffect } from "react";
 import { recruiterDashboard } from "@/Slice/RecruiterThunk";
 import axios from "axios";
+import { checkJobID } from "@/Slice/JobThunk";
 
 function JobPosting() {
   const dispatch = useDispatch<AppDispatch>();
 
   const jobState = useSelector((state: RootState) => state.jobReducer);
+
   useEffect(() => {
     const username = localStorage.getItem("recruiterUsername");
-    if (username) {
-      dispatch(recruiterDashboard({ username }));
-    }
+    const jobID = jobIDGenerator();
+    const verifyJobID = async (
+      jobID: string
+    ): Promise<{ success: boolean }> => {
+      const result = await dispatch(checkJobID({ jobID })).unwrap();
+      console.log(result.success);
+      return result;
+    };
+    const initDashboard = async () => {
+      if (username) {
+        dispatch(recruiterDashboard({ username }));
+
+        const result = await verifyJobID(jobID);
+
+        if (result.success) {
+          dispatch(
+            updateJob({
+              field: "jobID",
+              value: jobID,
+            })
+          );
+        }
+        else if('status' in result && result.status === 409){
+             window.location.reload();
+        }
+      }
+    };
+
+    initDashboard();
   }, [dispatch]);
   const recruiterDetails = useSelector(
     (state: RootState) => state.recruiterDashboard
@@ -191,6 +220,7 @@ function JobPosting() {
         username: recruiterDetails.username,
         name: recruiterDetails.recruiterData.firstName,
         email: recruiterDetails.recruiterData.email,
+        jobID: jobState.jobID,
       };
 
       // Correctly structure the axios request with headers as a separate config object
@@ -598,13 +628,13 @@ function JobPosting() {
                       <SelectValue placeholder="Select type of employment" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Full time">Full time</SelectItem>
-                      <SelectItem value="Part-time">Part time</SelectItem>
+                      <SelectItem value="Full-time">Full-time</SelectItem>
+                      <SelectItem value="Part-time">Part-time</SelectItem>
                       <SelectItem value="Contract-based">
-                        Contract based
+                        Contract-based
                       </SelectItem>
                       <SelectItem value="Project-based">
-                        Project based
+                        Project-based
                       </SelectItem>
                       <SelectItem value="Internship">Internship</SelectItem>
                     </SelectContent>
@@ -807,6 +837,24 @@ function JobPosting() {
                       dispatch(
                         updateJob({
                           field: "email",
+                          value: e.target.value,
+                        })
+                      );
+                    }}
+                  />
+                </div>
+                {/* jobID */}
+                <div className="space-y-2">
+                  <Label htmlFor="jobID">Job ID</Label>
+                  <Input
+                    id="jobID"
+                    disabled
+                    readOnly
+                    value={jobState.jobID}
+                    onChange={(e) => {
+                      dispatch(
+                        updateJob({
+                          field: "jobID",
                           value: e.target.value,
                         })
                       );

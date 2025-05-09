@@ -14,4 +14,4 @@ const jobIdSchema: Schema = new mongoose.Schema({
     required: true,
   },
 });
-export const jobID = mongoose.model<jobIdSchema>("jobIdSchema", jobIdSchema);
+export const jobIDSchema = mongoose.model<jobIdSchema>("jobIdSchema", jobIdSchema);

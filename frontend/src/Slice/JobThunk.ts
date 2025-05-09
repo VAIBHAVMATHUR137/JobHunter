@@ -39,6 +39,8 @@ interface JobPosting {
   username: string;
   name: string;
   email: string;
+  jobID:string
+  
 }
 const initialJobPosting: JobPosting = {
   designation: "",
@@ -59,16 +61,17 @@ const initialJobPosting: JobPosting = {
   username: "",
   name: "",
   email: "",
+  jobID:""
 };
 
 //FETCH INDIVIDUAL JOB
 export const fetchIndividualJob = createAsyncThunk<
   JobPosting,
-  { id: string },
+  { jobID: string },
   { rejectValue: { message: string; status: number } }
->("/job/fetchIndividual", async ({ id }, { rejectWithValue }) => {
+>("/job/fetchIndividual", async ({ jobID }, { rejectWithValue }) => {
   try {
-    const response = await jobApi.get(`/fetchIndividualJob/${id}`);
+    const response = await jobApi.get(`/fetchIndividualJob/${jobID}`);
     if (response.status === 200) {
       return response.data;
     }
@@ -204,5 +207,120 @@ export const allJobsSlice = createSlice({
   },
 });
 
+// Interface for jobID generation parameters
+interface JobIDGeneration {
+  username: string;
+  jobID: string;
+}
+
+// Error Response interface
+interface ErrorResponse {
+  message: string;
+  status: number;
+}
+
+// JobID creation thunk
+export const generateJobID = createAsyncThunk<
+  { success: boolean },
+  JobIDGeneration,
+  { rejectValue: ErrorResponse }
+>("/jobID/create", async (data: JobIDGeneration, { rejectWithValue }) => {
+  try {
+    const response = await jobApi.post("/createID", data);
+    return { success: response.status === 201 };
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      let status: number;
+      let message: string;
+
+      // Check for MongoDB duplicate key error
+      if (error.response?.data?.code === 11000) {
+        status = 409;
+        message = "Username already exists";
+      } else {
+        status = error.response?.status || 500;
+        message = error.response?.data?.message || "An unknown error occurred";
+      }
+
+      return rejectWithValue({
+        message,
+        status,
+      });
+    }
+
+    // Handle non-Axios errors
+    return rejectWithValue({
+      message: "An unexpected error occurred",
+      status: 500,
+    });
+  }
+});
+//THUNK TO CHECK JOB ID
+export const checkJobID = createAsyncThunk<
+  { success: boolean },
+  { jobID: string },
+  { rejectValue: ErrorResponse }
+>("jobID/check", async ({ jobID }, { rejectWithValue }) => {
+  try {
+    const response = await jobApi.get(`/screenID/${jobID}`);
+
+    if (response.status === 200) {
+      return { success: true };
+    } else if (response.status === 409) {
+      return { success: false };
+    } else {
+      return rejectWithValue({
+        message: "Unexpected response status",
+        status: response.status,
+      });
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error))
+      return rejectWithValue({
+        message: error?.response?.data?.message || "Network or server error",
+        status: error?.response?.status || 500,
+      });
+    return rejectWithValue({
+      message: "An unknown error occurred",
+      status: 500,
+    });
+  }
+});
+//Thunk to delete ID
+export const deleteJobID = createAsyncThunk<
+  { success: boolean },
+  { jobID: string },
+  { rejectValue: ErrorResponse }
+>("jobID/delete", async ({ jobID }, { rejectWithValue }) => {
+  try {
+    const response = await jobApi.post(`/deleteID/${jobID}`);
+
+    if (response.status === 200) {
+      return { success: true };
+    } else if (response.status === 404) {
+      return rejectWithValue({
+        message: "no such jobID exists",
+        status: 404,
+      });
+    } else {
+      return rejectWithValue({
+        message: "Unexpected response status",
+        status: response.status,
+      });
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error))
+      return rejectWithValue({
+        message: error?.response?.data?.message || "Network or server error",
+        status: error?.response?.status || 500,
+      });
+
+    return rejectWithValue({
+      message: "An unknown error occurred",
+      status: 500,
+    });
+  }
+});
+
 export const individualJobReducer = individualJobSlice.reducer;
-export const allJobsReducer=allJobsSlice.reducer;
+export const allJobsReducer = allJobsSlice.reducer;
