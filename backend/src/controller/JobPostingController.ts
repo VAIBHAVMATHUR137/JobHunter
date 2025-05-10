@@ -17,7 +17,7 @@ export const fetchAllJobsPosted = expressAsyncHandler(
 //Fetch a particular job posted by recruiter
 export const fetchParticularJobPosted = expressAsyncHandler(
   async (req: Request, res: Response) => {
-    const jobID=req.params.id
+    const jobID=req.params.jobID
     const jobposted = await JobPosting.findOne({jobID})
     if (!jobposted) {
       res.status(404);
@@ -80,9 +80,11 @@ export const postNewJob = expressAsyncHandler(
         jobID
       });
   
-      res.status(201).json(job);
+      res.status(201).json({"Message":"Job created successfully"});
     } catch (error) {
-      throw new Error("Error occured "+ error)
+      console.error(error);
+      res.status(500).json({ message: "Something went wrong on the server." });
+      return;
     }
 
   }

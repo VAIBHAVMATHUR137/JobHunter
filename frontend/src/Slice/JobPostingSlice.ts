@@ -72,7 +72,7 @@ export const updateJobPosting = <T extends keyof JobPosting>(
 
 export const resetJobPosting = <T extends keyof JobPosting>(
   state: JobPosting,
-  action: PayloadAction<{ field: T; value: JobPosting[T] }>
+  action: PayloadAction<{ field: T }>
 ) => {
   return {
     ...state,

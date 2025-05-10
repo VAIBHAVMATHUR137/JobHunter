@@ -1,8 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+
+import { resetJob } from "./JobPostingSlice";
 export const jobApi = axios.create({
   baseURL: "http://localhost:5000/job",
 });
+
 type WorkEnvironment = "Remote" | "Hybrid" | "On-site";
 type EmploymentType =
   | "Full-time"
@@ -39,8 +42,7 @@ interface JobPosting {
   username: string;
   name: string;
   email: string;
-  jobID:string
-  
+  jobID: string;
 }
 const initialJobPosting: JobPosting = {
   designation: "",
@@ -61,7 +63,7 @@ const initialJobPosting: JobPosting = {
   username: "",
   name: "",
   email: "",
-  jobID:""
+  jobID: "",
 };
 
 //FETCH INDIVIDUAL JOB
@@ -69,7 +71,7 @@ export const fetchIndividualJob = createAsyncThunk<
   JobPosting,
   { jobID: string },
   { rejectValue: { message: string; status: number } }
->("/job/fetchIndividual", async ({ jobID }, { rejectWithValue }) => {
+>("/job/fetchIndividual", async ( {jobID} , { rejectWithValue }) => {
   try {
     const response = await jobApi.get(`/fetchIndividualJob/${jobID}`);
     if (response.status === 200) {
@@ -205,6 +207,106 @@ export const allJobsSlice = createSlice({
         state.jobData = [initialJobPosting];
       });
   },
+});
+
+export const createJobThunk = createAsyncThunk<
+  { success: boolean },
+  JobPosting,
+  { rejectValue: ErrorResponse }
+>("/jobPosting/Create", async (data, { dispatch, rejectWithValue }) => {
+  
+
+  try {
+    const jobIDGenerate = await dispatch(
+      generateJobID({
+        username: data.username,
+        jobID: data.jobID,
+      })
+    ).unwrap();
+    if (!jobIDGenerate.success) {
+      return rejectWithValue({
+        message: "JobID  is already taken",
+        status: 409,
+      });
+    }
+    const response = await jobApi.post("/create", data);
+    //if job posting successful
+    if (response.status === 201) {
+      const resetFields = [
+        "designation",
+        "CTC",
+        "experience_required_in_months",
+        "isFresherEligible",
+        "degree_required",
+        "bond",
+        "work_environment",
+        "job_location",
+        "company_name",
+        "skills_required",
+        "job_description",
+        "type_of_employment",
+        "perks_and_benefits",
+        "required_languages",
+        "isVisaSponsored",
+        "username",
+        "name",
+        "email",
+        "jobID",
+      ] as const;
+      resetFields.forEach((field) => {
+        dispatch(resetJob({ field }));
+      });
+      return { success: true };
+    }
+    return rejectWithValue({
+      message: "Registration failed",
+      status: response.status,
+    });
+  } catch (error) {
+    return rejectWithValue({
+      message: "An unknown error occured",
+      status: 500,
+    });
+  }
+});
+//Delete Job
+export const deleteJobPosting = createAsyncThunk<
+  { success: boolean },
+  { jobID: string },
+  { rejectValue: ErrorResponse }
+>("jobPosting/delete", async (jobID, { rejectWithValue }) => {
+  try {
+    const response = await jobApi.delete(`/delete/${jobID}`);
+    if (response.status === 200) {
+      return {
+        success: true,
+      };
+    }
+  } catch (error) {
+    console.log(error);
+    if (axios.isAxiosError(error) && error.response) {
+      const status = error.response?.status;
+      let message = "Unknown error occured";
+      switch (status) {
+        case 404:
+          message = "Job you want to delete is not found";
+          break;
+        case 403:
+          message = "Unauthorised to delete the job posted by other recruiter";
+          break;
+        default:
+          message = error.response?.data?.message || "Deletion failed";
+      }
+      return rejectWithValue({
+        message: error.response?.data?.message || "Failed to delete job",
+        status: 500,
+      });
+    }
+  }
+  return rejectWithValue({
+    message: "Network error occured while deleting",
+    status: 500,
+  });
 });
 
 // Interface for jobID generation parameters

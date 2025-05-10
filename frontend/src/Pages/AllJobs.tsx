@@ -1,5 +1,5 @@
 import Navbar from "@/components/ui/navbar";
-import { fetchAllJobs } from "@/Slice/JobThunk";
+import { fetchAllJobs, fetchIndividualJob } from "@/Slice/JobThunk";
 import type { AppDispatch, RootState } from "@/Slice/Store";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,7 +13,6 @@ import {
   Clock,
   DollarSign,
   Star,
-  Bookmark,
   ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -22,13 +21,16 @@ function JobListing() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-
   useEffect(() => {
     dispatch(fetchAllJobs());
   }, [dispatch]);
-
   // Get jobs data from Redux store
   const jobsData = useSelector((state: RootState) => state.allJobs);
+  useEffect(()=>{
+    dispatch(fetchIndividualJob({jobID:"MVE391"}))
+  },[dispatch])
+  const individualJob=useSelector((state:RootState)=>state.individual_job.jobData)
+  console.log(individualJob)
 
   // Handle job card click to navigate to job details
   const handleJobCardClick = (jobId: string) => {
@@ -150,8 +152,6 @@ function JobListing() {
                   key={job.work_environment || index}
                   className="group w-full bg-white border-0 overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-all duration-300 relative"
                 >
-
-
                   {/* Card content that's clickable */}
                   <div
                     className="cursor-pointer h-full"

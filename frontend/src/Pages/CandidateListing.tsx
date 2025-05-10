@@ -4,17 +4,13 @@ import { AppDispatch, RootState } from "@/Slice/Store";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { jobApi } from "@/Slice/JobThunk";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Briefcase } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import JobPosting from "./JobPosting";
-import { fetchIndividualJob } from "@/Slice/JobThunk";
 
 function CandidateListing() {
   const dispatch = useDispatch<AppDispatch>();
-
-  const job = useSelector((state: RootState) => state.individual_job);
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -24,26 +20,6 @@ function CandidateListing() {
   const handleCandidateCardClick = (username: string) => {
     navigate(`/Candidate/${username}`);
   };
-  useEffect(() => {
-    const jobID='68186b1d15d5034b9c5d761f'
-    dispatch(fetchIndividualJob({id:jobID}));
-  }, [dispatch]);
-  if(job.isSuccess){
-    console.log("Hello")
-    console.log(job.jobData)
-  }
-  async function handleSubmit(){
-    const jobID="68186b1d15d5034b9c5d761f"
-    try {
-      const response=await jobApi.get(`/fetchIndividualJob/${jobID}`);
-      console.log(response.data)
-    } catch (error) {
-      console.log(error)
-    }
-
-    
-  }
-
 
   return (
     <div className='className="min-h-screen bg-gray-50"'>
@@ -101,8 +77,6 @@ function CandidateListing() {
           </div>
         )}
       </div>
-      <button onClick={handleSubmit}>Submit</button>
- 
     </div>
   );
 }

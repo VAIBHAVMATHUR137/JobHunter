@@ -13,7 +13,7 @@ export const createJobID = () =>
       }
 
       const newJob = await jobIDSchema.create({ username, jobID });
-      res.status(201).json(newJob);
+      res.status(201).json({"Message":"Job ID created successfully"});
     } catch (error: any) {
       console.error(error);
 

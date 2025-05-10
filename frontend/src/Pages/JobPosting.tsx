@@ -26,11 +26,43 @@ import {
 import { useEffect } from "react";
 import { recruiterDashboard } from "@/Slice/RecruiterThunk";
 import axios from "axios";
-import { checkJobID } from "@/Slice/JobThunk";
+import { checkJobID, createJobThunk } from "@/Slice/JobThunk";
 
 function JobPosting() {
   const dispatch = useDispatch<AppDispatch>();
+  type WorkEnvironment = "Remote" | "Hybrid" | "On-site";
+  type EmploymentType =
+    | "Full-time"
+    | "Part-time"
+    | "Contract-based"
+    | "Project-based"
+    | "Internship";
+  type CTC = {
+    minCTC: string;
+    maxCTC: string;
+  };
 
+  interface JobPosting {
+    designation: string;
+    CTC: CTC;
+    experience_required_in_months: string;
+    isFresherEligible: boolean;
+    degree_required: string[];
+    bond: string;
+    work_environment: WorkEnvironment;
+    job_location: string[];
+    company_name: string;
+    skills_required: string[];
+    job_description: string;
+    type_of_employment: EmploymentType;
+    perks_and_benefits: string;
+    required_languages: string[];
+    isVisaSponsored: boolean;
+    username: string;
+    name: string;
+    email: string;
+    jobID: string;
+  }
   const jobState = useSelector((state: RootState) => state.jobReducer);
 
   useEffect(() => {
@@ -56,9 +88,8 @@ function JobPosting() {
               value: jobID,
             })
           );
-        }
-        else if('status' in result && result.status === 409){
-             window.location.reload();
+        } else if ("status" in result && result.status === 409) {
+          window.location.reload();
         }
       }
     };
@@ -201,7 +232,7 @@ function JobPosting() {
   const handleSubmit = async () => {
     try {
       // Create job data object from the Redux state
-      const jobData = {
+      const jobData: JobPosting = {
         designation: jobState.designation,
         CTC: jobState.CTC,
         experience_required_in_months: jobState.experience_required_in_months,
@@ -224,13 +255,9 @@ function JobPosting() {
       };
 
       // Correctly structure the axios request with headers as a separate config object
-      const response = await axios.post(
-        "http://localhost:5000/job/create",
-        jobData
-      );
+      const response = await dispatch(createJobThunk(jobData)).unwrap();
 
-      console.log(response.status);
-      if (response.status === 201) {
+      if (response.success) {
         alert("Job posted successfully");
       }
     } catch (error) {
