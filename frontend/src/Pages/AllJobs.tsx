@@ -26,11 +26,6 @@ function JobListing() {
   }, [dispatch]);
   // Get jobs data from Redux store
   const jobsData = useSelector((state: RootState) => state.allJobs);
-  useEffect(()=>{
-    dispatch(fetchIndividualJob({jobID:"MVE391"}))
-  },[dispatch])
-  const individualJob=useSelector((state:RootState)=>state.individual_job.jobData)
-  console.log(individualJob)
 
   // Handle job card click to navigate to job details
   const handleJobCardClick = (jobId: string) => {
@@ -157,7 +152,7 @@ function JobListing() {
                     className="cursor-pointer h-full"
                     onClick={() =>
                       handleJobCardClick(
-                        job.work_environment || index.toString()
+                        job.jobID || index.toString()
                       )
                     }
                   >

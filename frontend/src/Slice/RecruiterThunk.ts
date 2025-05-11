@@ -4,7 +4,7 @@ import { recruiterApi } from "@/API/recruiterApi";
 import { recruiterRegistrationReset } from "./RecruiterStateSlice";
 import { createSlice } from "@reduxjs/toolkit";
 
-// Types
+//Interface for login response
 interface LoginResponse {
   accessToken: string;
   refreshToken: string;
@@ -14,6 +14,7 @@ interface LoginResponse {
     username: string;
   };
 }
+//Initial state for login response
 const initialLoginResponse: LoginResponse = {
   accessToken: "",
   refreshToken: "",
@@ -23,11 +24,13 @@ const initialLoginResponse: LoginResponse = {
     username: "",
   },
 };
+//Interface for UsernameRequest
 interface UsernameRequest {
   username: string;
   password: string;
 }
 
+//School education interface
 interface SchoolEducation {
   school_name: string;
   percentage_obtained: string;
@@ -41,7 +44,7 @@ const initialSchoolEducation: SchoolEducation = {
   school_board: "",
 };
 
-//College education
+//College education Interface
 interface CollegeEducation {
   programme_name: string;
   specialization: string;

@@ -1,6 +1,7 @@
 import JobPosting from "../schema/JobPostingSchema";
 import { Request, Response } from "express";
 import expressAsyncHandler from "express-async-handler";
+import { jobIDSchema } from "../schema/JobIDschema";
 
 //Fetch all the jobs posted by a particular recruiter
 export const fetchAllJobsPosted = expressAsyncHandler(
@@ -17,8 +18,8 @@ export const fetchAllJobsPosted = expressAsyncHandler(
 //Fetch a particular job posted by recruiter
 export const fetchParticularJobPosted = expressAsyncHandler(
   async (req: Request, res: Response) => {
-    const jobID=req.params.jobID
-    const jobposted = await JobPosting.findOne({jobID})
+    const jobID = req.params.jobID;
+    const jobposted = await JobPosting.findOne({ jobID });
     if (!jobposted) {
       res.status(404);
       throw new Error("No such job exists");
@@ -26,8 +27,6 @@ export const fetchParticularJobPosted = expressAsyncHandler(
     res.status(200).json(jobposted);
   }
 );
-
-
 
 //Post a new job by recruiter
 export const postNewJob = expressAsyncHandler(
@@ -52,14 +51,14 @@ export const postNewJob = expressAsyncHandler(
       username,
       name,
       email,
-      jobID
+      jobID,
     } = req.body;
 
     // Add recruiter information to the job posting
     try {
       const job = await JobPosting.create({
         designation,
-  
+
         CTC,
         experience_required_in_months,
         isFresherEligible,
@@ -77,40 +76,39 @@ export const postNewJob = expressAsyncHandler(
         username,
         name,
         email,
-        jobID
+        jobID,
       });
-  
-      res.status(201).json({"Message":"Job created successfully"});
+
+      res.status(201).json({ Message: "Job created successfully" });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Something went wrong on the server." });
       return;
     }
-
   }
 );
 
 //Delete job posted by recruiter
 export const deleteExistingJob = expressAsyncHandler(
   async (req: Request, res: Response) => {
-    const jobID=req.params.jobID
-    const jobposting = await JobPosting.findOne({jobID})
+    const jobID = req.params.jobID;
+    const jobposting = await JobPosting.findOne({ jobID });
 
     if (!jobposting) {
       res.status(404);
       throw new Error("Job posting not found");
     }
-
-    // Convert IDs to strings for comparison
-    if (jobposting) {
-      res.status(403);
-      throw new Error("You can only delete your own job postings");
+    try {
+      await Promise.all([
+        JobPosting.deleteOne({ jobID }),
+        jobIDSchema.deleteOne({ jobID }),
+      ]);
+      res.status(200).json({
+        message: "Job posting for this role has been deleted",
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ Message: "Cannot delete the user" });
     }
-
-    await JobPosting.deleteOne({jobID})
-    res.status(200).json({
-      message: `Job posting for this role has been deleted`,
-    });
-    return
   }
 );

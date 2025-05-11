@@ -71,7 +71,7 @@ export const fetchIndividualJob = createAsyncThunk<
   JobPosting,
   { jobID: string },
   { rejectValue: { message: string; status: number } }
->("/job/fetchIndividual", async ( {jobID} , { rejectWithValue }) => {
+>("/job/fetchIndividual", async ({ jobID }, { rejectWithValue }) => {
   try {
     const response = await jobApi.get(`/fetchIndividualJob/${jobID}`);
     if (response.status === 200) {
@@ -214,8 +214,6 @@ export const createJobThunk = createAsyncThunk<
   JobPosting,
   { rejectValue: ErrorResponse }
 >("/jobPosting/Create", async (data, { dispatch, rejectWithValue }) => {
-  
-
   try {
     const jobIDGenerate = await dispatch(
       generateJobID({
@@ -291,10 +289,7 @@ export const deleteJobPosting = createAsyncThunk<
         case 404:
           message = "Job you want to delete is not found";
           break;
-        case 403:
-          message = "Unauthorised to delete the job posted by other recruiter";
-          break;
-        default:
+          default:
           message = error.response?.data?.message || "Deletion failed";
       }
       return rejectWithValue({
