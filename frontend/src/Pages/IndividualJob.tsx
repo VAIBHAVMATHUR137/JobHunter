@@ -85,29 +85,40 @@ export default function IndividualJobPage() {
   const appliedForJob = async () => {
     const recruiterUsername = job.username;
     const jobID = job.jobID;
+
     if (!candidateUsername) {
       alert("User needs to login as candidate before applying for a job");
     } else {
-      const screeningResponse = await dispatch(
-        screenApplicationThunk({ candidateUsername, jobID })
-      ).unwrap();
-      if (screeningResponse.result.status === 403) {
-        alert("Cannot apply agian for the same job");
-      } else if (screeningResponse.result.status === 200) {
-        const application = await dispatch(
-          createApplicationThunk({
-            recruiterUsername,
-            candidateUsername,
-            jobID,
-          })
+      try {
+        const screeningResponse = await dispatch(
+          screenApplicationThunk({ candidateUsername, jobID })
         ).unwrap();
-        if (application.success) {
-          alert("Applied for job successfully");
+
+        if (screeningResponse.result.status === 200) {
+          const application = await dispatch(
+            createApplicationThunk({
+              recruiterUsername,
+              candidateUsername,
+              jobID,
+            })
+          ).unwrap();
+
+          if (application.success) {
+            alert("Applied for job successfully");
+          } else {
+            alert("Try later, some issue is at the backend");
+          }
         } else {
-          alert("Try later, some issue is at the backend");
+          alert("Unexpected error occurred, please try later");
         }
-      } else {
-        alert("Unexpected error occured, please try later");
+      } catch (err: any) {
+        // 403 error (already applied)
+        if (err?.status === 403) {
+          alert("Cannot apply again for the same job");
+        } else {
+          alert("An error occurred while checking eligibility");
+          console.error(err);
+        }
       }
     }
   };
