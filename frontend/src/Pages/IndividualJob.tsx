@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -18,16 +20,19 @@ import {
   Code,
   Languages,
   Globe,
-  Star,
   FileText,
   Gift,
   ArrowLeft,
-
+  AtSign,
   Calendar,
   CheckCircle2,
   XCircle,
+  BookmarkPlus,
+  Share2,
+  User,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function IndividualJobPage() {
   const { jobID } = useParams();
@@ -38,6 +43,9 @@ export default function IndividualJobPage() {
     (state: RootState) => state.individual_job.isLoading
   );
   const error = useSelector((state: RootState) => state.individual_job.error);
+  const candidateUsername = useSelector(
+    (state: RootState) => state.candidateDashboard.username
+  );
 
   useEffect(() => {
     if (jobID) {
@@ -67,12 +75,31 @@ export default function IndividualJobPage() {
     return ctc.minCTC || ctc.maxCTC;
   };
 
+  const appliedForJob = async () => {
+    const recruiterUsername = job.username;
+    if (!candidateUsername) {
+      alert("User needs to login as candidate before applying for a job");
+    } else {
+      const response = await axios.post(
+        "http://localhost:5000/applicants/candidatesApplied",
+        {
+          recruiterUsername,
+          jobID,
+          candidateUsername,
+        }
+      );
+      if (response.status === 200) {
+        alert("Applied successfully");
+      }
+    }
+  };
+
   if (loading) {
     return (
       <>
         <Navbar />
         <div className="container mx-auto px-4 py-12 flex flex-col items-center justify-center min-h-[50vh]">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-purple-600 mb-4"></div>
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500 mb-4"></div>
           <p className="text-lg text-gray-600">Loading job details...</p>
         </div>
       </>
@@ -113,360 +140,414 @@ export default function IndividualJobPage() {
   return (
     <>
       <Navbar />
-      <div className="container mx-auto px-4 py-8 max-w-5xl">
-        {/* Back button */}
-        <Button
-          variant="ghost"
-          className="mb-6 text-white hover:text-gray-900"
-          onClick={() => navigate("/AllJobs")}
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to all jobs
-        </Button>
+      <div className="bg-gray-50 min-h-screen">
+        <div className="container mx-auto px-4 py-6 max-w-5xl">
+          {/* Back button */}
+          <Button
+            variant="outline"
+            className="mb-4 text-gray-900"
+            onClick={() => navigate("/AllJobs")}
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to all jobs
+          </Button>
 
-        {/* Job header */}
-        <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8">
-          <div className="h-3 bg-gradient-to-r from-purple-500 to-indigo-600"></div>
-          <div className="p-6 md:p-8">
-            <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                  {job.designation}
-                </h1>
-                <div className="flex items-center text-lg text-gray-700 mb-4">
-                  <Building className="h-5 w-5 mr-2 text-purple-600" />
-                  <span className="font-medium">{job.company_name}</span>
-                </div>
-
-                <div className="flex flex-wrap gap-2 mb-4">
-                  <Badge
-                    className={`px-3 py-1 ${
-                      job.work_environment === "Remote"
-                        ? "bg-green-100 text-green-800"
-                        : job.work_environment === "Hybrid"
-                        ? "bg-blue-100 text-blue-800"
-                        : "bg-amber-100 text-amber-800"
-                    }`}
-                  >
-                    {job.work_environment === "Remote" && "🌎 "}
-                    {job.work_environment === "Hybrid" && "🏢/🏠 "}
-                    {job.work_environment === "On-site" && "🏢 "}
-                    {job.work_environment}
-                  </Badge>
-
-                  <Badge variant="outline" className="bg-gray-50">
-                    <Briefcase className="h-3.5 w-3.5 mr-1" />
-                    {job.type_of_employment}
-                  </Badge>
-
-                  {job.isFresherEligible && (
-                    <Badge className="bg-purple-100 text-purple-800">
-                      <Star className="h-3.5 w-3.5 mr-1" />
-                      Fresher Eligible
-                    </Badge>
-                  )}
-
-                  {job.isVisaSponsored && (
-                    <Badge className="bg-indigo-100 text-indigo-800">
-                      <Globe className="h-3.5 w-3.5 mr-1" />
-                      Visa Sponsored
-                    </Badge>
-                  )}
-                </div>
-
-                <div className="flex flex-wrap gap-x-6 gap-y-2 text-gray-600">
-                  <div className="flex items-center">
-                    <MapPin className="h-4 w-4 mr-2 text-gray-400" />
+          {/* Job header */}
+          <Card className="mb-6 border border-gray-200 shadow-sm">
+            <CardContent className="p-6 md:p-8">
+              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+                <div>
+                  <h1 className="text-2xl font-semibold text-gray-900 mb-2">
+                    {job.designation}
+                  </h1>
+                  <div className="flex items-center text-base text-gray-700 mb-4">
+                    <Building className="h-4 w-4 mr-2 text-gray-500" />
+                    <span className="font-medium">{job.company_name}</span>
+                    <span className="mx-2 text-gray-400">•</span>
+                    <MapPin className="h-4 w-4 mr-1 text-gray-500" />
                     <span>
                       {job.job_location.join(", ") || "Location not specified"}
                     </span>
                   </div>
 
-                  <div className="flex items-center">
-                    <Clock className="h-4 w-4 mr-2 text-gray-400" />
-                    <span>
-                      Experience:{" "}
-                      {formatExperience(job.experience_required_in_months)}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center">
-                    <DollarSign className="h-4 w-4 mr-2 text-gray-400" />
-                    <span>CTC: {formatCTC(job.CTC)}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-3">
-                <Button className="w-full md:w-auto bg-purple-600 hover:bg-purple-700">
-                  Apply Now
-                </Button>
-                <Button variant="outline" className="w-full md:w-auto">
-                  Save Job <Star className="ml-2 h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Job details grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {/* Left column - Main job details */}
-          <div className="md:col-span-2 space-y-6">
-            {/* Job description */}
-            <Card>
-              <CardContent className="p-6">
-                <h2 className="text-xl font-semibold flex items-center mb-4">
-                  <FileText className="mr-2 h-5 w-5 text-purple-600" />
-                  Job Description
-                </h2>
-                <div className="prose max-w-none text-gray-700">
-                  {job.job_description ? (
-                    <p>{job.job_description}</p>
-                  ) : (
-                    <p className="text-gray-500 italic">
-                      No job description provided
-                    </p>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Required Skills */}
-            <Card>
-              <CardContent className="p-6">
-                <h2 className="text-xl font-semibold flex items-center mb-4">
-                  <Code className="mr-2 h-5 w-5 text-purple-600" />
-                  Required Skills
-                </h2>
-                {job.skills_required && job.skills_required.length > 0 ? (
-                  <div className="flex flex-wrap gap-2">
-                    {job.skills_required.map((skill, index) => (
-                      <Badge
-                        key={index}
-                        className="bg-gray-100 text-gray-800 hover:bg-gray-200 px-3 py-1"
-                      >
-                        {skill}
-                      </Badge>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-gray-500 italic">
-                    No specific skills mentioned
-                  </p>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Required Languages */}
-            {job.required_languages && job.required_languages.length > 0 && (
-              <Card>
-                <CardContent className="p-6">
-                  <h2 className="text-xl font-semibold flex items-center mb-4">
-                    <Languages className="mr-2 h-5 w-5 text-purple-600" />
-                    Required Languages
-                  </h2>
-                  <div className="flex flex-wrap gap-2">
-                    {job.required_languages.map((language, index) => (
-                      <Badge
-                        key={index}
-                        variant="outline"
-                        className="bg-blue-50 text-blue-800 border-blue-200 px-3 py-1"
-                      >
-                        {language}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Perks and Benefits */}
-            
-              <Card>
-                <CardContent className="p-6">
-                  <h2 className="text-xl font-semibold flex items-center mb-4">
-                    <Gift className="mr-2 h-5 w-5 text-purple-600" />
-                    Perks and Benefits
-                  </h2>
-                  <div className="prose max-w-none text-gray-700">
-                    <p>{job.perks_and_benefits}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            
-          </div>
-
-          {/* Right column - Additional requirements */}
-          <div className="space-y-6">
-            {/* Job Requirements Summary */}
-            <Card>
-              <CardContent className="p-6">
-                <h2 className="text-xl font-semibold mb-4">Job Requirements</h2>
-
-                <div className="space-y-4">
-                  {/* Experience */}
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500 mb-1">
-                      EXPERIENCE
-                    </h3>
-                    <p className="font-medium">
-                      {formatExperience(job.experience_required_in_months)}
-                    </p>
-                  </div>
-
-                  <Separator />
-
-                  {/* Education */}
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500 mb-1">
-                      EDUCATION
-                    </h3>
-                    { 
-                      <div className="space-y-1">
-                        {job.degree_required.map((degree, index) => (
-                          <div key={index} className="flex items-start">
-                            <GraduationCap className="h-5 w-5 mr-2 text-gray-400 mt-0.5" />
-                            <span>{degree}</span>
-                          </div>
-                        ))}
+                  {/* Recruiter Badge - Sober Style */}
+                  <div className="flex items-center mb-4">
+                    <div
+                      className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 transition-colors rounded-md px-3 py-2 cursor-pointer"
+                      onClick={() => navigate(`/Recruiter/${job.username}`)}
+                    >
+                      <AtSign className="h-4 w-4 text-blue-600" />
+                      <div className="flex flex-col">
+                        <span className="text-xs text-gray-500">Recruiter</span>
+                        <span className="font-medium text-gray-800">
+                          {job.username}
+                        </span>
                       </div>
-                  
-                     
-                    }
+                    </div>
                   </div>
 
-                  <Separator />
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    <Badge
+                      variant="outline"
+                      className="bg-gray-50 text-gray-700 border-gray-200"
+                    >
+                      {job.work_environment}
+                    </Badge>
 
-                  {/* Employment Type */}
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500 mb-1">
-                      EMPLOYMENT TYPE
-                    </h3>
+                    <Badge
+                      variant="outline"
+                      className="bg-gray-50 text-gray-700 border-gray-200"
+                    >
+                      <Briefcase className="h-3.5 w-3.5 mr-1" />
+                      {job.type_of_employment}
+                    </Badge>
+
+                    {job.isFresherEligible && (
+                      <Badge
+                        variant="outline"
+                        className="bg-green-50 text-green-700 border-green-200"
+                      >
+                        Fresher Eligible
+                      </Badge>
+                    )}
+
+                    {job.isVisaSponsored && (
+                      <Badge
+                        variant="outline"
+                        className="bg-blue-50 text-blue-700 border-blue-200"
+                      >
+                        <Globe className="h-3.5 w-3.5 mr-1" />
+                        Visa Sponsored
+                      </Badge>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="flex items-center">
+                      <Clock className="h-5 w-5 mr-2 text-gray-400" />
+                      <div>
+                        <p className="text-xs text-gray-500">Experience</p>
+                        <p className="text-sm font-medium text-gray-700">
+                          {formatExperience(job.experience_required_in_months)}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center">
+                      <DollarSign className="h-5 w-5 mr-2 text-gray-400" />
+                      <div>
+                        <p className="text-xs text-gray-500">Salary</p>
+                        <p className="text-sm font-medium text-gray-700">
+                          {formatCTC(job.CTC)}
+                        </p>
+                      </div>
+                    </div>
+
                     <div className="flex items-center">
                       <Briefcase className="h-5 w-5 mr-2 text-gray-400" />
-                      <span className="font-medium">
-                        {job.type_of_employment}
-                      </span>
-                    </div>
-                  </div>
-
-                  <Separator />
-
-                  {/* Work Environment */}
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500 mb-1">
-                      WORK ENVIRONMENT
-                    </h3>
-                    <div className="flex items-center">
-                      {job.work_environment === "Remote" && (
-                        <Globe className="h-5 w-5 mr-2 text-gray-400" />
-                      )}
-                      {job.work_environment === "Hybrid" && (
-                        <Building className="h-5 w-5 mr-2 text-gray-400" />
-                      )}
-                      {job.work_environment === "On-site" && (
-                        <Building className="h-5 w-5 mr-2 text-gray-400" />
-                      )}
-                      <span className="font-medium">
-                        {job.work_environment}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Bond if applicable */}
-                  { (
-                    <>
-                      <Separator />
                       <div>
-                        <h3 className="text-sm font-medium text-gray-500 mb-1">
-                          BOND REQUIREMENT
-                        </h3>
-                        <div className="flex items-center">
-                          <Calendar className="h-5 w-5 mr-2 text-gray-400" />
-                          <span className="font-medium">{job.bond}</span>
-                        </div>
+                        <p className="text-xs text-gray-500">Job Type</p>
+                        <p className="text-sm font-medium text-gray-700">
+                          {job.type_of_employment}
+                        </p>
                       </div>
-                    </>
-                  )}
-
-                  {/* Fresher Eligibility */}
-                  <Separator />
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500 mb-1">
-                      FRESHER ELIGIBLE
-                    </h3>
-                    <div className="flex items-center">
-                      {job.isFresherEligible ? (
-                        <>
-                          <CheckCircle2 className="h-5 w-5 mr-2 text-green-500" />
-                          <span className="font-medium text-green-700">
-                            Yes
-                          </span>
-                        </>
-                      ) : (
-                        <>
-                          <XCircle className="h-5 w-5 mr-2 text-red-500" />
-                          <span className="font-medium text-red-700">No</span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Visa Sponsorship */}
-                  <Separator />
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500 mb-1">
-                      VISA SPONSORSHIP
-                    </h3>
-                    <div className="flex items-center">
-                      {job.isVisaSponsored ? (
-                        <>
-                          <CheckCircle2 className="h-5 w-5 mr-2 text-green-500" />
-                          <span className="font-medium text-green-700">
-                            Available
-                          </span>
-                        </>
-                      ) : (
-                        <>
-                          <XCircle className="h-5 w-5 mr-2 text-red-500" />
-                          <span className="font-medium text-red-700">
-                            Not Available
-                          </span>
-                        </>
-                      )}
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
 
-            {/* Apply Now Card */}
-            <Card className="bg-gradient-to-br from-purple-50 to-indigo-50 border-purple-100">
-              <CardContent className="p-6">
-                <h2 className="text-xl font-semibold text-purple-900 mb-3">
-                  Ready to Apply?
-                </h2>
-                <p className="text-black mb-4">
-                  Submit your application now and take the next step in your
-                  career journey.
-                </p>
-                <Button className="w-full bg-purple-600 hover:bg-purple-700">
-                  Apply for this Position
-                </Button>
-                <div className="mt-4 text-center text-sm text-gray-500">
-                  <p>or</p>
-                  <Button
-                    variant="link"
-                    className="text-purple-600 hover:text-purple-700 p-0 h-auto mt-1"
-                  >
-                    Save for later <Star className="ml-1 h-3 w-3" />
+                <div className="flex flex-col gap-3">
+                  <Button className="w-full md:w-auto bg-blue-600 hover:bg-blue-700"
+                  onClick={appliedForJob}>
+                    Apply Now
+                  </Button>
+                  <Button variant="outline" className="w-full md:w-auto">
+                    <BookmarkPlus className="mr-2 h-4 w-4" />
+                    Save Job
                   </Button>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </CardContent>
+          </Card>
 
+          {/* Job details grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            {/* Left column - Main job details */}
+            <div className="md:col-span-2 space-y-6">
+              {/* Job description */}
+              <Card className="border border-gray-200 shadow-sm">
+                <CardContent className="p-6">
+                  <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <FileText className="mr-2 h-5 w-5 text-blue-600" />
+                    Job Description
+                  </h2>
+                  <div className="prose max-w-none text-gray-700">
+                    {job.job_description ? (
+                      <p className="text-base leading-relaxed">
+                        {job.job_description}
+                      </p>
+                    ) : (
+                      <p className="text-gray-500 italic">
+                        No job description provided
+                      </p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
 
+              {/* Required Skills */}
+              <Card className="border border-gray-200 shadow-sm">
+                <CardContent className="p-6">
+                  <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <Code className="mr-2 h-5 w-5 text-blue-600" />
+                    Required Skills
+                  </h2>
+                  {job.skills_required && job.skills_required.length > 0 ? (
+                    <div className="flex flex-wrap gap-2">
+                      {job.skills_required.map((skill, index) => (
+                        <Badge
+                          key={index}
+                          variant="outline"
+                          className="bg-gray-50 text-gray-700 border-gray-200 px-3 py-1"
+                        >
+                          {skill}
+                        </Badge>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-500 italic">
+                      No specific skills mentioned
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Required Languages */}
+              {job.required_languages && job.required_languages.length > 0 && (
+                <Card className="border border-gray-200 shadow-sm">
+                  <CardContent className="p-6">
+                    <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                      <Languages className="mr-2 h-5 w-5 text-blue-600" />
+                      Required Languages
+                    </h2>
+                    <div className="flex flex-wrap gap-2">
+                      {job.required_languages.map((language, index) => (
+                        <Badge
+                          key={index}
+                          variant="outline"
+                          className="bg-gray-50 text-gray-700 border-gray-200 px-3 py-1"
+                        >
+                          {language}
+                        </Badge>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Perks and Benefits */}
+              {job.perks_and_benefits && (
+                <Card className="border border-gray-200 shadow-sm">
+                  <CardContent className="p-6">
+                    <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                      <Gift className="mr-2 h-5 w-5 text-blue-600" />
+                      Perks and Benefits
+                    </h2>
+                    <div className="prose max-w-none text-gray-700">
+                      <p className="text-base leading-relaxed">
+                        {job.perks_and_benefits}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+
+            {/* Right column - Additional requirements */}
+            <div className="space-y-6">
+              {/* Company and Recruiter Card */}
+              <Card className="border border-gray-200 shadow-sm">
+                <CardContent className="p-6">
+                  <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <Building className="mr-2 h-5 w-5 text-blue-600" />
+                    About the Company
+                  </h2>
+                  <div className="flex items-center mb-5">
+                    <div className="w-12 h-12 bg-blue-100 rounded-md flex items-center justify-center text-blue-600 mr-3">
+                      <span className="text-lg font-semibold">
+                        {job.company_name.charAt(0)}
+                      </span>
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-gray-900">
+                        {job.company_name}
+                      </h3>
+                      <Button
+                        variant="link"
+                        className="p-0 h-auto text-blue-600 hover:text-blue-800"
+                      >
+                        View company profile
+                      </Button>
+                    </div>
+                  </div>
+
+                  <Separator className="my-4" />
+
+                  <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                    <User className="mr-2 h-4 w-4 text-blue-600" />
+                    Recruiter
+                  </h3>
+                  <div className="flex items-center">
+                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mr-3">
+                      <AtSign className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">
+                        {job.username}
+                      </p>
+                      <p className="text-xs text-gray-500">Hiring Manager</p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="mt-3 w-full text-blue-600 border-blue-200 hover:bg-blue-50"
+                    onClick={() => navigate(`/Recruiter/${job.username}`)}
+                  >
+                    View Profile
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Job Requirements Summary */}
+              <Card className="border border-gray-200 shadow-sm">
+                <CardContent className="p-6">
+                  <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <Briefcase className="mr-2 h-5 w-5 text-blue-600" />
+                    Job Requirements
+                  </h2>
+
+                  <div className="space-y-4">
+                    {/* Education */}
+                    {job.degree_required && job.degree_required.length > 0 && (
+                      <div>
+                        <h3 className="text-sm font-medium text-gray-700 mb-2">
+                          Education
+                        </h3>
+                        <div className="bg-gray-50 border border-gray-200 rounded-md p-3">
+                          <div className="space-y-2">
+                            {job.degree_required.map((degree, index) => (
+                              <div key={index} className="flex items-start">
+                                <GraduationCap className="h-5 w-5 mr-2 text-gray-500 mt-0.5" />
+                                <span className="text-gray-800">{degree}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Bond if applicable */}
+                    {job.bond && (
+                      <div>
+                        <h3 className="text-sm font-medium text-gray-700 mb-2">
+                          Bond Requirement
+                        </h3>
+                        <div className="bg-gray-50 border border-gray-200 rounded-md p-3">
+                          <div className="flex items-center">
+                            <Calendar className="h-5 w-5 mr-2 text-gray-500" />
+                            <span className="text-gray-800">{job.bond}</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Fresher Eligibility */}
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-700 mb-2">
+                        Fresher Eligible
+                      </h3>
+                      <div className="bg-gray-50 border border-gray-200 rounded-md p-3">
+                        <div className="flex items-center">
+                          {job.isFresherEligible ? (
+                            <>
+                              <CheckCircle2 className="h-5 w-5 mr-2 text-green-500" />
+                              <span className="text-gray-800">
+                                Yes - Freshers can apply
+                              </span>
+                            </>
+                          ) : (
+                            <>
+                              <XCircle className="h-5 w-5 mr-2 text-red-500" />
+                              <span className="text-gray-800">
+                                No - Experience required
+                              </span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Visa Sponsorship */}
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-700 mb-2">
+                        Visa Sponsorship
+                      </h3>
+                      <div className="bg-gray-50 border border-gray-200 rounded-md p-3">
+                        <div className="flex items-center">
+                          {job.isVisaSponsored ? (
+                            <>
+                              <Globe className="h-5 w-5 mr-2 text-blue-500" />
+                              <span className="text-gray-800">Available</span>
+                            </>
+                          ) : (
+                            <>
+                              <XCircle className="h-5 w-5 mr-2 text-red-500" />
+                              <span className="text-gray-800">
+                                Not Available
+                              </span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Apply Now Card */}
+              <Card className="border border-gray-200 shadow-sm bg-blue-50">
+                <CardContent className="p-6">
+                  <h2 className="text-lg font-semibold text-gray-900 mb-3">
+                    Ready to Apply?
+                  </h2>
+                  <p className="text-gray-700 mb-4 text-sm">
+                    Submit your application now and take the next step in your
+                    career journey.
+                  </p>
+                  <Button className="w-full bg-blue-600 hover:bg-blue-700 mb-3">
+                    Apply for this Position
+                  </Button>
+                  <div className="flex justify-between mt-4">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-gray-600 hover:bg-blue-100 hover:text-blue-700"
+                    >
+                      <BookmarkPlus className="mr-2 h-4 w-4" />
+                      Save
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-gray-600 hover:bg-blue-100 hover:text-blue-700"
+                    >
+                      <Share2 className="mr-2 h-4 w-4" />
+                      Share
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
       </div>
