@@ -26,3 +26,45 @@ export const candidateForJobController = expressAsyncHandler(
     }
   }
 );
+
+
+export const checkCandidateJobApplication = expressAsyncHandler(
+  async (req: Request, res: Response) => {
+
+    const { candidateUsername, jobID } = req.body;
+
+    // Validate required parameters
+    if (!candidateUsername || !jobID) {
+      res.status(400).json({ message: "Candidate username and job ID are required" });
+      return;
+    }
+
+    try {
+      // Check if the combination exists in the database
+      const application = await CandidateForJobSchema.findOne({
+        candidateUsername,
+        jobID
+      });
+
+      // Return the result
+      if (!application) {
+        //Case where candidate has not applied for this job before
+        res.status(200).json({ 
+          hasApplied: false,
+          applicationDetails: application 
+        });
+      } 
+      //Case where candidate has already applied for the same job in past
+      else {
+        res.status(403).json({ 
+          hasApplied: true 
+        });
+      }
+    } catch (error:any) {
+
+      res.status(500).json({ 
+        message: "Failed to check application status, please try again" 
+      });
+    }
+  }
+);

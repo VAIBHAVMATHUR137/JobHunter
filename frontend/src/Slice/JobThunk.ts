@@ -1,10 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { jobApi } from "@/API/jobApi";
 import axios from "axios";
-
 import { resetJob } from "./JobPostingSlice";
-export const jobApi = axios.create({
-  baseURL: "http://localhost:5000/job",
-});
 
 type WorkEnvironment = "Remote" | "Hybrid" | "On-site";
 type EmploymentType =

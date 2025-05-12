@@ -35,6 +35,7 @@ interface RecruiterAuthContextType {
 interface CandidateAuthContextType {
   accessToken: string | null;
   setAccessToken: (token: string | null) => void;
+
   candidateLoginHandler: (
     username: string,
     password: string

@@ -80,6 +80,7 @@ function RecruiterLogin() {
         // Navigate to dashboard with username
         setTimeout(() => 
           nav(`/RecruiterDashboard`), 
+        
           1500
         );
       }

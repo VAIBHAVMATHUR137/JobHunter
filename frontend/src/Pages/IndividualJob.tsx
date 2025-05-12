@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -32,7 +30,12 @@ import {
   User,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+
+import { candidateDashboard } from "@/Slice/CandidateThunk";
+import {
+  createApplicationThunk,
+  screenApplicationThunk,
+} from "@/Slice/ApplicantsForJobThunk";
 
 export default function IndividualJobPage() {
   const { jobID } = useParams();
@@ -43,15 +46,19 @@ export default function IndividualJobPage() {
     (state: RootState) => state.individual_job.isLoading
   );
   const error = useSelector((state: RootState) => state.individual_job.error);
-  const candidateUsername = useSelector(
-    (state: RootState) => state.candidateDashboard.username
-  );
 
   useEffect(() => {
     if (jobID) {
       dispatch(fetchIndividualJob({ jobID }));
     }
+    const candidateUsername = localStorage.getItem("candidateUsername");
+    if (candidateUsername) {
+      dispatch(candidateDashboard({ username: candidateUsername }));
+    }
   }, [dispatch, jobID]);
+  const candidateUsername = useSelector(
+    (state: RootState) => state.candidateDashboard.username
+  );
 
   // Format experience from months to years and months
   const formatExperience = (months: string) => {
@@ -77,19 +84,30 @@ export default function IndividualJobPage() {
 
   const appliedForJob = async () => {
     const recruiterUsername = job.username;
+    const jobID = job.jobID;
     if (!candidateUsername) {
       alert("User needs to login as candidate before applying for a job");
     } else {
-      const response = await axios.post(
-        "http://localhost:5000/applicants/candidatesApplied",
-        {
-          recruiterUsername,
-          jobID,
-          candidateUsername,
+      const screeningResponse = await dispatch(
+        screenApplicationThunk({ candidateUsername, jobID })
+      ).unwrap();
+      if (screeningResponse.result.status === 403) {
+        alert("Cannot apply agian for the same job");
+      } else if (screeningResponse.result.status === 200) {
+        const application = await dispatch(
+          createApplicationThunk({
+            recruiterUsername,
+            candidateUsername,
+            jobID,
+          })
+        ).unwrap();
+        if (application.success) {
+          alert("Applied for job successfully");
+        } else {
+          alert("Try later, some issue is at the backend");
         }
-      );
-      if (response.status === 200) {
-        alert("Applied successfully");
+      } else {
+        alert("Unexpected error occured, please try later");
       }
     }
   };
@@ -256,8 +274,10 @@ export default function IndividualJobPage() {
                 </div>
 
                 <div className="flex flex-col gap-3">
-                  <Button className="w-full md:w-auto bg-blue-600 hover:bg-blue-700"
-                  onClick={appliedForJob}>
+                  <Button
+                    className="w-full md:w-auto bg-blue-600 hover:bg-blue-700"
+                    onClick={appliedForJob}
+                  >
                     Apply Now
                   </Button>
                   <Button variant="outline" className="w-full md:w-auto">

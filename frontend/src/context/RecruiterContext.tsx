@@ -1,6 +1,6 @@
 import { ReactNode, useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { setUsername, recruiterLogin, recruiterLogout } from "@/Slice/RecruiterThunk";
+import { setUsername, recruiterLogin, recruiterLogout, recruiterDashboard } from "@/Slice/RecruiterThunk";
 import { RecruiterAuthContext } from "./CreateContext";
 import { AppDispatch } from "@/Slice/Store";
 import { clearRefreshTimer } from "../API/recruiterApi" // Import the function to clear the timer
@@ -31,7 +31,7 @@ export const RecruiterAuthProvider = ({ children }: { children: ReactNode }) => 
       const username = localStorage.getItem("recruiterUsername");
 
       if (username) {
-        dispatch(setUsername(username));
+        dispatch(recruiterDashboard({username}));
         console.log("Username is " + username);
       }
     }

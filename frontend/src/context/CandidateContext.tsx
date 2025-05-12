@@ -1,6 +1,7 @@
 import { ReactNode, useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import {
+  candidateDashboard,
   candidateLogin,
   candidateLogout,
   setUsername,
@@ -35,7 +36,7 @@ export const CandidateAuthProvider = ({
       setAccessToken(token);
       const username = localStorage.getItem("candidateUsername");
       if (username) {
-        dispatch(setUsername(username));
+        dispatch(candidateDashboard({username}));
       }
     }
   }, [dispatch]);

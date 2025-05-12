@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/select";
 import { useEffect } from "react";
 import { recruiterDashboard } from "@/Slice/RecruiterThunk";
-import axios from "axios";
+
 import { checkJobID, createJobThunk } from "@/Slice/JobThunk";
 
 function JobPosting() {

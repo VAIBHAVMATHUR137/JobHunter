@@ -27,6 +27,7 @@ function JobListing() {
   // Get jobs data from Redux store
   const jobsData = useSelector((state: RootState) => state.allJobs);
 
+
   // Handle job card click to navigate to job details
   const handleJobCardClick = (jobId: string) => {
     navigate(`/job/${jobId}`);
