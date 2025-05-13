@@ -16,10 +16,14 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { screenApplicationThunk } from "@/Slice/JobApplicationThunk";
 
 function JobListing() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+
+
+
 
   useEffect(() => {
     dispatch(fetchAllJobs());
@@ -39,6 +43,7 @@ function JobListing() {
     if (ctc.minCTC && ctc.maxCTC) return `${ctc.minCTC} - ${ctc.maxCTC}`;
     return ctc.minCTC || ctc.maxCTC;
   };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">

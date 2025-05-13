@@ -35,7 +35,7 @@ import { candidateDashboard } from "@/Slice/CandidateThunk";
 import {
   createApplicationThunk,
   screenApplicationThunk,
-} from "@/Slice/ApplicantsForJobThunk";
+} from "@/Slice/JobApplicationThunk";
 
 export default function IndividualJobPage() {
   const { jobID } = useParams();

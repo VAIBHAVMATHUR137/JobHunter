@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { applicantsApi } from "@/API/applicantsApi";
+import { applicationsApi } from "@/API/applicationsAPI";
 import axios from "axios";
 
 interface application {
@@ -20,21 +20,21 @@ export const screenApplicationThunk = createAsyncThunk<
     result: {
       remarks: string;
       success: boolean;
-      status:number
+      status: number;
     };
   },
   application,
   { rejectValue: ErrorResponse }
 >("application/screening", async (data, { rejectWithValue }) => {
   try {
-    const response = await applicantsApi.post("/screeningCandidates", data);
+    const response = await applicationsApi.post("/screen", data);
 
     if (response.status === 200) {
       return {
         result: {
           remarks: "Candidate can apply",
           success: true,
-          status:200
+          status: 200,
         },
       };
     } else if (response.status === 403) {
@@ -42,7 +42,7 @@ export const screenApplicationThunk = createAsyncThunk<
         result: {
           remarks: "Candidate already applied. Not allowed",
           success: false,
-          status:403
+          status: 403,
         },
       };
     }
@@ -60,7 +60,7 @@ export const screenApplicationThunk = createAsyncThunk<
     result: {
       remarks: "Issue at backend, please apply later",
       success: false,
-      status:500
+      status: 500,
     },
   };
 });
@@ -71,7 +71,7 @@ export const createApplicationThunk = createAsyncThunk<
   application,
   { rejectValue: ErrorResponse }
 >("job/application", async (data, { rejectWithValue }) => {
-  const response = await applicantsApi.post("/candidatesApplied", data);
+  const response = await applicationsApi.post("/create", data);
   try {
     if (response.status === 200) {
       return { success: true };

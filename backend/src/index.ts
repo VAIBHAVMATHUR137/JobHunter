@@ -2,7 +2,7 @@ import express, { Express } from "express";
 import candidateRoute from "./routes/CandidateRoute";
 import recruiterRoute from "./routes/RecruiterRoute";
 import jobRoute from "./routes/JobPostingRoute";
-import jobForCandidate from "./routes/CandidateForJob"
+import jobForCandidate from "./routes/JobApplication"
 
 import cors from "cors";
 import connectDb from "./dbConnection";
@@ -21,7 +21,7 @@ export const client=new Redis();
 app.use("/candidate", candidateRoute);
 app.use("/recruiter", recruiterRoute);
 app.use("/job", jobRoute);
-app.use('/applicants',jobForCandidate)
+app.use('/applications',jobForCandidate)
 
 
 

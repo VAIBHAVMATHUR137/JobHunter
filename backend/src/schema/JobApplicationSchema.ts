@@ -1,11 +1,11 @@
 import mongoose, { Schema } from "mongoose";
-interface CandidateForJob {
+interface JobApplication {
   jobID: string;
   candidateUsername: string;
 
   recruiterUsername: string;
 }
-const candidateForJobSchema: Schema = new mongoose.Schema({
+const JobApplication: Schema = new mongoose.Schema({
   jobID: {
     type: String,
     required: true,
@@ -19,7 +19,7 @@ const candidateForJobSchema: Schema = new mongoose.Schema({
     required: true,
   },
 });
-export const CandidateForJobSchema = mongoose.model<CandidateForJob>(
-  "CandidateForJobSchema",
-  candidateForJobSchema
+export const JobApplicationSchema = mongoose.model<JobApplication>(
+  "JobApplicationSchema",
+  JobApplication
 );
