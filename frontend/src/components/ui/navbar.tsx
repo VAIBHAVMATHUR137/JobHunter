@@ -19,6 +19,7 @@ export default function Navbar() {
     { name: "Companies", to: "/TopRecruiters" },
     { name: "Resources", to: "/ExceptionalCandidates" },
     { name: "Post a job", to: "/JobPosting" },
+    {name:"Test", to :"/Test"}
   ];
 
   const renderAvatar = () => {

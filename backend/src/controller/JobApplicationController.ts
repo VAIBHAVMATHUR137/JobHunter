@@ -1,17 +1,18 @@
 import expressAsyncHandler from "express-async-handler";
 import { Request, Response } from "express";
 import { JobApplicationSchema } from "../schema/JobApplicationSchema";
+
 export const JobApplicationController = expressAsyncHandler(
   async (req: Request, res: Response) => {
-    const { candidateUsername, jobID, recruiterUsername } = req.body;
-    if (!candidateUsername || !jobID || !recruiterUsername) {
+    const { candidateProfile, job, recruiterUsername } = req.body;
+    if (!candidateProfile || !job || !recruiterUsername) {
       res.status(400).json({ Message: "Data is missing" });
       return;
     }
     try {
       const data = await JobApplicationSchema.create({
-        candidateUsername,
-        jobID,
+        candidateProfile,
+        job,
         recruiterUsername,
       });
       if (data) {
@@ -29,10 +30,10 @@ export const JobApplicationController = expressAsyncHandler(
 
 export const JobApplicationScreeningController = expressAsyncHandler(
   async (req: Request, res: Response) => {
-    const { candidateUsername, jobID } = req.body;
+    const { candidateProfile, job } = req.body;
 
     // Validate required parameters
-    if (!candidateUsername || !jobID) {
+    if (!candidateProfile || !job) {
       res
         .status(400)
         .json({ message: "Candidate username and job ID are required" });
@@ -42,8 +43,8 @@ export const JobApplicationScreeningController = expressAsyncHandler(
     try {
       // Check if the combination exists in the database
       const application = await JobApplicationSchema.findOne({
-        candidateUsername,
-        jobID,
+        candidateProfile,
+        job,
       });
 
       // Return the result
@@ -64,6 +65,68 @@ export const JobApplicationScreeningController = expressAsyncHandler(
       res.status(500).json({
         message: "Failed to check application status, please try again",
       });
+    }
+  }
+);
+
+
+export const JobApplicantsController = expressAsyncHandler(
+  async (req: Request, res: Response) => {
+    try {
+      const { recruiterUsername, candidateUsername, jobID } = req.query;
+
+
+      // Case 1: Recruiter checking candidates for a job
+
+      if (recruiterUsername && jobID) {
+        const applicants = await JobApplicationSchema.find({
+          recruiterUsername,
+          "job.jobID": jobID
+        });
+
+        res.status(200).json(applicants.filter((x) => x.candidateProfile).map((x) => x.candidateProfile));
+        return;
+      }
+
+      // Case 2: Candidate checking all jobs they've applied to
+      if (candidateUsername) {
+        const jobsApplied = await JobApplicationSchema.find({
+          "candidateProfile.username":candidateUsername
+        });
+        res.status(200).json(jobsApplied.filter((x)=>x.job).map((x)=>x.job));
+        return;
+      }
+
+      // Case 3: Recruiter checking all jobs they posted
+      if (recruiterUsername) {
+        const jobsPosted = await JobApplicationSchema.find({
+          recruiterUsername
+        });
+        res.status(200).json(jobsPosted);
+        return;
+      }
+
+      // Case 4: Get all jobs by jobID
+      if (jobID) {
+        const jobsWithId = await JobApplicationSchema.find({
+          "job.jobID": jobID
+        });
+        res.status(200).json(jobsWithId);
+        return;
+      }
+
+      // Case 5: No useful input
+      res.status(400).json({
+        error:
+          "Invalid or missing parameters. Please provide at least one of: recruiterUsername, candidateUsername, or jobID.",
+      });
+      return;
+    } catch (error) {
+      console.error("Error in JobApplicantsController:", error);
+      res.status(500).json({
+        error: "Server error occurred while processing your request.",
+      });
+      return;
     }
   }
 );

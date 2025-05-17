@@ -27,6 +27,7 @@ import CandidateProfile from "./Candidate/CandidateProfile";
 import JobPosting from "./Pages/JobPosting";
 import AllJobs from "./Pages/AllJobs";
 import IndividualJob from "./Pages/IndividualJob";
+import Test from "./Pages/Test";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -134,6 +135,11 @@ const router = createBrowserRouter([
   {
     path:'/Job/:jobID',
     element:<IndividualJob/>,
+    errorElement:<Error/>
+  },
+  {
+    path:"/Test",
+    element:<Test/>,
     errorElement:<Error/>
   }
 ]);

@@ -41,7 +41,15 @@ export default function IndividualJobPage() {
   const { jobID } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
+
   const job = useSelector((state: RootState) => state.individual_job.jobData);
+  console.log(job)
+  
+
+  const candidateProfile = useSelector(
+    (state: RootState) => state.candidateDashboard.candidateData
+  );
+
   const loading = useSelector(
     (state: RootState) => state.individual_job.isLoading
   );
@@ -84,22 +92,22 @@ export default function IndividualJobPage() {
 
   const appliedForJob = async () => {
     const recruiterUsername = job.username;
-    const jobID = job.jobID;
+    // const jobID = job.jobID;
 
     if (!candidateUsername) {
       alert("User needs to login as candidate before applying for a job");
     } else {
       try {
         const screeningResponse = await dispatch(
-          screenApplicationThunk({ candidateUsername, jobID })
+          screenApplicationThunk({ candidateProfile, job })
         ).unwrap();
 
         if (screeningResponse.result.status === 200) {
           const application = await dispatch(
             createApplicationThunk({
               recruiterUsername,
-              candidateUsername,
-              jobID,
+              candidateProfile,
+              job,
             })
           ).unwrap();
 
@@ -117,7 +125,7 @@ export default function IndividualJobPage() {
           alert("Cannot apply again for the same job");
         } else {
           alert("An error occurred while checking eligibility");
-          console.error(err);
+          console.log(err);
         }
       }
     }
