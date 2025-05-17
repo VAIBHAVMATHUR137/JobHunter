@@ -1,5 +1,5 @@
 import Navbar from "@/components/ui/navbar";
-import { candidateJobApplicationThunk } from "@/Slice/JobApplicationThunk";
+import { candidateJobApplicationThunk, recruiterJobListingThunk } from "@/Slice/JobApplicationThunk";
 import { AppDispatch, RootState } from "@/Slice/Store";
 
 import axios from "axios";
@@ -12,23 +12,17 @@ function Test() {
   const candidateUsername: string = useSelector(
     (state: RootState) => state.candidateDashboard.candidateData.username
   );
-  console.log(candidateUsername);
+
+
+  const recruiterUsername:string=useSelector((state:RootState)=>state.recruiterDashboard.username)
+  console.log(recruiterUsername)
+
+  const recruitment=useSelector((state:RootState)=>state.allRecruitmentsByRecruiter.recruitment)
   const jobs = useSelector(
     (state: RootState) => state.jobsAppliedByCandidate.jobData
   );
 
-  const testingAPITwo = async (candidateUsername:string) => {
-    try {
-      // For GET requests, parameters should be passed in the URL as query parameters
-      const response = await axios.get(
-        `http://localhost:5000/applications/jobStatus?candidateUsername=${candidateUsername}`
-      );
-      console.log(response.data);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-  testingAPITwo(candidateUsername);
+
 
   const thunkTester = async () => {
     const response = await dispatch(
@@ -37,11 +31,22 @@ function Test() {
     console.log(response);
     console.log(jobs);
   };
-
+  
+  const thunkOneTester=async()=>{
+    const response=await dispatch(recruiterJobListingThunk({recruiterUsername})).unwrap();
+    console.log(response);
+    console.log(recruitment)
+  }
   return (
     <>
       <Navbar />
-      <button onClick={thunkTester} className="text-white">API Two</button>
+      <div>
+              <button onClick={thunkTester} className="text-white m-5">API Two</button>
+      </div>
+      <div>
+        <button onClick={thunkOneTester} className="text-white m-5"> API One</button>
+      </div>
+
     </>
   );
 }

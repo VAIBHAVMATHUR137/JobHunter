@@ -245,15 +245,14 @@ export const candidateJobApplicationThunk = createAsyncThunk<
       }
 
       return rejectWithValue({
-        message: "Failed to fetch candidate details",
+        message: "Failed to fetch job details",
         status: response.status,
       });
     } catch (error) {
       if (axios.isAxiosError(error)) {
         return rejectWithValue({
           message:
-            error.response?.data?.message ||
-            "Failed to fetch candidate details",
+            error.response?.data?.message || "Failed to fetch job details",
           status: error.response?.status || 500,
         });
       }
@@ -303,4 +302,79 @@ export const allJobsAppliedSlice = createSlice({
   },
 });
 
+export const recruiterJobListingThunk = createAsyncThunk<
+  JobPosting[],
+  { recruiterUsername: string },
+  { rejectValue: ErrorResponse }
+>(
+  "recruiter/allRecruitments",
+  async (recruiterUsername, { rejectWithValue }) => {
+    try {
+      const response = await applicationsApi.get(
+        `/jobStatus?recruiterUsername=${recruiterUsername.recruiterUsername}`
+      );
+      if (response.status === 200) {
+        return response.data;
+      }
+
+      return rejectWithValue({
+        message: "Failed to fetch job details",
+        status: response.status,
+      });
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        return rejectWithValue({
+          message:
+            error.response?.data?.message || "Failed to fetch job details",
+          status: error.response?.status || 500,
+        });
+      }
+    }
+    return {
+      message: "Unexpected error from the backend",
+      status: 500,
+    };
+  }
+);
+
+interface fetchAllRecruitments {
+  isLoading: boolean;
+  error: string | null;
+  isSuccess: boolean;
+  recruitment: JobPosting[];
+}
+
+const initialRecruitmentState: fetchAllRecruitments = {
+  isLoading: false,
+  error: null,
+  isSuccess: true,
+  recruitment: [initialJobPosting],
+};
+
+export const allRecruitmentSlice = createSlice({
+  name: "allRecruitmentSlice",
+  initialState: initialRecruitmentState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(recruiterJobListingThunk.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(recruiterJobListingThunk.fulfilled, (state, action) => {
+        state.error = null;
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.recruitment = action.payload;
+      })
+      .addCase(recruiterJobListingThunk.rejected, (state) => {
+        state.isLoading = false;
+        state.error = "Failed to fetch recruitment details";
+        state.isSuccess = false;
+        state.recruitment = [initialJobPosting];
+      });
+  },
+});
+
 export const allAppliedJobs = allJobsAppliedSlice.reducer;
+export const allRecruitments = allRecruitmentSlice.reducer;
