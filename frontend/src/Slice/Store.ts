@@ -23,7 +23,7 @@ import {
 } from "./CandidateThunk";
 import { jobPostingReducer } from "./JobPostingSlice";
 import { allJobsReducer, individualJobReducer } from "./JobThunk";
-import { allAppliedJobs, allRecruitments } from "./JobApplicationThunk";
+import { allApplicants, allAppliedJobs, allRecruitments } from "./JobApplicationThunk";
 
 const store = configureStore({
   reducer: {
@@ -45,7 +45,8 @@ const store = configureStore({
     individual_job:individualJobReducer,
     allJobs:allJobsReducer,
     jobsAppliedByCandidate:allAppliedJobs,
-    allRecruitmentsByRecruiter:allRecruitments
+    allRecruitmentsByRecruiter:allRecruitments,
+    allApplicantsForJob:allApplicants
   },
 });
 

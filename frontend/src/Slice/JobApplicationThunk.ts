@@ -61,13 +61,7 @@ const initialJobPosting: JobPosting = {
   email: "",
   jobID: "",
 };
-interface SchoolEducation {
-  school_name: string;
-  percentage_obtained: string;
-  year_of_passing: string;
-  school_board: string;
-}
-type Gender = "male" | "female" | "transgender";
+
 //College Education
 interface CollegeEducation {
   programme_name: string;
@@ -79,6 +73,18 @@ interface CollegeEducation {
   year_of_commencement: string;
   year_of_conclusion: string;
 }
+
+const initialCollegeEducation: CollegeEducation = {
+  programme_name: "",
+  specialization: "",
+  college_name: "",
+  university_name: "",
+  cgpa: "",
+  duration: "",
+  year_of_commencement: "",
+  year_of_conclusion: "",
+};
+
 //Internship Experience
 interface InternshipExperience {
   date_of_commencement: string;
@@ -88,6 +94,16 @@ interface InternshipExperience {
   roles_and_responsibilities: string;
   stipend: string;
 }
+
+const initialInternship: InternshipExperience = {
+  date_of_commencement: "",
+  date_of_conclusion: "",
+  company: "",
+  duration: "",
+  roles_and_responsibilities: "",
+  stipend: "",
+};
+
 //Job Experience
 interface JobExperience {
   company: string;
@@ -98,6 +114,15 @@ interface JobExperience {
   job_description: string;
   annual_ctc: string;
 }
+const initial_job_experience: JobExperience = {
+  company: "",
+  designation: "",
+  date_of_commencement: "",
+  date_of_resignation: "",
+  duration_of_service: "",
+  job_description: "",
+  annual_ctc: "",
+};
 //Certificate
 interface CertificateCourse {
   platform_name: string;
@@ -107,6 +132,14 @@ interface CertificateCourse {
   date_of_commencement: string;
   date_of_conclusion: string;
 }
+const initialCertificateState: CertificateCourse = {
+  platform_name: "",
+  mentor_name: "",
+  title_of_course: "",
+  learning_description: "",
+  date_of_commencement: "",
+  date_of_conclusion: "",
+};
 //Current Job
 interface CurrentJob {
   company: string;
@@ -116,6 +149,31 @@ interface CurrentJob {
   years_of_experience: string;
   current_location: string;
 }
+const initialCurrentJob: CurrentJob = {
+  company: "",
+  job_description: "",
+  date_of_commencement: "",
+  current_role: "",
+  years_of_experience: "",
+  current_location: "",
+};
+
+type Gender = "male" | "female" | "transgender";
+const initialGender: Gender = "male";
+
+// Define types for School Education
+interface SchoolEducation {
+  school_name: string;
+  percentage_obtained: string;
+  year_of_passing: string;
+  school_board: string;
+}
+const initialSchoolEducation: SchoolEducation = {
+  school_name: "",
+  percentage_obtained: "",
+  year_of_passing: "",
+  school_board: "",
+};
 //interface for first time registration/signin by the candidate
 interface candidateProfile {
   firstName: string;
@@ -138,6 +196,29 @@ interface candidateProfile {
   certificate_courses: CertificateCourse[];
   current_job: CurrentJob;
 }
+
+const initialCandidateState: candidateProfile = {
+  firstName: "",
+  lastName: "",
+  title: "",
+  one_liner_intro: "",
+  number: "",
+  email: "",
+  username: "",
+  password: "",
+  gender: initialGender,
+  introduction: "",
+  photo: "",
+  tenth_standard_education: initialSchoolEducation,
+  twelth_standard_education: initialSchoolEducation,
+  college_education: [initialCollegeEducation],
+  internship_experience: [initialInternship],
+  work_experience: [initial_job_experience],
+  core_skills: [],
+  certificate_courses: [initialCertificateState],
+  current_job: initialCurrentJob,
+};
+
 interface application {
   recruiterUsername?: string;
   job: JobPosting;
@@ -277,6 +358,7 @@ const initialAppliedJobsState: fetchAppliedJobs = {
   jobData: [initialJobPosting],
 };
 
+
 export const allJobsAppliedSlice = createSlice({
   name: "allJobsAppliedSlice",
   initialState: initialAppliedJobsState,
@@ -351,6 +433,8 @@ const initialRecruitmentState: fetchAllRecruitments = {
   recruitment: [initialJobPosting],
 };
 
+
+
 export const allRecruitmentSlice = createSlice({
   name: "allRecruitmentSlice",
   initialState: initialRecruitmentState,
@@ -376,5 +460,76 @@ export const allRecruitmentSlice = createSlice({
   },
 });
 
+//THUNK WHICH IS USED BY RECRUITER TO GET LIST OF CANDIDATES WHO APPLIED FOR A PARTICULAR JOB
+export const jobApplicantsThunk = createAsyncThunk<
+  candidateProfile[],
+  { recruiterUsername: string; jobID: string },
+  { rejectValue: ErrorResponse }
+>("/recruitment/applicants", async (data, { rejectWithValue }) => {
+  try {
+    const response = await applicationsApi.get(
+      `/jobStatus?recruiterUsername=${data.recruiterUsername}&jobID=${data.jobID}`
+    );
+    if (response.status === 200) {
+      return response.data;
+    }
+    return rejectWithValue({
+      message: "Failed to fetch job details",
+      status: response.status,
+    });
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return rejectWithValue({
+        message: error.response?.data?.message || "Failed to fetch job details",
+        status: error.response?.status || 500,
+      });
+    }
+  }
+  return {
+    message: "Unexpected error from the backend",
+    status: 500,
+  };
+});
+
+interface fetchAllApplicants {
+  isLoading: boolean;
+  error: string | null;
+  isSuccess: boolean;
+  applicant: candidateProfile[];
+}
+
+const initialApplicantState: fetchAllApplicants = {
+  isLoading: false,
+  error: null,
+  isSuccess: true,
+  applicant: [initialCandidateState],
+};
+
+export const jobApplicantsSlice = createSlice({
+  name: "jobApplicantSlice",
+  initialState: initialApplicantState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(jobApplicantsThunk.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(jobApplicantsThunk.fulfilled, (state, action) => {
+        state.error = null;
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.applicant= action.payload;
+      })
+      .addCase(jobApplicantsThunk.rejected, (state) => {
+        state.isLoading = false;
+        state.error = "Failed to fetch recruitment details";
+        state.isSuccess = false;
+        state.applicant = [initialCandidateState];
+      });
+  },
+});
+
 export const allAppliedJobs = allJobsAppliedSlice.reducer;
 export const allRecruitments = allRecruitmentSlice.reducer;
+export const allApplicants=jobApplicantsSlice.reducer
