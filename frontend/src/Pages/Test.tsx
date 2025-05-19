@@ -1,9 +1,6 @@
 import Navbar from "@/components/ui/navbar";
 import { candidateJobApplicationThunk, jobApplicantsThunk, recruiterJobListingThunk } from "@/Slice/JobApplicationThunk";
 import { AppDispatch, RootState } from "@/Slice/Store";
-
-import axios from "axios";
-
 import { useDispatch, useSelector } from "react-redux";
 
 function Test() {

@@ -1,5 +1,5 @@
 import Navbar from "@/components/ui/navbar";
-import { fetchAllJobs, fetchIndividualJob } from "@/Slice/JobThunk";
+import { fetchAllJobs } from "@/Slice/JobThunk";
 import type { AppDispatch, RootState } from "@/Slice/Store";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,9 +14,10 @@ import {
   DollarSign,
   Star,
   ExternalLink,
+
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { screenApplicationThunk } from "@/Slice/JobApplicationThunk";
+
 
 function JobListing() {
   const dispatch = useDispatch<AppDispatch>();

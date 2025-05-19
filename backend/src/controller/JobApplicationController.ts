@@ -102,7 +102,7 @@ export const JobApplicantsController = expressAsyncHandler(
         const jobsPosted = await JobApplicationSchema.find({
           recruiterUsername
         });
-        res.status(200).json(jobsPosted);
+        res.status(200).json(jobsPosted.filter((x)=>x.job).map((x)=>x.job));
         return;
       }
 
