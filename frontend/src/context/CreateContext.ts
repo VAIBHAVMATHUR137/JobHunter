@@ -17,6 +17,7 @@ interface CandidateLoginResponse {
     id: string;
     photo: string;
     username: string;
+
   };
 }
 

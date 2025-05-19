@@ -11,15 +11,17 @@ import {
   deleteJobID,
   screenJobID,
 } from "../controller/JobIdController";
+
 const router = express.Router();
 
 // Public routes (accessible to both candidates and recruiters)
-router.get("/fetch", fetchAllJobsPosted);
+router.get("/fetch",fetchAllJobsPosted);
 router.get("/fetchIndividualJob/:jobID", fetchParticularJobPosted);
 
 // Recruiter-only routes
 router.post(
   "/create",
+
   postNewJob
 );
 

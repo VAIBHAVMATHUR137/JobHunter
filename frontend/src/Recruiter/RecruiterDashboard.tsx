@@ -460,6 +460,11 @@ const RecruiterDashboard: React.FC = () => {
           </TabsContent>
         </Tabs>
       </div>
+      <Button
+      onClick={()=>{
+        nav('/RecruiterDashboard/MyRecruitments')
+      }}
+      > My Recruitments</Button>
     </div>
   );
 };

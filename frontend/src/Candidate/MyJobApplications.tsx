@@ -26,11 +26,10 @@ function MyJobApplications() {
   const { jobData, isLoading, error, isSuccess } = useSelector(
     (state: RootState) => state.jobsAppliedByCandidate
   );
-const authContext = useContext(CandidateAuthContext);
-if (!authContext) throw new Error("CandidateAuthContext not found");
+  const authContext = useContext(CandidateAuthContext);
+  if (!authContext) throw new Error("CandidateAuthContext not found");
 
-const { logout } = authContext;
-
+  const { logout } = authContext;
 
   useEffect(() => {
     const renderApplications = async () => {

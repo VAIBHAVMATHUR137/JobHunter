@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { addAuthHeaderForCandidate, applicationsApi } from "@/API/applicationsAPI";
+import { addAuthHeaderForCandidate, addAuthHeaderForRecruiter, applicationsApi } from "@/API/applicationsAPI";
 import axios from "axios";
 
 type WorkEnvironment = "Remote" | "Hybrid" | "On-site";
@@ -393,7 +393,7 @@ export const recruiterJobListingThunk = createAsyncThunk<
   async (recruiterUsername, { rejectWithValue }) => {
     try {
       const response = await applicationsApi.get(
-        `/jobStatus?recruiterUsername=${recruiterUsername.recruiterUsername}`
+        `/jobStatus?recruiterUsername=${recruiterUsername.recruiterUsername}`,addAuthHeaderForRecruiter()
       );
       if (response.status === 200) {
         return response.data;

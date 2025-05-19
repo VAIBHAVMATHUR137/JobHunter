@@ -18,6 +18,7 @@ interface CandidateLoginResponse {
     id: string;
     photo: string;
     username: string;
+
   };
 }
 export const CandidateAuthProvider = ({
@@ -55,6 +56,7 @@ export const CandidateAuthProvider = ({
         localStorage.setItem("candidateRefreshToken", loginData.refreshToken);
         localStorage.setItem("candidateUsername", loginData.candidate.username);
         localStorage.setItem("candidatePhoto", loginData.candidate.photo);
+
 
         // Update Redux store with username
         dispatch(setUsername(loginData.candidate.username));
