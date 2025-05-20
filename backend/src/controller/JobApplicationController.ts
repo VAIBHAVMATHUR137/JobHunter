@@ -1,7 +1,7 @@
 import expressAsyncHandler from "express-async-handler";
 import { Request, Response } from "express";
 import { JobApplicationSchema } from "../schema/JobApplicationSchema";
-
+import JobPosting from "../schema/JobPostingSchema";
 export const JobApplicationController = expressAsyncHandler(
   async (req: Request, res: Response) => {
     const { candidateProfile, job, recruiterUsername } = req.body;
@@ -99,10 +99,10 @@ export const JobApplicantsController = expressAsyncHandler(
 
       // Case 3: Recruiter checking all jobs they posted
       if (recruiterUsername) {
-        const jobsPosted = await JobApplicationSchema.find({
-          recruiterUsername
+        const jobsPosted = await JobPosting.find({
+          username:recruiterUsername
         });
-        res.status(200).json(jobsPosted.filter((x)=>x.job).map((x)=>x.job));
+        res.status(200).json(jobsPosted);
         return;
       }
 

@@ -231,7 +231,6 @@ interface ErrorResponse {
 }
 
 //This thunk checks if candidate is not applying for same job multiple times
-
 export const screenApplicationThunk = createAsyncThunk<
   {
     result: {
@@ -310,6 +309,7 @@ export const createApplicationThunk = createAsyncThunk<
   };
 });
 
+//THIS THUNK IS THERE TO DISPLAY ALL THE JOBS WHERE EACH CANDIDATE HAS APPLIED
 export const candidateJobApplicationThunk = createAsyncThunk<
   JobPosting[],
   { candidateUsername: string },
@@ -358,7 +358,7 @@ const initialAppliedJobsState: fetchAppliedJobs = {
   jobData: [initialJobPosting],
 };
 
-
+//THIS SLICE IS THERE TO RENDER THE LIST OF ALL THE CANDIDATES WHO APPLIED FOR A JOB
 export const allJobsAppliedSlice = createSlice({
   name: "allJobsAppliedSlice",
   initialState: initialAppliedJobsState,
@@ -384,6 +384,7 @@ export const allJobsAppliedSlice = createSlice({
   },
 });
 
+//THIS THUNK IS THERE TO RENDER THE LIST OF ALL JOBS WHICH A PARTICULAR RECRUITER POSTED
 export const recruiterJobListingThunk = createAsyncThunk<
   JobPosting[],
   { recruiterUsername: string },
@@ -468,7 +469,7 @@ export const jobApplicantsThunk = createAsyncThunk<
 >("/recruitment/applicants", async (data, { rejectWithValue }) => {
   try {
     const response = await applicationsApi.get(
-      `/jobStatus?recruiterUsername=${data.recruiterUsername}&jobID=${data.jobID}`
+      `/jobStatus?recruiterUsername=${data.recruiterUsername}&jobID=${data.jobID}`,addAuthHeaderForRecruiter()
     );
     if (response.status === 200) {
       return response.data;

@@ -30,6 +30,7 @@ import IndividualJob from "./Pages/IndividualJob";
 import Test from "./Pages/Test";
 import MyJobApplications from "./Candidate/MyJobApplications";
 import MyRecruitments from "./Recruiter/MyRecruitments";
+import JobApplications from "./Recruiter/JobApplications";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -152,6 +153,11 @@ const router = createBrowserRouter([
   {
     path:"/RecruiterDashboard/MyRecruitments",
     element:<MyRecruitments/>,
+    errorElement:<Error/>
+  },
+  {
+    path:"/RecruiterDashboard/MyRecruitments/:jobID",
+    element:<JobApplications/>,
     errorElement:<Error/>
   }
 ]);

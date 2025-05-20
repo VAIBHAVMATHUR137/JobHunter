@@ -1,5 +1,12 @@
 import Navbar from "@/components/ui/navbar";
-import { Briefcase, Building, DollarSign, MapPin, Trash2,  Users } from "lucide-react"
+import {
+  Briefcase,
+  Building,
+  DollarSign,
+  MapPin,
+  Trash2,
+  Users,
+} from "lucide-react";
 import { ArrowLeft } from "lucide-react";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -29,15 +36,16 @@ function MyRecruitments() {
   const isSuccess: boolean = useSelector(
     (state: RootState) => state.allRecruitmentsByRecruiter.isSuccess
   );
+
   useEffect(() => {
     const renderApplications = async () => {
       const recruiterUsername = localStorage.getItem("recruiterUsername");
       if (recruiterUsername) {
         try {
-          const response = await dispatch(
+           await dispatch(
             recruiterJobListingThunk({ recruiterUsername })
           ).unwrap();
-          console.log(response);
+         
         } catch (err) {
           console.error("Failed to fetch job applications:", err);
         }
@@ -223,8 +231,6 @@ function MyRecruitments() {
                     </div>
                   </div>
 
-                
-
                   <div className="flex gap-2 mt-2">
                     <Button variant="destructive" size="sm" className="flex-1">
                       <Trash2 className="h-4 w-4 mr-1" />
@@ -235,11 +241,21 @@ function MyRecruitments() {
                       variant="outline"
                       size="sm"
                       className="flex-1"
+                      onClick={() => {
+                        nav(`/job/${job.jobID}`);
+                      }}
                     >
                       View Job
                     </Button>
 
-                    <Button variant="default" size="sm" className="flex-1">
+                    <Button
+                      variant="default"
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => {
+                        nav(`/RecruiterDashboard/MyRecruitments/${job.jobID}`);
+                      }}
+                    >
                       <Users className="h-4 w-4 mr-1" />
                       Applications
                     </Button>
