@@ -63,7 +63,7 @@ function MyRecruitments() {
     logout();
     setTimeout(() => {
       nav("/");
-    }, 1500);
+    }, 500);
   };
   const recruiterData = useSelector(
     (state: RootState) => state.recruiterDashboard.recruiterData

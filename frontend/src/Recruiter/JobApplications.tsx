@@ -1,5 +1,5 @@
-"use client"
-
+import { useContext } from "react";
+import { RecruiterAuthContext } from "@/context/CreateContext";
 import Navbar from "@/components/ui/navbar"
 import { jobApplicantsThunk } from "@/Slice/JobApplicationThunk"
 import type { AppDispatch, RootState } from "@/Slice/Store"
@@ -9,12 +9,15 @@ import { useParams } from "react-router-dom"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { GraduationCap } from "lucide-react"
+import { useNavigate } from "react-router-dom";
+import { recruiterLogout } from "@/Slice/RecruiterThunk";
 
 function JobApplications() {
   const { jobID } = useParams()
   const dispatch = useDispatch<AppDispatch>()
+  const nav=useNavigate()
   const { applicant, isLoading, error } = useSelector((state: RootState) => state.allApplicantsForJob)
-
+ const recruiterUsername = localStorage.getItem("recruiterUsername");
   useEffect(() => {
     const renderApplicants = async () => {
       const recruiterUsername = localStorage.getItem("recruiterUsername")
@@ -25,6 +28,35 @@ function JobApplications() {
     }
     renderApplicants()
   }, [dispatch, jobID])
+  
+    const authContext = useContext(RecruiterAuthContext);
+  if (!authContext) throw new Error("RecruiterAuthContext not found");
+
+  const { logout } = authContext;
+
+    const userLogout = () => {
+      if (recruiterUsername) 
+        dispatch(recruiterLogout(recruiterUsername));
+      logout();
+      setTimeout(() => {
+        nav("/");
+      }, 500);
+    };
+
+      const recruiterData = useSelector(
+    (state: RootState) => state.recruiterDashboard.recruiterData
+  );
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      const storageUsername = localStorage.getItem("recruiterUsername");
+
+      if (storageUsername !== recruiterData.username) {
+        userLogout();
+      }
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [recruiterData.username]);
 
   return (
     <>
