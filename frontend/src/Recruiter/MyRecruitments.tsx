@@ -22,6 +22,7 @@ import { RecruiterAuthContext } from "@/context/CreateContext";
 import { recruiterLogout } from "@/Slice/RecruiterThunk";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { deleteJobPostingThunk } from "@/Slice/JobThunk";
 
 function MyRecruitments() {
   const dispatch = useDispatch<AppDispatch>();
@@ -42,10 +43,9 @@ function MyRecruitments() {
       const recruiterUsername = localStorage.getItem("recruiterUsername");
       if (recruiterUsername) {
         try {
-           await dispatch(
+          await dispatch(
             recruiterJobListingThunk({ recruiterUsername })
           ).unwrap();
-         
         } catch (err) {
           console.error("Failed to fetch job applications:", err);
         }
@@ -106,6 +106,13 @@ function MyRecruitments() {
         return "bg-teal-100 text-teal-800";
       default:
         return "bg-gray-100 text-gray-800";
+    }
+  };
+  const deleteJob = async (jobID: string) => {
+    console.log(jobID)
+    const response = await dispatch(deleteJobPostingThunk({ jobID })).unwrap();
+    if (response.success) {
+      alert("Job deleted successfully!");
     }
   };
 
@@ -232,7 +239,14 @@ function MyRecruitments() {
                   </div>
 
                   <div className="flex gap-2 mt-2">
-                    <Button variant="destructive" size="sm" className="flex-1">
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => {
+                        deleteJob(job.jobID);
+                      }}
+                    >
                       <Trash2 className="h-4 w-4 mr-1" />
                       Delete
                     </Button>

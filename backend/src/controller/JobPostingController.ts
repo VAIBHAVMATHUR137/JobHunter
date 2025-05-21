@@ -2,6 +2,7 @@ import JobPosting from "../schema/JobPostingSchema";
 import { Request, Response } from "express";
 import expressAsyncHandler from "express-async-handler";
 import { jobIDSchema } from "../schema/JobIDschema";
+import { JobApplicationSchema } from "../schema/JobApplicationSchema";
 
 //Fetch all the jobs posted by a particular recruiter
 export const fetchAllJobsPosted = expressAsyncHandler(
@@ -102,6 +103,7 @@ export const deleteExistingJob = expressAsyncHandler(
       await Promise.all([
         JobPosting.deleteOne({ jobID }),
         jobIDSchema.deleteOne({ jobID }),
+        JobApplicationSchema.deleteMany({ "job.jobID": jobID })
       ]);
       res.status(200).json({
         message: "Job posting for this role has been deleted",

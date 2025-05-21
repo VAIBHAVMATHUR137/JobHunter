@@ -265,13 +265,13 @@ export const createJobThunk = createAsyncThunk<
   }
 });
 //Delete Job
-export const deleteJobPosting = createAsyncThunk<
+export const deleteJobPostingThunk = createAsyncThunk<
   { success: boolean },
   { jobID: string },
   { rejectValue: ErrorResponse }
 >("jobPosting/delete", async (jobID, { rejectWithValue }) => {
   try {
-    const response = await jobApi.delete(`/delete/${jobID}`);
+    const response = await jobApi.delete(`/delete/${jobID.jobID}`);
     if (response.status === 200) {
       return {
         success: true,
