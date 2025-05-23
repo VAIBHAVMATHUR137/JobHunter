@@ -4,14 +4,47 @@ import expressAsyncHandler from "express-async-handler";
 import { jobIDSchema } from "../schema/JobIDschema";
 import { JobApplicationSchema } from "../schema/JobApplicationSchema";
 
-//Fetch all the jobs posted by a particular recruiter
-export const fetchAllJobsPosted = expressAsyncHandler(
+export const fetchAll = expressAsyncHandler(
   async (req: Request, res: Response) => {
     try {
-      const jobposted = await JobPosting.find();
-      res.status(200).json(jobposted);
+      const allJobs = await JobPosting.find();
+      const { username } = req.query;
+      //No username passed, so it will fetch all the jobs
+      if (!username) {
+        console.log("Finding All jobs");
+        res.status(200).json(allJobs);
+        return;
+      }
+      //It checks if the username provided belongs to candidate
+      const jobsAppliedByCandidate = await JobApplicationSchema.find({
+        "candidateProfile.username": username,
+      });
+      const recruitments = await JobPosting.find({
+        username: username,
+      });
+      //Positive confirmation of belonging of username to candidate
+      if (jobsAppliedByCandidate.length > 0) {
+        const appliedJobID = new Set(
+          jobsAppliedByCandidate.map((application) => application.job.jobID)
+        );
+        const availableJobs = allJobs.filter(
+          (job) => !appliedJobID.has(job.jobID)
+        );
+        res.status(200).json(availableJobs);
+        return;
+      } else if (recruitments.length > 0) {
+        //This case covers the scenario where the username belongs to the recruiter and not candidate
+        const postedJobID = new Set(
+          recruitments.map((recruitment) => recruitment.jobID)
+        );
+        const newJobs = allJobs.filter((job) => !postedJobID.has(job.jobID));
+        res.status(200).json(newJobs);
+        return;
+      }
     } catch (error) {
+      console.log(error);
       res.status(500).json({ message: "Error fetching jobs", error });
+      return;
     }
   }
 );
@@ -103,7 +136,7 @@ export const deleteExistingJob = expressAsyncHandler(
       await Promise.all([
         JobPosting.deleteOne({ jobID }),
         jobIDSchema.deleteOne({ jobID }),
-        JobApplicationSchema.deleteMany({ "job.jobID": jobID })
+        JobApplicationSchema.deleteMany({ "job.jobID": jobID }),
       ]);
       res.status(200).json({
         message: "Job posting for this role has been deleted",

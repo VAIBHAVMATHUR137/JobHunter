@@ -4,10 +4,9 @@ import { useSelector, useDispatch } from "react-redux";
 
 import {
   deleteRecruiter,
-  fetchRecruiterDetails,
+
   recruiterDashboard,
   recruiterLogout,
-
 } from "@/Slice/RecruiterThunk";
 import {
   Card,
@@ -44,37 +43,30 @@ const RecruiterDashboard: React.FC = () => {
     const username = localStorage.getItem("recruiterUsername");
 
     if (username) {
-    
-      dispatch(recruiterDashboard({ username }))
-
+      dispatch(recruiterDashboard({ username }));
     }
   }, [dispatch]);
-  
 
   // Updated selector to match the new state structure in RecruiterThunk.ts
   const { isLoading, error, recruiterData } = useSelector(
     (state: RootState) => state.recruiterDashboard
   );
-  
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-
       const storageUsername = localStorage.getItem("recruiterUsername");
-      
-      if ( storageUsername !== recruiterData.username) {
+
+      if (storageUsername !== recruiterData.username) {
         userLogout();
       }
     }, 2000);
-  
+
     return () => clearTimeout(timeoutId);
-  }, [ recruiterData.username]);
+  }, [recruiterData.username]);
 
   const username: string = useSelector(
     (state: RootState) => state.recruiterLoginThunk.username
   );
-
-
 
   const tabMenu = ["Education", "Experience", "Certificate", "Internship"];
   const authContext = useContext(RecruiterAuthContext);
@@ -167,7 +159,6 @@ const RecruiterDashboard: React.FC = () => {
       nav("/");
     }, 1500);
   };
-
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
@@ -461,10 +452,13 @@ const RecruiterDashboard: React.FC = () => {
         </Tabs>
       </div>
       <Button
-      onClick={()=>{
-        nav('/RecruiterDashboard/MyRecruitments')
-      }}
-      > My Recruitments</Button>
+        onClick={() => {
+          nav("/RecruiterDashboard/MyRecruitments");
+        }}
+      >
+        {" "}
+        My Recruitments
+      </Button>
     </div>
   );
 };

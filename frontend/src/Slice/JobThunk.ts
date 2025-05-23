@@ -136,13 +136,17 @@ export const individualJobSlice = createSlice({
   },
 });
 //THUNK FOR ALL THE JOBS
+
 export const fetchAllJobs = createAsyncThunk<
   JobPosting[],
-  void,
+  { username: string | null },
   { rejectValue: { message: string; status: number } }
->("job/fetchAll", async (_, { rejectWithValue }) => {
+>("job/fetchAll", async (data, { rejectWithValue }) => {
   try {
-    const response = await jobApi.get("/fetch");
+    // Built URL conditionally, only add username param if it exists
+    const url = data.username ? `/fetch?username=${data.username}` : '/fetch';
+    const response = await jobApi.get(url);
+    
     if (response.status === 200) {
       return response.data;
     }
@@ -286,7 +290,7 @@ export const deleteJobPostingThunk = createAsyncThunk<
         case 404:
           message = "Job you want to delete is not found";
           break;
-          default:
+        default:
           message = error.response?.data?.message || "Deletion failed";
       }
       return rejectWithValue({

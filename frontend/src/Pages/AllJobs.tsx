@@ -14,24 +14,22 @@ import {
   DollarSign,
   Star,
   ExternalLink,
-
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
 
 function JobListing() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-
-
+  const candidateUsername = localStorage.getItem("candidateUsername");
+  const recruiterUsername = localStorage.getItem("recruiterUsername");
+  const username = candidateUsername || recruiterUsername || null;
 
   useEffect(() => {
-    dispatch(fetchAllJobs());
+    dispatch(fetchAllJobs({ username }));
   }, [dispatch]);
   // Get jobs data from Redux store
   const jobsData = useSelector((state: RootState) => state.allJobs);
-
 
   // Handle job card click to navigate to job details
   const handleJobCardClick = (jobId: string) => {
@@ -44,7 +42,6 @@ function JobListing() {
     if (ctc.minCTC && ctc.maxCTC) return `${ctc.minCTC} - ${ctc.maxCTC}`;
     return ctc.minCTC || ctc.maxCTC;
   };
-
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
@@ -140,7 +137,7 @@ function JobListing() {
             <Button
               variant="outline"
               className="mt-4 border-red-300 text-red-600 hover:bg-red-50"
-              onClick={() => dispatch(fetchAllJobs())}
+              onClick={() => dispatch(fetchAllJobs({ username }))}
             >
               Try Again
             </Button>
@@ -158,9 +155,7 @@ function JobListing() {
                   <div
                     className="cursor-pointer h-full"
                     onClick={() =>
-                      handleJobCardClick(
-                        job.jobID || index.toString()
-                      )
+                      handleJobCardClick(job.jobID || index.toString())
                     }
                   >
                     {/* Company badge at top */}
@@ -293,7 +288,7 @@ function JobListing() {
                 <p className="text-gray-600 mb-6">
                   We couldn't find any job listings at the moment.
                 </p>
-                <Button onClick={() => dispatch(fetchAllJobs())}>
+                <Button onClick={() => dispatch(fetchAllJobs({ username }))}>
                   Refresh Jobs
                 </Button>
               </div>
