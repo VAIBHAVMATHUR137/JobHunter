@@ -69,38 +69,116 @@ export const JobApplicationScreeningController = expressAsyncHandler(
   }
 );
 
+export const screeningController = expressAsyncHandler(
+  async (req: Request, res: Response) => {
+    try {
+      const { jobID, candidateUsername, recruiterUsername } = req.query;
+      
+      if (!jobID) {
+         res.status(400).json({ Message: "Job field is mandatory" });
+         return
+      }
 
+      // If the candidate's job application is undergoing verification
+      if (!recruiterUsername && candidateUsername && jobID) {
+        // Option 1: Query by nested object fields (if you store username/email in candidateProfile)
+        const application = await JobApplicationSchema.findOne({
+          'candidateProfile.username': candidateUsername, // Assuming candidateProfile is username
+          'job.jobID': jobID, // Assuming job is jobID
+        });
+
+        if (!application) {
+          // Case where candidate has not applied for this job before
+           res.status(200).json({
+            hasApplied: false,
+            applicationDetails: null, // Changed from 'application' since it's null
+          });
+          return
+        } else {
+          // Case where candidate has already applied for the same job in past
+           res.status(403).json({
+            hasApplied: true,
+            applicationDetails: application,
+          });
+          return
+        }
+      }
+
+      // If recruiter's job post is verified
+      if (!candidateUsername && recruiterUsername && jobID) {
+        const recruitment = await JobPosting.findOne({
+          username: recruiterUsername, // Fixed: use 'username' instead of 'recruiterUsername'
+          jobID // Fixed: use 'jobID' instead of 'job'
+        });
+
+        if (!recruitment) {
+          res.status(200).json({
+            hasPosted: false,
+            recruitmentDetails: null,
+          });
+          return
+        } else {
+           res.status(403).json({
+            hasPosted: true,
+            recruitmentDetails: recruitment,
+          });
+          return
+        }
+      }
+
+      // If neither condition is met
+      res.status(400).json({
+        message: "Invalid request parameters",
+      });
+      return
+
+    } catch (error) {
+      console.error('Screening controller error:', error);
+      res.status(500).json({
+        message: "Failed to check application status, please try again",
+      });
+      return
+    }
+  }
+);
 export const JobApplicantsController = expressAsyncHandler(
   async (req: Request, res: Response) => {
     try {
       const { recruiterUsername, candidateUsername, jobID } = req.query;
-
 
       // Case 1: Recruiter checking candidates for a job
 
       if (recruiterUsername && jobID) {
         const applicants = await JobApplicationSchema.find({
           recruiterUsername,
-          "job.jobID": jobID
+          "job.jobID": jobID,
         });
 
-        res.status(200).json(applicants.filter((x) => x.candidateProfile).map((x) => x.candidateProfile));
+        res
+          .status(200)
+          .json(
+            applicants
+              .filter((x) => x.candidateProfile)
+              .map((x) => x.candidateProfile)
+          );
         return;
       }
 
       // Case 2: Candidate checking all jobs they've applied to
       if (candidateUsername) {
         const jobsApplied = await JobApplicationSchema.find({
-          "candidateProfile.username":candidateUsername
+          "candidateProfile.username": candidateUsername,
         });
-        res.status(200).json(jobsApplied.filter((x)=>x.job).map((x)=>x.job));
+        res
+          .status(200)
+          .json(jobsApplied.filter((x) => x.job).map((x) => x.job));
         return;
       }
 
       // Case 3: Recruiter checking all jobs they posted
       if (recruiterUsername) {
         const jobsPosted = await JobPosting.find({
-          username:recruiterUsername
+          username: recruiterUsername,
         });
         res.status(200).json(jobsPosted);
         return;
@@ -109,7 +187,7 @@ export const JobApplicantsController = expressAsyncHandler(
       // Case 4: Get all jobs by jobID
       if (jobID) {
         const jobsWithId = await JobApplicationSchema.find({
-          "job.jobID": jobID
+          "job.jobID": jobID,
         });
         res.status(200).json(jobsWithId);
         return;

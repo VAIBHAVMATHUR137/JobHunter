@@ -221,8 +221,8 @@ const initialCandidateState: candidateProfile = {
 
 interface application {
   recruiterUsername?: string;
-  job: JobPosting;
-  candidateProfile: candidateProfile;
+  jobID:string;
+  candidateUsername?:string
 }
 
 interface ErrorResponse {
@@ -243,7 +243,8 @@ export const screenApplicationThunk = createAsyncThunk<
   { rejectValue: ErrorResponse }
 >("application/screening", async (data, { rejectWithValue }) => {
   try {
-    const response = await applicationsApi.post("/screen", data);
+    const url=data.recruiterUsername?`/screening?jobID=${data.jobID}&recruiterUsername=${data.recruiterUsername}`:`/screening?jobID=${data.jobID}&candidateUsername=${data.candidateUsername}`;
+    const response = await applicationsApi.get(url);
 
     if (response.status === 200) {
       return {
@@ -280,11 +281,15 @@ export const screenApplicationThunk = createAsyncThunk<
     },
   };
 });
-
+interface createApplication{
+  candidateProfile:candidateProfile;
+  recruiterUsername:string;
+  job:JobPosting
+}
 //Candidate can apply for the job using this thunk API
 export const createApplicationThunk = createAsyncThunk<
   { success: boolean },
-  application,
+  createApplication,
   { rejectValue: ErrorResponse }
 >("job/application", async (data, { rejectWithValue }) => {
   const response = await applicationsApi.post("/create", data);

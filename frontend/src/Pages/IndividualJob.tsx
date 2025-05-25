@@ -39,12 +39,15 @@ import {
 
 export default function IndividualJobPage() {
   const { jobID } = useParams();
+
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
   const job = useSelector((state: RootState) => state.individual_job.jobData);
-  console.log(job)
-  
+  console.log(job);
+
+  const candidateUsername = localStorage.getItem("candidateUsername");
+  const recruiterUsername = localStorage.getItem("recruiterUsername");
 
   const candidateProfile = useSelector(
     (state: RootState) => state.candidateDashboard.candidateData
@@ -59,14 +62,11 @@ export default function IndividualJobPage() {
     if (jobID) {
       dispatch(fetchIndividualJob({ jobID }));
     }
-    const candidateUsername = localStorage.getItem("candidateUsername");
+
     if (candidateUsername) {
       dispatch(candidateDashboard({ username: candidateUsername }));
     }
   }, [dispatch, jobID]);
-  const candidateUsername = useSelector(
-    (state: RootState) => state.candidateDashboard.username
-  );
 
   // Format experience from months to years and months
   const formatExperience = (months: string) => {
@@ -89,20 +89,38 @@ export default function IndividualJobPage() {
     if (ctc.minCTC && ctc.maxCTC) return `${ctc.minCTC} - ${ctc.maxCTC}`;
     return ctc.minCTC || ctc.maxCTC;
   };
+  const tester = async () => {
+    if (!recruiterUsername || !jobID) {
+      alert("User needs to login as candidate before applying for a job");
+    } else {
+      const screen = await dispatch(
+        screenApplicationThunk({
+          recruiterUsername,
+          jobID,
+        })
+      ).unwrap();
+      if (screen.result.status === 200) {
+        alert("API working");
+        console.log(screen.result);
+      }
+    }
+  };
 
   const appliedForJob = async () => {
     const recruiterUsername = job.username;
-    // const jobID = job.jobID;
 
-    if (!candidateUsername) {
+    if (!candidateUsername || !jobID) {
       alert("User needs to login as candidate before applying for a job");
     } else {
       try {
         const screeningResponse = await dispatch(
-          screenApplicationThunk({ candidateProfile, job })
+          screenApplicationThunk({ candidateUsername, jobID })
         ).unwrap();
-
+        console.log(screeningResponse);
         if (screeningResponse.result.status === 200) {
+          console.log(
+            "Recruiter screening successful " + screenApplicationThunk
+          );
           const application = await dispatch(
             createApplicationThunk({
               recruiterUsername,
@@ -589,6 +607,10 @@ export default function IndividualJobPage() {
             </div>
           </div>
         </div>
+        {recruiterUsername && (
+<Button onClick={tester}> Testing</Button>
+        )}
+        
       </div>
     </>
   );
