@@ -113,6 +113,7 @@ function MyRecruitments() {
     const response = await dispatch(deleteJobPostingThunk({ jobID })).unwrap();
     if (response.success) {
       alert("Job deleted successfully!");
+      window.location.reload()
     }
   };
 

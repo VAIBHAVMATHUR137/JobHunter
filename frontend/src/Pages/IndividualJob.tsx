@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { deleteJobPostingThunk } from "@/Slice/JobThunk";
 import {
   Building,
   MapPin,
@@ -36,9 +37,13 @@ import {
   createApplicationThunk,
   screenApplicationThunk,
 } from "@/Slice/JobApplicationThunk";
+import { useState } from "react";
 
 export default function IndividualJobPage() {
+  const [isPosted, setIsPosted] = useState<boolean | null>(null);
+  const [isApplied, setIsApplied] = useState<boolean | null>(null);
   const { jobID } = useParams();
+
 
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
@@ -57,6 +62,47 @@ export default function IndividualJobPage() {
     (state: RootState) => state.individual_job.isLoading
   );
   const error = useSelector((state: RootState) => state.individual_job.error);
+  useEffect(() => {
+    const buttonRender = async () => {
+      if (candidateUsername && jobID) {
+        try {
+          const response = await dispatch(
+            screenApplicationThunk({ candidateUsername, jobID })
+          ).unwrap();
+
+          // If success, candidate has NOT applied yet
+          setIsApplied(false);
+        } catch (error: any) {
+          // If it throws error like 403, candidate HAS already applied
+          if (error?.status === 403) {
+            setIsApplied(true);
+          } else {
+            console.error("Unexpected error while checking application", error);
+            setIsApplied(null); // fallback to disabled loading button
+          }
+        }
+      }
+      if (recruiterUsername && jobID) {
+        try {
+          const response = await dispatch(
+            screenApplicationThunk({ recruiterUsername, jobID })
+          ).unwrap();
+
+          // Recruiter has posted the job
+          setIsPosted(true);
+        } catch (error: any) {
+          // Recruiter has NOT posted the job (likely 403 or similar)
+          if (error?.status === 403) {
+            setIsPosted(false);
+          } else {
+            console.error("Unexpected error for recruiter screening", error);
+            setIsPosted(null); // fallback
+          }
+        }
+      }
+    };
+    buttonRender();
+  }, []);
 
   useEffect(() => {
     if (jobID) {
@@ -89,22 +135,7 @@ export default function IndividualJobPage() {
     if (ctc.minCTC && ctc.maxCTC) return `${ctc.minCTC} - ${ctc.maxCTC}`;
     return ctc.minCTC || ctc.maxCTC;
   };
-  const tester = async () => {
-    if (!recruiterUsername || !jobID) {
-      alert("User needs to login as candidate before applying for a job");
-    } else {
-      const screen = await dispatch(
-        screenApplicationThunk({
-          recruiterUsername,
-          jobID,
-        })
-      ).unwrap();
-      if (screen.result.status === 200) {
-        alert("API working");
-        console.log(screen.result);
-      }
-    }
-  };
+
 
   const appliedForJob = async () => {
     const recruiterUsername = job.username;
@@ -160,6 +191,14 @@ export default function IndividualJobPage() {
       </>
     );
   }
+  const deleteJob = async (jobID: string) => {
+    console.log(jobID);
+    const response = await dispatch(deleteJobPostingThunk({ jobID })).unwrap();
+    if (response.success) {
+      alert("Job deleted successfully!");
+      navigate("/RecruiterDashboard");
+    }
+  };
 
   if (error) {
     return (
@@ -191,21 +230,13 @@ export default function IndividualJobPage() {
       </>
     );
   }
-
+  console.log("State here is " + isPosted);
   return (
     <>
       <Navbar />
       <div className="bg-gray-50 min-h-screen">
         <div className="container mx-auto px-4 py-6 max-w-5xl">
-          {/* Back button */}
-          <Button
-            variant="outline"
-            className="mb-4 text-gray-900"
-            onClick={() => navigate("/AllJobs")}
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to all jobs
-          </Button>
+
 
           {/* Job header */}
           <Card className="mb-6 border border-gray-200 shadow-sm">
@@ -311,16 +342,46 @@ export default function IndividualJobPage() {
                 </div>
 
                 <div className="flex flex-col gap-3">
-                  <Button
-                    className="w-full md:w-auto bg-blue-600 hover:bg-blue-700"
-                    onClick={appliedForJob}
-                  >
-                    Apply Now
-                  </Button>
-                  <Button variant="outline" className="w-full md:w-auto">
-                    <BookmarkPlus className="mr-2 h-4 w-4" />
-                    Save Job
-                  </Button>
+                  {!recruiterUsername && !candidateUsername ? (
+                    <Button disabled>Login for further action</Button>
+                  ) : recruiterUsername ? (
+                    isPosted === true ? (
+                      <>
+                        <Button
+                          onClick={() =>
+                            navigate(
+                              `/RecruiterDashboard/MyRecruitments/${jobID}`
+                            )
+                          }
+                        >
+                          View Applicants
+                        </Button>
+
+                        <Button
+                          variant="outline"
+                          className="w-full md:w-auto"
+                          onClick={() => {
+                            deleteJob(job.jobID);
+                          }}
+                        >
+                          <BookmarkPlus className="mr-2 h-4 w-4" />
+                          Delete Job
+                        </Button>
+                      </>
+                    ) : isPosted === false ? (
+                      <Button disabled>View Applicants</Button>
+                    ) : (
+                      <Button disabled>Loading...</Button>
+                    )
+                  ) : candidateUsername ? (
+                    isApplied === false ? (
+                      <Button onClick={appliedForJob}>Apply Now</Button>
+                    ) : isApplied === true ? (
+                      <Button disabled>Apply now</Button>
+                    ) : (
+                      <Button disabled>Loading...</Button>
+                    )
+                  ) : null}
                 </div>
               </div>
             </CardContent>
@@ -607,10 +668,7 @@ export default function IndividualJobPage() {
             </div>
           </div>
         </div>
-        {recruiterUsername && (
-<Button onClick={tester}> Testing</Button>
-        )}
-        
+
       </div>
     </>
   );

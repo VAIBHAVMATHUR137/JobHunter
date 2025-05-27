@@ -1,5 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { addAuthHeaderForCandidate, addAuthHeaderForRecruiter, applicationsApi } from "@/API/applicationsAPI";
+import {
+  addAuthHeaderForCandidate,
+  addAuthHeaderForRecruiter,
+  applicationsApi,
+} from "@/API/applicationsAPI";
 import axios from "axios";
 
 type WorkEnvironment = "Remote" | "Hybrid" | "On-site";
@@ -221,8 +225,8 @@ const initialCandidateState: candidateProfile = {
 
 interface application {
   recruiterUsername?: string;
-  jobID:string;
-  candidateUsername?:string
+  jobID: string;
+  candidateUsername?: string;
 }
 
 interface ErrorResponse {
@@ -234,7 +238,6 @@ interface ErrorResponse {
 export const screenApplicationThunk = createAsyncThunk<
   {
     result: {
-      remarks: string;
       success: boolean;
       status: number;
     };
@@ -243,13 +246,14 @@ export const screenApplicationThunk = createAsyncThunk<
   { rejectValue: ErrorResponse }
 >("application/screening", async (data, { rejectWithValue }) => {
   try {
-    const url=data.recruiterUsername?`/screening?jobID=${data.jobID}&recruiterUsername=${data.recruiterUsername}`:`/screening?jobID=${data.jobID}&candidateUsername=${data.candidateUsername}`;
+    const url = data.recruiterUsername
+      ? `/screening?jobID=${data.jobID}&recruiterUsername=${data.recruiterUsername}`
+      : `/screening?jobID=${data.jobID}&candidateUsername=${data.candidateUsername}`;
     const response = await applicationsApi.get(url);
 
     if (response.status === 200) {
       return {
         result: {
-          remarks: "Candidate can apply",
           success: true,
           status: 200,
         },
@@ -257,7 +261,6 @@ export const screenApplicationThunk = createAsyncThunk<
     } else if (response.status === 403) {
       return {
         result: {
-          remarks: "Candidate already applied. Not allowed",
           success: false,
           status: 403,
         },
@@ -281,10 +284,10 @@ export const screenApplicationThunk = createAsyncThunk<
     },
   };
 });
-interface createApplication{
-  candidateProfile:candidateProfile;
-  recruiterUsername:string;
-  job:JobPosting
+interface createApplication {
+  candidateProfile: candidateProfile;
+  recruiterUsername: string;
+  job: JobPosting;
 }
 //Candidate can apply for the job using this thunk API
 export const createApplicationThunk = createAsyncThunk<
@@ -324,7 +327,8 @@ export const candidateJobApplicationThunk = createAsyncThunk<
   async (candidateUsername, { rejectWithValue }) => {
     try {
       const response = await applicationsApi.get(
-        `/jobStatus?candidateUsername=${candidateUsername.candidateUsername}`,addAuthHeaderForCandidate()
+        `/jobStatus?candidateUsername=${candidateUsername.candidateUsername}`,
+        addAuthHeaderForCandidate()
       );
       if (response.status === 200) {
         return response.data;
@@ -399,7 +403,8 @@ export const recruiterJobListingThunk = createAsyncThunk<
   async (recruiterUsername, { rejectWithValue }) => {
     try {
       const response = await applicationsApi.get(
-        `/jobStatus?recruiterUsername=${recruiterUsername.recruiterUsername}`,addAuthHeaderForRecruiter()
+        `/jobStatus?recruiterUsername=${recruiterUsername.recruiterUsername}`,
+        addAuthHeaderForRecruiter()
       );
       if (response.status === 200) {
         return response.data;
@@ -439,8 +444,6 @@ const initialRecruitmentState: fetchAllRecruitments = {
   recruitment: [initialJobPosting],
 };
 
-
-
 export const allRecruitmentSlice = createSlice({
   name: "allRecruitmentSlice",
   initialState: initialRecruitmentState,
@@ -474,7 +477,8 @@ export const jobApplicantsThunk = createAsyncThunk<
 >("/recruitment/applicants", async (data, { rejectWithValue }) => {
   try {
     const response = await applicationsApi.get(
-      `/jobStatus?recruiterUsername=${data.recruiterUsername}&jobID=${data.jobID}`,addAuthHeaderForRecruiter()
+      `/jobStatus?recruiterUsername=${data.recruiterUsername}&jobID=${data.jobID}`,
+      addAuthHeaderForRecruiter()
     );
     if (response.status === 200) {
       return response.data;
@@ -525,7 +529,7 @@ export const jobApplicantsSlice = createSlice({
         state.error = null;
         state.isLoading = false;
         state.isSuccess = true;
-        state.applicant= action.payload;
+        state.applicant = action.payload;
       })
       .addCase(jobApplicantsThunk.rejected, (state) => {
         state.isLoading = false;
@@ -538,4 +542,4 @@ export const jobApplicantsSlice = createSlice({
 
 export const allAppliedJobs = allJobsAppliedSlice.reducer;
 export const allRecruitments = allRecruitmentSlice.reducer;
-export const allApplicants=jobApplicantsSlice.reducer
+export const allApplicants = jobApplicantsSlice.reducer;

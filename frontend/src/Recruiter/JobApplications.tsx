@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge"
 import { GraduationCap } from "lucide-react"
 import { useNavigate } from "react-router-dom";
 import { recruiterLogout } from "@/Slice/RecruiterThunk";
+import { deleteJobPostingThunk } from "@/Slice/JobThunk";
 
 function JobApplications() {
   const { jobID } = useParams()
@@ -57,6 +58,8 @@ function JobApplications() {
 
     return () => clearTimeout(timeoutId);
   }, [recruiterData.username]);
+
+
 
   return (
     <>

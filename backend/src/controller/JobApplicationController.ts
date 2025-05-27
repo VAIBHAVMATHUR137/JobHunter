@@ -73,56 +73,56 @@ export const screeningController = expressAsyncHandler(
   async (req: Request, res: Response) => {
     try {
       const { jobID, candidateUsername, recruiterUsername } = req.query;
-      
+
       if (!jobID) {
-         res.status(400).json({ Message: "Job field is mandatory" });
-         return
+        res.status(400).json({ Message: "Job field is mandatory" });
+        return;
       }
 
       // If the candidate's job application is undergoing verification
       if (!recruiterUsername && candidateUsername && jobID) {
         // Option 1: Query by nested object fields (if you store username/email in candidateProfile)
         const application = await JobApplicationSchema.findOne({
-          'candidateProfile.username': candidateUsername, // Assuming candidateProfile is username
-          'job.jobID': jobID, // Assuming job is jobID
+          "candidateProfile.username": candidateUsername, // Assuming candidateProfile is username
+          "job.jobID": jobID, // Assuming job is jobID
         });
 
         if (!application) {
           // Case where candidate has not applied for this job before
-           res.status(200).json({
+          res.status(200).json({
             hasApplied: false,
-            applicationDetails: null, // Changed from 'application' since it's null
+            applicationDetails: null, 
           });
-          return
+          return;
         } else {
           // Case where candidate has already applied for the same job in past
-           res.status(403).json({
+          res.status(403).json({
             hasApplied: true,
             applicationDetails: application,
           });
-          return
+          return;
         }
       }
 
       // If recruiter's job post is verified
       if (!candidateUsername && recruiterUsername && jobID) {
         const recruitment = await JobPosting.findOne({
-          username: recruiterUsername, // Fixed: use 'username' instead of 'recruiterUsername'
-          jobID // Fixed: use 'jobID' instead of 'job'
+          username: recruiterUsername,
+          jobID,
         });
 
-        if (!recruitment) {
+        if (recruitment) {
           res.status(200).json({
-            hasPosted: false,
-            recruitmentDetails: null,
-          });
-          return
-        } else {
-           res.status(403).json({
             hasPosted: true,
             recruitmentDetails: recruitment,
           });
-          return
+          return;
+        } else if (!recruitment) {
+          res.status(403).json({
+            hasPosted: false,
+            recruitmentDetails: null,
+          });
+          return;
         }
       }
 
@@ -130,14 +130,13 @@ export const screeningController = expressAsyncHandler(
       res.status(400).json({
         message: "Invalid request parameters",
       });
-      return
-
+      return;
     } catch (error) {
-      console.error('Screening controller error:', error);
+      console.error("Screening controller error:", error);
       res.status(500).json({
         message: "Failed to check application status, please try again",
       });
-      return
+      return;
     }
   }
 );
