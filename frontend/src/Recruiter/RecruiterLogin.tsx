@@ -58,19 +58,19 @@ function RecruiterLogin() {
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    
+
     try {
       const response = await auth.recruiterLoginHandler(
-        formData.username, 
+        formData.username,
         formData.password
       );
-      
+
       if (response) {
         setShowAlert(true);
         setTitle("Welcome Recruiter");
         setMessage("Successfully logged in");
         setIsSuccess(true);
-        dispatch(recruiterDashboard({username:formData.username}))
+        dispatch(recruiterDashboard({ username: formData.username }));
 
         // Reset form fields
         formFields.forEach((field) => {
@@ -78,9 +78,9 @@ function RecruiterLogin() {
         });
 
         // Navigate to dashboard with username
-        setTimeout(() => 
-          nav(`/RecruiterDashboard`), 
-        
+        setTimeout(
+          () => nav(`/RecruiterDashboard`),
+
           1500
         );
       }

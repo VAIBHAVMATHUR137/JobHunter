@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from "react-redux";
 
 import {
   deleteRecruiter,
-
   recruiterDashboard,
   recruiterLogout,
 } from "@/Slice/RecruiterThunk";
@@ -249,11 +248,19 @@ const RecruiterDashboard: React.FC = () => {
                 </div>
               </div>
             </CardContent>
-            <Button className="m-9" onClick={handleDelete}>
-              Delete Profile
-            </Button>
             <div>
-              <Button onClick={userLogout}>Logout</Button>
+              <Button className="m-2 text-white bg-red-800 hover:bg-red-500 " onClick={handleDelete}>
+                Delete Profile
+              </Button>
+              <Button className="m-2" onClick={userLogout}>Logout</Button>
+              <Button className="m-2"
+                onClick={() => {
+                  nav("/RecruiterDashboard/MyRecruitments");
+                }}
+              >
+                {" "}
+                My Recruitments
+              </Button>
             </div>
           </Card>
 
@@ -451,14 +458,6 @@ const RecruiterDashboard: React.FC = () => {
           </TabsContent>
         </Tabs>
       </div>
-      <Button
-        onClick={() => {
-          nav("/RecruiterDashboard/MyRecruitments");
-        }}
-      >
-        {" "}
-        My Recruitments
-      </Button>
     </div>
   );
 };

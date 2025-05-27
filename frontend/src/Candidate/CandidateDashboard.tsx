@@ -3,7 +3,6 @@ import { useContext, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   deleteCandidate,
-
   candidateLogout,
   candidateDashboard,
 } from "@/Slice/CandidateThunk";
@@ -36,49 +35,44 @@ import { useNavigate } from "react-router-dom";
 
 const CandidateDashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const nav=useNavigate()
+  const nav = useNavigate();
 
-
-
-
-  useEffect(()=>{
-    const username=localStorage.getItem("candidateUsername");
-    if(username){
-      dispatch(candidateDashboard({username})).unwrap()
+  useEffect(() => {
+    const username = localStorage.getItem("candidateUsername");
+    if (username) {
+      dispatch(candidateDashboard({ username })).unwrap();
     }
-  },[dispatch])
+  }, [dispatch]);
   const { isLoading, error, candidateData } = useSelector(
     (state: RootState) => state.candidateDashboard
   );
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-
       const storageUsername = localStorage.getItem("candidateUsername");
-      
-      if ( storageUsername !== candidateData.username) {
+
+      if (storageUsername !== candidateData.username) {
         userLogout();
       }
     }, 2000);
-  
+
     return () => clearTimeout(timeoutId);
-  }, [ candidateData.username]);
+  }, [candidateData.username]);
 
   const username: string = useSelector(
     (state: RootState) => state.candidateLoginThunk.username
   );
 
-
   const tabMenu = ["Education", "Experience", "Certificate", "Internship"];
   const authContext = useContext(CandidateAuthContext);
-  
+
   // Check if context exists before destructuring
   if (!authContext) {
-    throw new Error("candidateAuthContext must be used within a candidateAuthProvider");
+    throw new Error(
+      "candidateAuthContext must be used within a candidateAuthProvider"
+    );
   }
-  
+
   const { logout } = authContext;
-
-
 
   if (isLoading) {
     return (
@@ -154,12 +148,10 @@ const CandidateDashboard: React.FC = () => {
   };
   const userLogout = () => {
     dispatch(candidateLogout(username));
-    logout()
-    setTimeout(()=>{
-      nav("/")
-    },1500)
-
-  
+    logout();
+    setTimeout(() => {
+      nav("/");
+    }, 1500);
   };
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
@@ -250,11 +242,28 @@ const CandidateDashboard: React.FC = () => {
                 </div>
               </div>
             </CardContent>
-            <Button className="m-9" onClick={handleDelete}>
-              Delete Profile
-            </Button>
+
             <div>
-              <Button onClick={userLogout}>Logout</Button>
+              <div>
+                <Button
+                  className="m-2 text-white bg-red-800 hover:bg-red-500 "
+                  onClick={handleDelete}
+                >
+                  Delete Profile
+                </Button>
+                <Button className="m-2" onClick={userLogout}>
+                  Logout
+                </Button>
+                <Button
+                  className="m-2"
+                  onClick={() => {
+                    nav("/CandidateDashboard/MyJobApplications");
+                  }}
+                >
+                  {" "}
+                  My Applications
+                </Button>
+              </div>
             </div>
           </Card>
 
@@ -452,13 +461,7 @@ const CandidateDashboard: React.FC = () => {
           </TabsContent>
         </Tabs>
       </div>
-      <div>
-        <Button className="m-4 p-4"
-        onClick={()=>{
-          nav('/CandidateDashboard/MyJobApplications')
-        }}
-        >My Applications</Button>
-      </div>
+   
     </div>
   );
 };
