@@ -144,9 +144,9 @@ export const fetchAllJobs = createAsyncThunk<
 >("job/fetchAll", async (data, { rejectWithValue }) => {
   try {
     // Built URL conditionally, only add username param if it exists
-    const url = data.username ? `/fetch?username=${data.username}` : '/fetch';
+    const url = data.username ? `/fetch?username=${data.username}` : "/fetch";
     const response = await jobApi.get(url);
-    
+
     if (response.status === 200) {
       return response.data;
     }
@@ -269,6 +269,7 @@ export const createJobThunk = createAsyncThunk<
   }
 });
 //Delete Job
+let message;
 export const deleteJobPostingThunk = createAsyncThunk<
   { success: boolean },
   { jobID: string },
@@ -285,7 +286,7 @@ export const deleteJobPostingThunk = createAsyncThunk<
     console.log(error);
     if (axios.isAxiosError(error) && error.response) {
       const status = error.response?.status;
-      let message = "Unknown error occured";
+       message = "Unknown error occured";
       switch (status) {
         case 404:
           message = "Job you want to delete is not found";
