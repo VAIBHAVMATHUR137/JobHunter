@@ -150,7 +150,7 @@ export default function IndividualJobPage() {
         console.log(screeningResponse);
         if (screeningResponse.result.status === 200) {
           console.log(
-            "Recruiter screening successful " + screenApplicationThunk
+            "Recruiter screening successful "
           );
           const application = await dispatch(
             createApplicationThunk({

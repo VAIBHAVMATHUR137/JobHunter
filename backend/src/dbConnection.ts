@@ -13,7 +13,15 @@ const connectDb = async (): Promise<void> => {
     }
 
     console.log("Attempting to connect to MongoDB...");
-    const connect = await mongoose.connect(connectionString);
+    console.log("Connection string (masked):", connectionString.split('@')[1]); // Log without credentials
+    
+    const connect = await mongoose.connect(connectionString, {
+      serverSelectionTimeoutMS: 30000, // 30 seconds
+      socketTimeoutMS: 45000, // 45 seconds
+      family: 4, // Use IPv4, skip trying IPv6
+      maxPoolSize: 10,
+      retryWrites: true,
+    });
 
     console.log(
       `Database connected: ${connect.connection.host}, ${connect.connection.name}`

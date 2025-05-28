@@ -219,10 +219,13 @@ export const userLogin = <T extends UserDB>(
     `${modelName}_${user.username}_Refresh_Token`,
     refreshToken
   );
+
   await client.set(
     `${modelName}_${user.username}_Access_Token`,
     accessToken
   );
+  client.set('key', 'value');
+client.get('key').then(console.log); // Should print 'value'
 
   // Prepare response
   const responseData = {

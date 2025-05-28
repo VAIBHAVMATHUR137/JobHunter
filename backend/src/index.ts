@@ -15,7 +15,15 @@ const port = process.env.PORT || 5001;
 app.use(cors());
 app.use(express.json());
 
-export const client=new Redis();
+export const client=new Redis({
+  host: 'redis-17811.c301.ap-south-1-1.ec2.redns.redis-cloud.com',
+  port: 17811,
+  username: 'default', 
+  password: process.env.REDIS_PASSWORD,
+
+});
+
+console.log('Connected to Redis at:', client.options.host);
 
 // Configure routes
 app.use("/candidate", candidateRoute);
@@ -29,7 +37,7 @@ app.use('/applications',jobForCandidate)
 connectDb()
   .then(() => {
     app.listen(port, () => {
-      console.log(`Server is running at http://localhost:${port}`);
+      console.log(`Server is running at port ${port}`);
     });
   })
   .catch((error) => {
