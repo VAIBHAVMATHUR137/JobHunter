@@ -269,7 +269,7 @@ export const createJobThunk = createAsyncThunk<
   }
 });
 //Delete Job
-let message;
+let message:string;
 export const deleteJobPostingThunk = createAsyncThunk<
   { success: boolean },
   { jobID: string },
