@@ -23,6 +23,11 @@ export const client=new Redis({
 
 });
 
+app.get('/', (req, res) => {
+  res.send('JobHunter API is running...');
+});
+
+
 console.log('Connected to Redis at:', client.options.host);
 
 // Configure routes
