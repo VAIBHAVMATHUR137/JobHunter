@@ -22,7 +22,6 @@ export const client=new Redis({
   password: process.env.REDIS_PASSWORD,
 
 });
-
 app.get('/', (req, res) => {
   res.send('JobHunter API is running...');
 });

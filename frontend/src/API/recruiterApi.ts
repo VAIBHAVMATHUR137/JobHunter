@@ -1,6 +1,6 @@
 import axios from "axios";
 export const recruiterApi = axios.create({
-  baseURL: "http://localhost:5000/recruiter"
+  baseURL: "https://jobhunter-1-o7zz.onrender.com/recruiter"
 });
 
 // Track the refresh timer so we can clear it on logout
