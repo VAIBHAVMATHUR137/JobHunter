@@ -21,7 +21,7 @@ import {
   Globe,
   FileText,
   Gift,
-  ArrowLeft,
+
   AtSign,
   Calendar,
   CheckCircle2,
@@ -66,7 +66,7 @@ export default function IndividualJobPage() {
     const buttonRender = async () => {
       if (candidateUsername && jobID) {
         try {
-          const response = await dispatch(
+           await dispatch(
             screenApplicationThunk({ candidateUsername, jobID })
           ).unwrap();
 
@@ -84,7 +84,7 @@ export default function IndividualJobPage() {
       }
       if (recruiterUsername && jobID) {
         try {
-          const response = await dispatch(
+          await dispatch(
             screenApplicationThunk({ recruiterUsername, jobID })
           ).unwrap();
 

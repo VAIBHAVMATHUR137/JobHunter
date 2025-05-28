@@ -1,10 +1,11 @@
-import React from 'react'
+import Navbar from "@/components/ui/navbar"
 
 function Error() {
   return (
-    <div>
-      
-    </div>
+<>
+<Navbar/>
+<p> Error page</p>
+</>
   )
 }
 
