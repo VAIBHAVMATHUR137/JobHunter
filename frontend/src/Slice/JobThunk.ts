@@ -269,7 +269,6 @@ export const createJobThunk = createAsyncThunk<
   }
 });
 //Delete Job
-let message:string;
 export const deleteJobPostingThunk = createAsyncThunk<
   { success: boolean },
   { jobID: string },
@@ -278,21 +277,18 @@ export const deleteJobPostingThunk = createAsyncThunk<
   try {
     const response = await jobApi.delete(`/delete/${jobID.jobID}`);
     if (response.status === 200) {
-      return {
-        success: true,
-      };
+      return { success: true };
     }
   } catch (error) {
     console.log(error);
     if (axios.isAxiosError(error) && error.response) {
       const status = error.response?.status;
-       message = "Unknown error occured";
       switch (status) {
         case 404:
-          message = "Job you want to delete is not found";
+          console.log("Job you want to delete is not found");
           break;
         default:
-          message = error.response?.data?.message || "Deletion failed";
+          console.log(error.response?.data?.message || "Deletion failed");
       }
       return rejectWithValue({
         message: error.response?.data?.message || "Failed to delete job",
@@ -301,10 +297,11 @@ export const deleteJobPostingThunk = createAsyncThunk<
     }
   }
   return rejectWithValue({
-    message: "Network error occured while deleting",
+    message: "Network error occurred while deleting",
     status: 500,
   });
 });
+
 
 // Interface for jobID generation parameters
 interface JobIDGeneration {
