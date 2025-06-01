@@ -1,13 +1,8 @@
-
-import { useNavigate } from 'react-router-dom';
-import { 
-  User, 
-  Building2, 
-  ArrowRight 
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent,  CardTitle } from '@/components/ui/card';
-import Navbar from "../components/ui/navbar"
+import { useNavigate } from "react-router-dom";
+import { User, Building2, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import Navbar from "../components/ui/navbar";
 
 export default function CommonAuthentication() {
   const nav = useNavigate();
@@ -15,9 +10,9 @@ export default function CommonAuthentication() {
   const handleRedirect = (userType: string, action: string) => {
     const routes = {
       candidateLogin: "/CandidateLogin",
-      candidateSignup: "/CandidateSignup",
+      candidateSignup: "/CandidatePersonalInformation",
       recruiterLogin: "/RecruiterLogin",
-      recruiterSignup: "/RecruiterSignup",
+      recruiterSignup: "/RecruiterPersonalInformation",
     };
     const route =
       routes[
@@ -64,22 +59,23 @@ export default function CommonAuthentication() {
                     {
                       type: "candidate",
                       icon: User,
-                      description: "Discover and apply to your dream job"
+                      description: "Discover and apply to your dream job",
                     },
                     {
-                      type: "recruiter", 
+                      type: "recruiter",
                       icon: Building2,
-                      description: "Find top talent for your team"
-                    }
+                      description: "Find top talent for your team",
+                    },
                   ].map((role) => (
-                    <div 
-                      key={role.type} 
+                    <div
+                      key={role.type}
                       className="group border border-gray-300 rounded-xl p-6 hover:border-gray-500 transition-all duration-300"
                     >
                       <div className="flex items-center mb-4">
                         <role.icon className="w-8 h-8 text-gray-600 mr-4" />
                         <h3 className="text-xl font-semibold text-gray-800">
-                          {role.type.charAt(0).toUpperCase() + role.type.slice(1)}
+                          {role.type.charAt(0).toUpperCase() +
+                            role.type.slice(1)}
                         </h3>
                       </div>
                       <p className="text-gray-500 mb-4 text-sm">

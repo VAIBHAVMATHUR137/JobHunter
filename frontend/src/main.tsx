@@ -27,7 +27,7 @@ import CandidateProfile from "./Candidate/CandidateProfile";
 import JobPosting from "./Pages/JobPosting";
 import AllJobs from "./Pages/AllJobs";
 import IndividualJob from "./Pages/IndividualJob";
-import Test from "./Pages/Test";
+
 import MyJobApplications from "./Candidate/MyJobApplications";
 import MyRecruitments from "./Recruiter/MyRecruitments";
 import JobApplications from "./Recruiter/JobApplications";
@@ -106,60 +106,56 @@ const router = createBrowserRouter([
     errorElement: <Error />,
   },
   {
-    path:"/TopRecruiters",
-    element:<RecruiterListing/>,
-    errorElement:<Error/>
+    path: "/TopRecruiters",
+    element: <RecruiterListing />,
+    errorElement: <Error />,
   },
   {
-    path:"/Recruiter/:username",
-    element:<RecruiterProfile/>,
-    errorElement:<Error/>
+    path: "/Recruiter/:username",
+    element: <RecruiterProfile />,
+    errorElement: <Error />,
   },
   {
-    path:"/Candidate/:username",
-    element:<CandidateProfile/>,
-    errorElement:<Error/>
+    path: "/Candidate/:username",
+    element: <CandidateProfile />,
+    errorElement: <Error />,
   },
   {
-    path:"/ExceptionalCandidates",
-    element:<CandidateListing/>,
-    errorElement:<Error/>
+    path: "/ExceptionalCandidates",
+    element: <CandidateListing />,
+    errorElement: <Error />,
   },
   {
-    path:"/JobPosting",
-    element:<JobPosting/>,
-    errorElement:<Error/>
+    path: "/JobPosting",
+    element: <JobPosting />,
+    errorElement: <Error />,
   },
   {
-    path:"/AllJobs",
-    element:<AllJobs/>,
-    errorElement:<Error/>
+    path: "/AllJobs",
+    element: <AllJobs />,
+    errorElement: <Error />,
   },
   {
-    path:'/Job/:jobID',
-    element:<IndividualJob/>,
-    errorElement:<Error/>
+    path: "/Job/:jobID",
+    element: <IndividualJob />,
+    errorElement: <Error />,
+  },
+
+  {
+    path: "/CandidateDashboard/MyJobApplications",
+    element: <MyJobApplications />,
+    errorElement: <Error />,
   },
   {
-    path:"/Test",
-    element:<Test/>,
-    errorElement:<Error/>
+    path: "/RecruiterDashboard/MyRecruitments",
+    element: <MyRecruitments />,
+    errorElement: <Error />,
   },
   {
-    path:"/CandidateDashboard/MyJobApplications",
-    element:<MyJobApplications/>,
-    errorElement:<Error/>
+    path: "/RecruiterDashboard/MyRecruitments/:jobID",
+    element: <JobApplications />,
+    errorElement: <Error />,
   },
-  {
-    path:"/RecruiterDashboard/MyRecruitments",
-    element:<MyRecruitments/>,
-    errorElement:<Error/>
-  },
-  {
-    path:"/RecruiterDashboard/MyRecruitments/:jobID",
-    element:<JobApplications/>,
-    errorElement:<Error/>
-  }
 ]);
 
 createRoot(document.getElementById("root")!).render(
