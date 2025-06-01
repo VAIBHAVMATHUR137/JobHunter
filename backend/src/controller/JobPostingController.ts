@@ -9,20 +9,21 @@ export const fetchAll = expressAsyncHandler(
     try {
       const allJobs = await JobPosting.find();
       const { username } = req.query;
-      //No username passed, so it will fetch all the jobs
+
       if (!username) {
         console.log("Finding All jobs");
         res.status(200).json(allJobs);
         return;
       }
-      //It checks if the username provided belongs to candidate
+
       const jobsAppliedByCandidate = await JobApplicationSchema.find({
         "candidateProfile.username": username,
       });
+
       const recruitments = await JobPosting.find({
         username: username,
       });
-      //Positive confirmation of belonging of username to candidate
+
       if (jobsAppliedByCandidate.length > 0) {
         const appliedJobID = new Set(
           jobsAppliedByCandidate.map((application) => application.job.jobID)
@@ -33,12 +34,18 @@ export const fetchAll = expressAsyncHandler(
         res.status(200).json(availableJobs);
         return;
       } else if (recruitments.length > 0) {
-        //This case covers the scenario where the username belongs to the recruiter and not candidate
         const postedJobID = new Set(
           recruitments.map((recruitment) => recruitment.jobID)
         );
         const newJobs = allJobs.filter((job) => !postedJobID.has(job.jobID));
         res.status(200).json(newJobs);
+        return;
+      } else {
+        //  If username is unknown, or has no activity (no posts, no applications), return all jobs
+        console.log(
+          "Username provided but no activity found — returning all jobs"
+        );
+        res.status(200).json(allJobs);
         return;
       }
     } catch (error) {
