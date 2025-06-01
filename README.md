@@ -1,13 +1,13 @@
 JobHunter- A secure and role-based job portal built in MERN stack with TypeScript and ShadCN UI — enabling recruiters and candidates to connect via unique job IDs and dashboards.
 
-##Link to open the platform
+## Link to open the platform
 
 https://job-hunter-git-main-vaibhav-mathurs-projects.vercel.app/
 
-##Tech Stack
+## Tech Stack
 MongoDB, Express, React, Node.js, TypeScript, Redux Toolkit, Asyncthunk, axios interceptor, ShadCN UI, JWT, bcrypt
 
-##Key Features
+## Key Features
 🔐 Authentication & Security
 
 JWT-protected routes for login, dashboard, and job posting
