@@ -149,9 +149,17 @@ const RecruiterDashboard: React.FC = () => {
     year_of_conclusion: string;
   }
   const handleDelete = async () => {
-    const response= await dispatch(deleteRecruiter({username})).unwrap();
-    if(response){
-      alert("User deleted")
+    try {
+      const response = await dispatch(deleteRecruiter({ username })).unwrap();
+      if (response) {
+        alert("User deleted");
+        logout();
+        setTimeout(() => {
+          nav("/");
+        }, 500);
+      }
+    } catch (error) {
+      console.log("Error deleting the user " + error);
     }
   };
   const userLogout = () => {
@@ -252,11 +260,17 @@ const RecruiterDashboard: React.FC = () => {
               </div>
             </CardContent>
             <div>
-              <Button className="m-2 text-white bg-red-800 hover:bg-red-500 " onClick={handleDelete}>
+              <Button
+                className="m-2 text-white bg-red-800 hover:bg-red-500 "
+                onClick={handleDelete}
+              >
                 Delete Profile
               </Button>
-              <Button className="m-2" onClick={userLogout}>Logout</Button>
-              <Button className="m-2"
+              <Button className="m-2" onClick={userLogout}>
+                Logout
+              </Button>
+              <Button
+                className="m-2"
                 onClick={() => {
                   nav("/RecruiterDashboard/MyRecruitments");
                 }}

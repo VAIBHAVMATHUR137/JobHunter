@@ -546,11 +546,11 @@ export const candidateProfileSlice = createSlice({
 });
 export const deleteCandidate = createAsyncThunk<
   boolean,
-  string,
+  {username:string},
   { rejectValue: ErrorResponse }
->("candidate/delete", async (username: string, { rejectWithValue }) => {
+>("candidate/delete", async (data, { rejectWithValue }) => {
   try {
-    const response = await candidateApi.delete(`/delete/${username}`);
+    const response = await candidateApi.delete(`/delete/${data.username}`);
 
     return response.data;
   } catch (error) {

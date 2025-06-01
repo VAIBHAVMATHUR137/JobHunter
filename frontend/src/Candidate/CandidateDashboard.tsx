@@ -143,8 +143,20 @@ const CandidateDashboard: React.FC = () => {
     year_of_commencement: string;
     year_of_conclusion: string;
   }
-  const handleDelete = () => {
-    dispatch(deleteCandidate(username));
+  const handleDelete = async() => {
+    try {
+     const response= await dispatch(deleteCandidate({username})).unwrap();
+     if(response){
+      alert("User deleted")
+      logout();
+      setTimeout(()=>{
+        nav("/")
+      },500)
+     }
+    } catch (error) {
+      console.log(error)
+    }
+   
   };
   const userLogout = () => {
     dispatch(candidateLogout(username));
