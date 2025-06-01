@@ -693,11 +693,11 @@ export const allRecruitersSlice = createSlice({
 //Thunk to delete recruiter
 export const deleteRecruiter = createAsyncThunk<
   boolean,
-  string,
+  {username:string},
   { rejectValue: ErrorResponse }
->("recruiter/delete", async (username: string, { rejectWithValue }) => {
+>("recruiter/delete", async (data, { rejectWithValue }) => {
   try {
-    const response = await recruiterApi.delete(`/delete/${username}`);
+    const response = await recruiterApi.delete(`/delete/${data.username}`);
 
     return response.data;
   } catch (error) {

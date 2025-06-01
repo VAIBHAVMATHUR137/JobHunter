@@ -148,8 +148,11 @@ const RecruiterDashboard: React.FC = () => {
     year_of_commencement: string;
     year_of_conclusion: string;
   }
-  const handleDelete = () => {
-    dispatch(deleteRecruiter(username));
+  const handleDelete = async () => {
+    const response= await dispatch(deleteRecruiter({username})).unwrap();
+    if(response){
+      alert("User deleted")
+    }
   };
   const userLogout = () => {
     dispatch(recruiterLogout(username));
