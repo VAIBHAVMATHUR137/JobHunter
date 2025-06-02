@@ -4,7 +4,6 @@ import {
   deleteExistingJob,
   postNewJob,
   fetchParticularJobPosted,
-
 } from "../controller/JobPostingController";
 
 import {
@@ -16,15 +15,13 @@ import {
 const router = express.Router();
 
 // Public routes (accessible to both candidates and recruiters)
-router.get("/fetch",fetchAll);
+router.get("/fetch", fetchAll);
 
 router.get("/fetchIndividualJob/:jobID", fetchParticularJobPosted);
-router
 
 // Recruiter-only routes
 router.post(
   "/create",
-
   postNewJob
 );
 

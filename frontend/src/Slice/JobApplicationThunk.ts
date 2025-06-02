@@ -367,7 +367,7 @@ const initialAppliedJobsState: fetchAppliedJobs = {
   jobData: [initialJobPosting],
 };
 
-//THIS SLICE IS THERE TO RENDER THE LIST OF ALL THE CANDIDATES WHO APPLIED FOR A JOB
+//THIS SLICE IS THERE TO RENDER THE LIST OF ALL THE JOBS WHERE A CANDIDATE HAS APPLIED
 export const allJobsAppliedSlice = createSlice({
   name: "allJobsAppliedSlice",
   initialState: initialAppliedJobsState,

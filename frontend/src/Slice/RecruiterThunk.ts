@@ -362,40 +362,7 @@ export const recruiterRegistration = createAsyncThunk<
   });
 });
 
-interface recruiterRegistration {
-  isLoading: boolean;
-  error: string | null;
-  isSuccess: boolean;
-}
-const initialRecruiterRegistrationState: recruiterRegistration = {
-  isLoading: false,
-  error: null,
-  isSuccess: false,
-};
-//SLICE FOR RECRUITER REGISTRATION
-const recruiterRegistrationSlice = createSlice({
-  name: "recruiterRegistrationSlice",
-  initialState: initialRecruiterRegistrationState,
 
-  reducers: {},
-  extraReducers: (builder) => {
-    builder
-      .addCase(recruiterRegistration.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
-      .addCase(recruiterRegistration.fulfilled, (state) => {
-        state.error = null;
-        state.isLoading = false;
-        state.isSuccess = true;
-      })
-      .addCase(recruiterRegistration.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload?.message || "Registration failed";
-        state.isSuccess = false;
-      });
-  },
-});
 
 //Thunk for recruiter login
 export const recruiterLogin = createAsyncThunk<
@@ -740,8 +707,7 @@ export const recruiterLogout = createAsyncThunk<
 export const recruiterUsernameGeneratorReducer =
   recruiterUsernameGeneratorSlice.reducer;
 
-export const recruiter_registration_reducer =
-  recruiterRegistrationSlice.reducer;
+
 
 export const { setUsername } = recruiterLoginSlice.actions;
 export const recruiter_login_reducer = recruiterLoginSlice.reducer;
