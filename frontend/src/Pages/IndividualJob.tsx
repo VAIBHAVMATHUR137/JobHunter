@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { deleteJobPostingThunk } from "@/Slice/JobThunk";
+import { AlertDialogDemo } from "@/components/ui/AlertDialogDemo";
 import {
   Building,
   MapPin,
@@ -21,7 +22,6 @@ import {
   Globe,
   FileText,
   Gift,
-
   AtSign,
   Calendar,
   CheckCircle2,
@@ -42,8 +42,13 @@ import { useState } from "react";
 export default function IndividualJobPage() {
   const [isPosted, setIsPosted] = useState<boolean | null>(null);
   const [isApplied, setIsApplied] = useState<boolean | null>(null);
-  const { jobID } = useParams();
 
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [title, setTitle] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
+
+  const { jobID } = useParams();
 
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
@@ -66,7 +71,7 @@ export default function IndividualJobPage() {
     const buttonRender = async () => {
       if (candidateUsername && jobID) {
         try {
-           await dispatch(
+          await dispatch(
             screenApplicationThunk({ candidateUsername, jobID })
           ).unwrap();
 
@@ -136,12 +141,14 @@ export default function IndividualJobPage() {
     return ctc.minCTC || ctc.maxCTC;
   };
 
-
   const appliedForJob = async () => {
     const recruiterUsername = job.username;
 
     if (!candidateUsername || !jobID) {
-      alert("User needs to login as candidate before applying for a job");
+      setShowAlert(true);
+      setIsSuccess(false);
+      setTitle("Unauthorised Application !");
+      setMessage("User needs to login as candidate before applying");
     } else {
       try {
         const screeningResponse = await dispatch(
@@ -149,9 +156,7 @@ export default function IndividualJobPage() {
         ).unwrap();
         console.log(screeningResponse);
         if (screeningResponse.result.status === 200) {
-          console.log(
-            "Recruiter screening successful "
-          );
+          console.log("Recruiter screening successful ");
           const application = await dispatch(
             createApplicationThunk({
               recruiterUsername,
@@ -161,19 +166,34 @@ export default function IndividualJobPage() {
           ).unwrap();
 
           if (application.success) {
-            alert("Applied for job successfully");
+            setShowAlert(true);
+            setIsSuccess(true);
+            setTitle("Success");
+            setMessage("Applied for this job successfully");
           } else {
-            alert("Try later, some issue is at the backend");
+            setShowAlert(true);
+            setIsSuccess(false);
+            setTitle("Oops!");
+            setMessage("Some issue at the backend. Please try later");
           }
         } else {
-          alert("Unexpected error occurred, please try later");
+          setShowAlert(true);
+          setIsSuccess(false);
+          setTitle("Oops!");
+          setMessage("Some issue at the backend. Please try later");
         }
       } catch (err: any) {
         // 403 error (already applied)
         if (err?.status === 403) {
-          alert("Cannot apply again for the same job");
+          setShowAlert(true);
+          setIsSuccess(false);
+          setTitle("Unauthorised Application !");
+          setMessage("Cannot apply for the same job again");
         } else {
-          alert("An error occurred while checking eligibility");
+          setShowAlert(true);
+          setIsSuccess(false);
+          setTitle("Error !");
+          setMessage("Unexpected error at the backend");
           console.log(err);
         }
       }
@@ -195,8 +215,13 @@ export default function IndividualJobPage() {
     console.log(jobID);
     const response = await dispatch(deleteJobPostingThunk({ jobID })).unwrap();
     if (response.success) {
-      alert("Job deleted successfully!");
-      navigate("/RecruiterDashboard");
+      setShowAlert(true);
+      setIsSuccess(false);
+      setTitle("Deleted !");
+      setMessage("Job Deleted Successfully.Navigating back to dashboard....");
+      setTimeout(()=>{
+        navigate('/RecruiterDashboard')
+      },2500)
     }
   };
 
@@ -236,8 +261,6 @@ export default function IndividualJobPage() {
       <Navbar />
       <div className="bg-gray-50 min-h-screen">
         <div className="container mx-auto px-4 py-6 max-w-5xl">
-
-
           {/* Job header */}
           <Card className="mb-6 border border-gray-200 shadow-sm">
             <CardContent className="p-6 md:p-8">
@@ -668,7 +691,16 @@ export default function IndividualJobPage() {
             </div>
           </div>
         </div>
-
+        {showAlert && (
+          <AlertDialogDemo
+            title={title}
+            message={message}
+            onClose={() => setShowAlert(false)}
+            nextPage={() => navigate("/")}
+            setIsSuccess={setIsSuccess}
+            isSuccess={isSuccess}
+          />
+        )}
       </div>
     </>
   );

@@ -359,41 +359,6 @@ export const candidateRegistration = createAsyncThunk<
   });
 });
 
-interface candidateRegistration {
-  isLoading: boolean;
-  error: string | null;
-  isSuccess: boolean;
-}
-const initialCandidateRegistrationState: candidateRegistration = {
-  isLoading: false,
-  error: null,
-  isSuccess: false,
-};
-//SLICE FOR CANDIDATE REGISTRATION
-export const candidateRegistrationSlice = createSlice({
-  name: "candidateRegistrationSlice",
-  initialState: initialCandidateRegistrationState,
-
-  reducers: {},
-  extraReducers: (builder) => {
-    builder
-      .addCase(candidateRegistration.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
-      .addCase(candidateRegistration.fulfilled, (state) => {
-        state.error = null;
-        state.isLoading = false;
-        state.isSuccess = true;
-      })
-      .addCase(candidateRegistration.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload?.message || "Registration failed";
-        state.isSuccess = false;
-      });
-  },
-});
-
 //Thunk for candidate login
 export const candidateLogin = createAsyncThunk<
   { success: boolean; data: LoginResponse },
@@ -546,7 +511,7 @@ export const candidateProfileSlice = createSlice({
 });
 export const deleteCandidate = createAsyncThunk<
   boolean,
-  {username:string},
+  { username: string },
   { rejectValue: ErrorResponse }
 >("candidate/delete", async (data, { rejectWithValue }) => {
   try {
@@ -732,9 +697,6 @@ export const candidateDashboardSlice = createSlice({
 });
 export const candidateUsernameGeneratorReducer =
   candidateUsernameGeneratorSlice.reducer;
-
-export const candidate_registration_reducer =
-  candidateRegistrationSlice.reducer;
 
 export const { setUsername } = candidateLoginSlice.actions;
 export const candidate_login_reducer = candidateLoginSlice.reducer;

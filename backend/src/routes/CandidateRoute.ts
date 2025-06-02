@@ -28,7 +28,6 @@ import Candidate from "../schema/CandidateSchema";
 
 const router = express.Router();
 
-router.get("/fetch/:username", getProfile(Candidate));
 router.post(
   "/create",
   createUser(Candidate),
