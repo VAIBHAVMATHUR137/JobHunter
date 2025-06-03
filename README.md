@@ -71,6 +71,8 @@ Separate jobApplications collection with candidate + recruiter + job object
 |/candidate  |/create    |    POST    |
 |            |/delete/:username    |   DELETE   |
 |            |/login     |    POST    |
+|            |/refresh-token  |  POST  |
+|            |/username/check  |  POST  |
 
 
 
