@@ -10,7 +10,7 @@ MongoDB, Express, React, Node.js, TypeScript, Redux Toolkit, Asyncthunk, axios i
 ## Key Features
 🔐 Authentication & Security
 
-JWT-protected routes for login, dashboard, and job posting
+JWT-protected private routes for login, dashboard, and job posting
 
 bcrypt-secured password storage
 
@@ -63,3 +63,13 @@ Custom alert dialogs for API feedback
 Composite schema with custom data structures and custom interfaces
 
 Separate jobApplications collection with candidate + recruiter + job object
+
+### Table for APIs
+
+| Base Route | Sub Route | HTTP Method
+|------------|-----------|------------|
+|/candidate  |/create    |    POST    |
+
+
+
+
