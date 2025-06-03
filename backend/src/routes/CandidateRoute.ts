@@ -35,7 +35,7 @@ router.post(
   candidateValidationRules,
   validateCandidate
 );
-router.delete("/delete/:username", deleteUser(Candidate, CandidateUserName, JobApplicationSchema));
+router.delete("/delete/:username", deleteUser(Candidate, CandidateUserName, JobApplicationSchema,undefined));
 router.post(
   "/login",
 

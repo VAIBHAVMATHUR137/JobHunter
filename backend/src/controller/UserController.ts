@@ -141,8 +141,6 @@ export const deleteUser = <T, U, V, W>(
   expressAsyncHandler(async (req: Request, res: Response) => {
     const { username } = req.params;
 
-
-
     const user = await userDatabase.findOne({ username });
     if (!user) {
       res.status(400).json({ Message: "No such user exists" });
@@ -159,6 +157,11 @@ export const deleteUser = <T, U, V, W>(
         deletionPromises.push(
           jobApplicationsDatabase.deleteMany({
             "candidateProfile.username": username,
+          })
+        );
+        deletionPromises.push(
+          jobApplicationsDatabase.deleteMany({
+            recruiterUsername: username,
           })
         );
       }

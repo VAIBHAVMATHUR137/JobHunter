@@ -27,6 +27,7 @@ import {
 } from "../controller/UserController";
 import Recruiter from "../schema/RecruiterSchema";
 import JobPosting from "../schema/JobPostingSchema";
+import { JobApplicationSchema } from "../schema/JobApplicationSchema";
 
 const router = express.Router();
 
@@ -39,7 +40,7 @@ router.post(
 
 router.delete(
   "/delete/:username",
-  deleteUser(Recruiter, RecruiterUserName,undefined, JobPosting)
+  deleteUser(Recruiter, RecruiterUserName,JobApplicationSchema, JobPosting)
 );
 
 router.post(
