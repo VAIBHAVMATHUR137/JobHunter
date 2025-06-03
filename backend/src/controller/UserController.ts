@@ -139,7 +139,7 @@ export const deleteUser = <T, U, V, W>(
   jobPostingDatabase?: Model<W>
 ) =>
   expressAsyncHandler(async (req: Request, res: Response) => {
-    const { username } = req.query;
+    const { username } = req.params;
 
 
 
