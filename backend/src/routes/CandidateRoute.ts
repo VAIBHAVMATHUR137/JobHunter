@@ -25,6 +25,7 @@ import {
 import RecruiterUserName from "../schema/RecruiterUserNameSchema";
 import CandidateUserName from "../schema/CandidateUserNameSchema";
 import Candidate from "../schema/CandidateSchema";
+import { JobApplicationSchema } from "../schema/JobApplicationSchema";
 
 const router = express.Router();
 
@@ -34,7 +35,7 @@ router.post(
   candidateValidationRules,
   validateCandidate
 );
-router.delete("/delete/:username", deleteUser(Candidate, CandidateUserName));
+router.delete("/delete/:username", deleteUser(Candidate, CandidateUserName, JobApplicationSchema));
 router.post(
   "/login",
 

@@ -26,6 +26,7 @@ import {
   updateToken,
 } from "../controller/UserController";
 import Recruiter from "../schema/RecruiterSchema";
+import JobPosting from "../schema/JobPostingSchema";
 
 const router = express.Router();
 
@@ -36,7 +37,10 @@ router.post(
   createUser(Recruiter)
 );
 
-router.delete("/delete/:username", deleteUser(Recruiter, RecruiterUserName));
+router.delete(
+  "/delete/:username",
+  deleteUser(Recruiter, RecruiterUserName, JobPosting)
+);
 
 router.post(
   "/login",

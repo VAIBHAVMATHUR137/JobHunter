@@ -10,7 +10,7 @@ import { JobApplicationSchema } from "../schema/JobApplicationSchema";
 
 dotenv.config();
 const SECRET_ACCESS_TOKEN = process.env.SECRET_ACCESS_TOKEN;
-type UserRole = 'candidate' | 'recruiter';
+type UserRole = "candidate" | "recruiter";
 
 //FETCH DASHBOARD OF BOTH CANDIDATE AND RECRUITER
 export const userDashboard = <T>(database: Model<T>) =>
@@ -132,10 +132,11 @@ export const createUser = <T>(database: Model<T>) =>
     }
   });
 //FUNCTION TO DELETE USER
-export const deleteUser = <T, U,V>(
+export const deleteUser = <T, U, V, W>(
   userDatabase: Model<T>,
   usernameDatabase: Model<U>,
-  jobApplicationDatabase:Model<V>
+  jobApplicationDatabase?: Model<V>,
+  jobPostingDatabase?: Model<W>
 ) =>
   expressAsyncHandler(async (req: Request, res: Response) => {
     const { username } = req.params;
@@ -148,7 +149,8 @@ export const deleteUser = <T, U,V>(
       await Promise.all([
         userDatabase.deleteOne({ username }),
         usernameDatabase.deleteOne({ username }),
-        
+        jobApplicationDatabase?.deleteOne({"candidateProfile.username":username}),
+        jobPostingDatabase?.deleteOne({username})
       ]);
       res.status(200).json({ Message: "User deleted successfully" });
     } catch (error) {
@@ -166,100 +168,98 @@ interface UserDB {
 }
 
 //FUNCTION FOR USER LOGIN
-export const userLogin = <T extends UserDB>(
-  model: Model<T>,
-  role: UserRole
-) => expressAsyncHandler(async (req: Request, res: Response) => {
-  const { username, password } = req.body;
+export const userLogin = <T extends UserDB>(model: Model<T>, role: UserRole) =>
+  expressAsyncHandler(async (req: Request, res: Response) => {
+    const { username, password } = req.body;
 
-  // Input validation
-  if (!username || !password) {
-    res.status(401).json({ message: "All fields are mandatory" });
-    return;
-  }
-
-  // Find user in database
-  const user = await model.findOne({ username });
-  const userRole=`${role.charAt(0).toUpperCase()+role.slice(1)}`
-  if (!user) {
-    res.status(404).json({ message: `${role.charAt(0).toUpperCase() + role.slice(1)} not found` });
-    return;
-  }
-
-  // Validate password
-  const isPasswordValid = await bcrypt.compare(password, user.password);
-  if (!isPasswordValid) {
-    res.status(401).json({ message: "Invalid password" });
-    return;
-  }
-
-  // Create token payload matching the expected structure in validateToken.ts
-  const tokenPayload = {
-    [role]: {
-      username: user.username,
-      id: user.id,
-      role: role
-   
+    // Input validation
+    if (!username || !password) {
+      res.status(401).json({ message: "All fields are mandatory" });
+      return;
     }
-  };
 
-  // Generate tokens
-  const accessToken = jwt.sign(
-    tokenPayload,
-    process.env.SECRET_ACCESS_TOKEN!,
-    { expiresIn: "3m" }
-  );
+    // Find user in database
+    const user = await model.findOne({ username });
+    const userRole = `${role.charAt(0).toUpperCase() + role.slice(1)}`;
+    if (!user) {
+      res
+        .status(404)
+        .json({
+          message: `${role.charAt(0).toUpperCase() + role.slice(1)} not found`,
+        });
+      return;
+    }
 
-  const refreshToken = jwt.sign(
-    { username: user.username, id: user.id },
-    process.env.SECRET_REFRESH_TOKEN!,
-    { expiresIn: "30d" }
-  );
+    // Validate password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      res.status(401).json({ message: "Invalid password" });
+      return;
+    }
 
-  // Store tokens in Redis
-  const modelName = model.modelName || role.charAt(0).toUpperCase() + role.slice(1);
-  await client.set(
-    `${modelName}_${user.username}_Refresh_Token`,
-    refreshToken
-  );
+    // Create token payload matching the expected structure in validateToken.ts
+    const tokenPayload = {
+      [role]: {
+        username: user.username,
+        id: user.id,
+        role: role,
+      },
+    };
 
-  await client.set(
-    `${modelName}_${user.username}_Access_Token`,
-    accessToken
-  );
-  client.set('key', 'value');
-client.get('key').then(console.log); // Should print 'value'
+    // Generate tokens
+    const accessToken = jwt.sign(
+      tokenPayload,
+      process.env.SECRET_ACCESS_TOKEN!,
+      { expiresIn: "3m" }
+    );
 
-  // Prepare response
-  const responseData = {
-    accessToken,
-    refreshToken,
-    [role]: {
-      id: user.id,
-      photo: user.photo,
-      username: user.username,
-    },
-  };
+    const refreshToken = jwt.sign(
+      { username: user.username, id: user.id },
+      process.env.SECRET_REFRESH_TOKEN!,
+      { expiresIn: "30d" }
+    );
 
-  res.status(200).json(responseData);
-});
+    // Store tokens in Redis
+    const modelName =
+      model.modelName || role.charAt(0).toUpperCase() + role.slice(1);
+    await client.set(
+      `${modelName}_${user.username}_Refresh_Token`,
+      refreshToken
+    );
 
+    await client.set(`${modelName}_${user.username}_Access_Token`, accessToken);
+    client.set("key", "value");
+    client.get("key").then(console.log); // Should print 'value'
 
+    // Prepare response
+    const responseData = {
+      accessToken,
+      refreshToken,
+      [role]: {
+        id: user.id,
+        photo: user.photo,
+        username: user.username,
+      },
+    };
+
+    res.status(200).json(responseData);
+  });
 
 // USER LOGOUT FUNCTION
 export const userLogout = <T extends UserDB>(model: Model<T>, role: UserRole) =>
   expressAsyncHandler(async (req: Request, res: Response) => {
     // Get username from authenticated user (from token) rather than requiring it in body
     const username = req.user?.username;
-    
+
     if (!username) {
       res.status(401).json({ message: "Authentication required" });
       return;
     }
-    
+
     try {
-      const modelName = model.modelName || role.charAt(0).toUpperCase() + role.slice(1);
-  
+      const modelName =
+        model.modelName || role.charAt(0).toUpperCase() + role.slice(1);
+
       await Promise.all([
         client.del(`${modelName}_${username}_Refresh_Token`),
         client.del(`${modelName}_${username}_Access_Token`),
@@ -277,15 +277,18 @@ export const userLogout = <T extends UserDB>(model: Model<T>, role: UserRole) =>
   });
 
 // FUNCTION FOR UPDATING ACCESS TOKEN
-export const updateToken = <T extends UserDB>(model: Model<T>, role: UserRole) =>
+export const updateToken = <T extends UserDB>(
+  model: Model<T>,
+  role: UserRole
+) =>
   expressAsyncHandler(async (req: Request, res: Response) => {
     const { refreshToken } = req.body;
-    
+
     if (!refreshToken) {
       res.status(401).json({ message: "Refresh token not provided" });
       return;
     }
-    
+
     try {
       // Verify refresh token
       const decoded = jwt.verify(
@@ -294,18 +297,19 @@ export const updateToken = <T extends UserDB>(model: Model<T>, role: UserRole) =
       ) as { username: string; id: string };
 
       const user = await model.findOne({ username: decoded.username });
-      
+
       if (!user) {
         res.status(403).json({ message: "User not found" });
         return;
       }
 
       // Use consistent naming for Redis keys
-      const modelName = model.modelName || role.charAt(0).toUpperCase() + role.slice(1);
+      const modelName =
+        model.modelName || role.charAt(0).toUpperCase() + role.slice(1);
       const storedRefreshToken = await client.get(
         `${modelName}_${user.username}_Refresh_Token`
       );
-      
+
       if (storedRefreshToken !== refreshToken) {
         res.status(403).json({ message: "Invalid refresh token" });
         return;
@@ -316,8 +320,8 @@ export const updateToken = <T extends UserDB>(model: Model<T>, role: UserRole) =
         [role]: {
           username: user.username,
           id: user.id,
-          role: role
-        }
+          role: role,
+        },
       };
 
       // Generate new access token
