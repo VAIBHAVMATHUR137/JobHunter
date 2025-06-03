@@ -69,6 +69,9 @@ Separate jobApplications collection with candidate + recruiter + job object
 | Base Route | Sub Route | HTTP Method
 |------------|-----------|------------|
 |/candidate  |/create    |    POST    |
+|------------|/delete
+              /:username |   DELETE   |
+|------------|/login     |    POST    |
 
 
 
