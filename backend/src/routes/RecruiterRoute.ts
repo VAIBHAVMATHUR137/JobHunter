@@ -39,7 +39,7 @@ router.post(
 
 router.delete(
   "/delete/:username",
-  deleteUser(Recruiter, RecruiterUserName, JobPosting)
+  deleteUser(Recruiter, RecruiterUserName,undefined, JobPosting)
 );
 
 router.post(
