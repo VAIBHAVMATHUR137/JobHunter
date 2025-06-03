@@ -157,14 +157,14 @@ export const deleteUser = <T, U, V, W>(
 
       if (jobApplicationsDatabase) {
         deletionPromises.push(
-          jobApplicationsDatabase.deleteOne({
+          jobApplicationsDatabase.deleteMany({
             "candidateProfile.username": username,
           })
         );
       }
 
       if (jobPostingDatabase) {
-        deletionPromises.push(jobPostingDatabase.deleteOne({ username }));
+        deletionPromises.push(jobPostingDatabase.deleteMany({ username }));
       }
 
       await Promise.all(deletionPromises);
