@@ -135,23 +135,45 @@ export const createUser = <T>(database: Model<T>) =>
 export const deleteUser = <T, U, V, W>(
   userDatabase: Model<T>,
   usernameDatabase: Model<U>,
-  jobApplicationDatabase?: Model<V>,
+  jobApplicationsDatabase?: Model<V>,
   jobPostingDatabase?: Model<W>
 ) =>
   expressAsyncHandler(async (req: Request, res: Response) => {
-    const { username } = req.params;
+    const { username } = req.query;
+
+    if (!username || typeof username !== "string") {
+      res
+        .status(400)
+        .json({ Message: "Username is required in query parameters" });
+      return;
+    }
+
     const user = await userDatabase.findOne({ username });
     if (!user) {
       res.status(400).json({ Message: "No such user exists" });
       return;
     }
+
     try {
-      await Promise.all([
+      const deletionPromises: Promise<any>[] = [
         userDatabase.deleteOne({ username }),
         usernameDatabase.deleteOne({ username }),
-        jobApplicationDatabase?.deleteOne({"candidateProfile.username":username}),
-        jobPostingDatabase?.deleteOne({username})
-      ]);
+      ];
+
+      if (jobApplicationsDatabase) {
+        deletionPromises.push(
+          jobApplicationsDatabase.deleteOne({
+            "candidateProfile.username": username,
+          })
+        );
+      }
+
+      if (jobPostingDatabase) {
+        deletionPromises.push(jobPostingDatabase.deleteOne({ username }));
+      }
+
+      await Promise.all(deletionPromises);
+
       res.status(200).json({ Message: "User deleted successfully" });
     } catch (error) {
       console.log(error);
@@ -182,11 +204,9 @@ export const userLogin = <T extends UserDB>(model: Model<T>, role: UserRole) =>
     const user = await model.findOne({ username });
     const userRole = `${role.charAt(0).toUpperCase() + role.slice(1)}`;
     if (!user) {
-      res
-        .status(404)
-        .json({
-          message: `${role.charAt(0).toUpperCase() + role.slice(1)} not found`,
-        });
+      res.status(404).json({
+        message: `${role.charAt(0).toUpperCase() + role.slice(1)} not found`,
+      });
       return;
     }
 
