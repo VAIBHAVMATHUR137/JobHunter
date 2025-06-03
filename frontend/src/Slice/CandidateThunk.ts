@@ -515,6 +515,7 @@ export const deleteCandidate = createAsyncThunk<
   { rejectValue: ErrorResponse }
 >("candidate/delete", async (data, { rejectWithValue }) => {
   try {
+    console.log("Debugging "+data.username)
     const response = await candidateApi.delete(`/delete/${data.username}`);
 
     return response.data;

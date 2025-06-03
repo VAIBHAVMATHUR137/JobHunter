@@ -141,12 +141,7 @@ export const deleteUser = <T, U, V, W>(
   expressAsyncHandler(async (req: Request, res: Response) => {
     const { username } = req.query;
 
-    if (!username || typeof username !== "string") {
-      res
-        .status(400)
-        .json({ Message: "Username is required in query parameters" });
-      return;
-    }
+
 
     const user = await userDatabase.findOne({ username });
     if (!user) {
