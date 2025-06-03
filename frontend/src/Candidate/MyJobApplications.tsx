@@ -16,20 +16,39 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { CandidateAuthContext } from "@/context/CreateContext";
 import { useContext } from "react";
-import { candidateLogout } from "@/Slice/CandidateThunk";
+import { candidateDashboard, candidateLogout } from "@/Slice/CandidateThunk";
 
 function MyJobApplications() {
   const dispatch = useDispatch<AppDispatch>();
 
   const nav = useNavigate();
-
+  const candidateUsername = localStorage.getItem("candidateUsername");
   const { jobData, isLoading, error, isSuccess } = useSelector(
     (state: RootState) => state.jobsAppliedByCandidate
   );
+  const candidateData = useSelector(
+    (state: RootState) => state.candidateDashboard.candidateData
+  );
+
   const authContext = useContext(CandidateAuthContext);
   if (!authContext) throw new Error("CandidateAuthContext not found");
 
   const { logout } = authContext;
+  useEffect(() => {
+    if (candidateUsername) {
+      dispatch(candidateDashboard({ username: candidateUsername }));
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (candidateUsername !== candidateData.username) {
+        userLogout();
+      }
+    }, 1000);
+
+    return () => clearTimeout(timeoutId);
+  }, [candidateData.username]);
 
   useEffect(() => {
     const renderApplications = async () => {
@@ -54,20 +73,6 @@ function MyJobApplications() {
       nav("/");
     }, 1500);
   };
-  const candidateData = useSelector(
-    (state: RootState) => state.candidateDashboard.candidateData
-  );
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      const storageUsername = localStorage.getItem("candidateUsername");
-
-      if (storageUsername !== candidateData.username) {
-        userLogout();
-      }
-    }, 500);
-
-    return () => clearTimeout(timeoutId);
-  }, [candidateData.username]);
 
   const getWorkEnvironmentColor = (environment: string) => {
     switch (environment) {

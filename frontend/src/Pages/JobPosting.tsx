@@ -3,6 +3,8 @@ import type { AppDispatch, RootState } from "@/Slice/Store";
 import { Plus, Minus } from "lucide-react";
 import { updateJob } from "@/Slice/JobPostingSlice";
 import { jobIDGenerator } from "@/components/ui/idGenerator";
+import { useState } from "react";
+
 import Navbar from "@/components/ui/navbar";
 import {
   Card,
@@ -15,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { AlertDialogDemo } from "@/components/ui/AlertDialogDemo";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -27,9 +30,15 @@ import { useEffect } from "react";
 import { recruiterDashboard } from "@/Slice/RecruiterThunk";
 
 import { checkJobID, createJobThunk } from "@/Slice/JobThunk";
+import { useNavigate } from "react-router-dom";
 
 function JobPosting() {
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [title, setTitle] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
   const dispatch = useDispatch<AppDispatch>();
+  const nav = useNavigate();
   type WorkEnvironment = "Remote" | "Hybrid" | "On-site";
   type EmploymentType =
     | "Full-time"
@@ -258,11 +267,17 @@ function JobPosting() {
       const response = await dispatch(createJobThunk(jobData)).unwrap();
 
       if (response.success) {
-        alert("Job posted successfully");
+        setShowAlert(true);
+        setTitle("Success");
+        setMessage("Job Posted successfully");
+        setIsSuccess(true);
       }
     } catch (error) {
       console.error("Error posting job:", error);
-      alert("Failed to post job. Please check the console for details.");
+      setShowAlert(true);
+      setTitle("Error");
+      setMessage("Error occured at backend " + error);
+      setIsSuccess(false);
     }
   };
 
@@ -897,6 +912,16 @@ function JobPosting() {
           </CardFooter>
         </Card>
       </div>
+      {showAlert && (
+        <AlertDialogDemo
+          title={title}
+          message={message}
+          onClose={() => setShowAlert(false)}
+          nextPage={() => nav("/")}
+          setIsSuccess={setIsSuccess}
+          isSuccess={isSuccess}
+        />
+      )}
     </div>
   );
 }

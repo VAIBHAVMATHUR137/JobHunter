@@ -402,6 +402,7 @@ export const recruiterJobListingThunk = createAsyncThunk<
   "recruiter/allRecruitments",
   async (recruiterUsername, { rejectWithValue }) => {
     try {
+      console.log("BUG FIXING "+recruiterUsername.recruiterUsername)
       const response = await applicationsApi.get(
         `/jobStatus?recruiterUsername=${recruiterUsername.recruiterUsername}`,
         addAuthHeaderForRecruiter()

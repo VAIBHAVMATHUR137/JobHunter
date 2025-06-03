@@ -664,6 +664,7 @@ export const deleteRecruiter = createAsyncThunk<
   { rejectValue: ErrorResponse }
 >("recruiter/delete", async (data, { rejectWithValue }) => {
   try {
+    console.log(data.username)
     const response = await recruiterApi.delete(`/delete/${data.username}`);
 
     return response.data;

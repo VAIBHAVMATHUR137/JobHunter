@@ -1,7 +1,8 @@
 import type React from "react";
 import { useContext, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-
+import { ConfirmationDialog } from "@/components/ui/ConfirmationDialog";
+import { AlertDialogDemo } from "@/components/ui/AlertDialogDemo";
 import {
   deleteRecruiter,
   recruiterDashboard,
@@ -28,13 +29,21 @@ import {
   GraduationCap,
   Award,
 } from "lucide-react";
-
+import { useState } from "react";
 import Navbar from "@/components/ui/navbar";
 
 import type { AppDispatch } from "@/Slice/Store";
 import { useNavigate } from "react-router-dom";
 
 const RecruiterDashboard: React.FC = () => {
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [title, setTitle] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
+  const [confirmAction, setConfirmAction] = useState<() => void>(
+    () => () => {}
+  );
+  const [showDialog, setShowDialog] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const nav = useNavigate();
 
@@ -148,16 +157,28 @@ const RecruiterDashboard: React.FC = () => {
     year_of_commencement: string;
     year_of_conclusion: string;
   }
-  const handleDelete = async () => {
+  const handleDelete = async (username: string) => {
     try {
-      const response = await dispatch(deleteRecruiter({ username })).unwrap();
-      if (response) {
-        alert("User deleted");
-        logout();
-        setTimeout(() => {
-          nav("/");
-        }, 500);
-      }
+      setTitle("Delete Account");
+      setMessage(
+        "Are you sure you want to delete this account? This action cannot be undone."
+      );
+      setConfirmAction(() => async () => {
+        const response = await dispatch(deleteRecruiter({ username })).unwrap();
+        if (response) {
+          logout();
+          setShowAlert(true);
+          setIsSuccess(false);
+          setTitle("Deleted !");
+          setMessage(
+            "Account Deleted Successfully.Navigating back to homepage"
+          );
+          setTimeout(() => {
+            nav("/");
+          }, 2500);
+        }
+      });
+      setShowDialog(true);
     } catch (error) {
       console.log("Error deleting the user " + error);
     }
@@ -262,7 +283,9 @@ const RecruiterDashboard: React.FC = () => {
             <div>
               <Button
                 className="m-2 text-white bg-red-800 hover:bg-red-500 "
-                onClick={handleDelete}
+                onClick={() => {
+                  handleDelete(recruiterData.username);
+                }}
               >
                 Delete Profile
               </Button>
@@ -475,6 +498,24 @@ const RecruiterDashboard: React.FC = () => {
           </TabsContent>
         </Tabs>
       </div>
+      {showAlert && (
+        <AlertDialogDemo
+          title={title}
+          message={message}
+          onClose={() => setShowAlert(false)}
+          nextPage={() => nav("/")}
+          setIsSuccess={setIsSuccess}
+          isSuccess={isSuccess}
+        />
+      )}
+
+      <ConfirmationDialog
+        title={title}
+        message={message}
+        isOpen={showDialog}
+        onClose={() => setShowDialog(false)}
+        onConfirm={confirmAction}
+      />
     </div>
   );
 };

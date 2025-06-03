@@ -7,8 +7,10 @@ import {
   Trash2,
   Users,
 } from "lucide-react";
+import { AlertDialogDemo } from "@/components/ui/AlertDialogDemo";
+import { ConfirmationDialog } from "@/components/ui/ConfirmationDialog";
 import { ArrowLeft } from "lucide-react";
-
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -23,19 +25,29 @@ import { recruiterLogout } from "@/Slice/RecruiterThunk";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { deleteJobPostingThunk } from "@/Slice/JobThunk";
+import { recruiterDashboard } from "@/Slice/RecruiterThunk";
 
 function MyRecruitments() {
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [title, setTitle] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
+  const [confirmAction, setConfirmAction] = useState<() => void>(
+    () => () => {}
+  );
+  const [showDialog, setShowDialog] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const recruiterUsername = localStorage.getItem("recruiterUsername");
+  useEffect(() => {
+    if (recruiterUsername) {
+      dispatch(recruiterDashboard({ username: recruiterUsername }));
+    }
+  }, [dispatch]);
   const allJobs = useSelector(
     (state: RootState) => state.allRecruitmentsByRecruiter.recruitment
   );
   const isLoading = useSelector(
     (state: RootState) => state.allRecruitmentsByRecruiter.isLoading
-  );
-
-  const isSuccess: boolean = useSelector(
-    (state: RootState) => state.allRecruitmentsByRecruiter.isSuccess
   );
 
   useEffect(() => {
@@ -68,17 +80,19 @@ function MyRecruitments() {
   const recruiterData = useSelector(
     (state: RootState) => state.recruiterDashboard.recruiterData
   );
+
+  
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      const storageUsername = localStorage.getItem("recruiterUsername");
-
-      if (storageUsername !== recruiterData.username) {
+      if (recruiterUsername !== recruiterData.username) {
         userLogout();
       }
-    }, 500);
+    }, 1000);
 
     return () => clearTimeout(timeoutId);
   }, [recruiterData.username]);
+
+
   const getWorkEnvironmentColor = (environment: string) => {
     switch (environment) {
       case "Remote":
@@ -108,13 +122,26 @@ function MyRecruitments() {
         return "bg-gray-100 text-gray-800";
     }
   };
-  const deleteJob = async (jobID: string) => {
-    console.log(jobID)
-    const response = await dispatch(deleteJobPostingThunk({ jobID })).unwrap();
-    if (response.success) {
-      alert("Job deleted successfully!");
-      window.location.reload()
-    }
+  const deleteJob = (jobID: string) => {
+    setTitle("Delete Job");
+    setMessage(
+      "Are you sure you want to delete this job? This action cannot be undone."
+    );
+    setConfirmAction(() => async () => {
+      const response = await dispatch(
+        deleteJobPostingThunk({ jobID })
+      ).unwrap();
+      if (response.success) {
+        setShowAlert(true);
+        setIsSuccess(false);
+        setTitle("Deleted !");
+        setMessage("Job Deleted Successfully.Navigating back to dashboard....");
+        setTimeout(() => {
+          nav("/RecruiterDashboard");
+        }, 2500);
+      }
+    });
+    setShowDialog(true);
   };
 
   return (
@@ -171,7 +198,7 @@ function MyRecruitments() {
           </div>
         )}
         {/* When there are active recruitments */}
-        {isSuccess && (
+        {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {allJobs.map((job) => (
               <Card
@@ -280,7 +307,26 @@ function MyRecruitments() {
               </Card>
             ))}
           </div>
+        }
+
+        {showAlert && (
+          <AlertDialogDemo
+            title={title}
+            message={message}
+            onClose={() => setShowAlert(false)}
+            nextPage={() => nav("/")}
+            setIsSuccess={setIsSuccess}
+            isSuccess={isSuccess}
+          />
         )}
+
+        <ConfirmationDialog
+          title={title}
+          message={message}
+          isOpen={showDialog}
+          onClose={() => setShowDialog(false)}
+          onConfirm={confirmAction}
+        />
       </div>
     </>
   );

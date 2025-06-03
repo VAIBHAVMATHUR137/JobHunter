@@ -1,11 +1,14 @@
 import type React from "react";
 import { useContext, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { ConfirmationDialog } from "@/components/ui/ConfirmationDialog";
+import { AlertDialogDemo } from "@/components/ui/AlertDialogDemo";
 import {
   deleteCandidate,
   candidateLogout,
   candidateDashboard,
 } from "@/Slice/CandidateThunk";
+import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -35,6 +38,14 @@ import { useNavigate } from "react-router-dom";
 
 const CandidateDashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [title, setTitle] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
+  const [confirmAction, setConfirmAction] = useState<() => void>(
+    () => () => {}
+  );
+  const [showDialog, setShowDialog] = useState(false);
   const nav = useNavigate();
 
   useEffect(() => {
@@ -143,20 +154,28 @@ const CandidateDashboard: React.FC = () => {
     year_of_commencement: string;
     year_of_conclusion: string;
   }
-  const handleDelete = async() => {
-    try {
-     const response= await dispatch(deleteCandidate({username})).unwrap();
-     if(response){
-      alert("User deleted")
-      logout();
-      setTimeout(()=>{
-        nav("/")
-      },500)
-     }
-    } catch (error) {
-      console.log(error)
-    }
-   
+
+  const deleteAccount = (username: string) => {
+    setTitle("Delete Account");
+    setMessage(
+      "Are you sure you want to delete this account? This action cannot be undone."
+    );
+    setConfirmAction(() => async () => {
+      const response = await dispatch(deleteCandidate({ username })).unwrap();
+      if (response) {
+        logout();
+        setShowAlert(true);
+        setIsSuccess(false);
+        setTitle("Deleted !");
+        setMessage(
+          "Account Deleted Successfully.Navigating back to homepage...."
+        );
+        setTimeout(() => {
+          nav("/");
+        }, 2500);
+      }
+    });
+    setShowDialog(true);
   };
   const userLogout = () => {
     dispatch(candidateLogout(username));
@@ -259,7 +278,9 @@ const CandidateDashboard: React.FC = () => {
               <div>
                 <Button
                   className="m-2 text-white bg-red-800 hover:bg-red-500 "
-                  onClick={handleDelete}
+                  onClick={() => {
+                    deleteAccount(candidateData.username);
+                  }}
                 >
                   Delete Profile
                 </Button>
@@ -473,7 +494,24 @@ const CandidateDashboard: React.FC = () => {
           </TabsContent>
         </Tabs>
       </div>
-   
+      {showAlert && (
+        <AlertDialogDemo
+          title={title}
+          message={message}
+          onClose={() => setShowAlert(false)}
+          nextPage={() => nav("/")}
+          setIsSuccess={setIsSuccess}
+          isSuccess={isSuccess}
+        />
+      )}
+
+      <ConfirmationDialog
+        title={title}
+        message={message}
+        isOpen={showDialog}
+        onClose={() => setShowDialog(false)}
+        onConfirm={confirmAction}
+      />
     </div>
   );
 };

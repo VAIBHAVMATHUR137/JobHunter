@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { deleteJobPostingThunk } from "@/Slice/JobThunk";
 import { AlertDialogDemo } from "@/components/ui/AlertDialogDemo";
+import { ConfirmationDialog } from "@/components/ui/ConfirmationDialog";
 import {
   Building,
   MapPin,
@@ -47,6 +48,10 @@ export default function IndividualJobPage() {
   const [showAlert, setShowAlert] = useState(false);
   const [title, setTitle] = useState<string>("");
   const [message, setMessage] = useState<string>("");
+  const [confirmAction, setConfirmAction] = useState<() => void>(
+    () => () => {}
+  );
+  const [showDialog, setShowDialog] = useState(false);
 
   const { jobID } = useParams();
 
@@ -211,18 +216,27 @@ export default function IndividualJobPage() {
       </>
     );
   }
-  const deleteJob = async (jobID: string) => {
-    console.log(jobID);
-    const response = await dispatch(deleteJobPostingThunk({ jobID })).unwrap();
-    if (response.success) {
-      setShowAlert(true);
-      setIsSuccess(false);
-      setTitle("Deleted !");
-      setMessage("Job Deleted Successfully.Navigating back to dashboard....");
-      setTimeout(()=>{
-        navigate('/RecruiterDashboard')
-      },2500)
-    }
+
+  const deleteJob = (jobID: string) => {
+    setTitle("Delete Job");
+    setMessage(
+      "Are you sure you want to delete this job? This action cannot be undone."
+    );
+    setConfirmAction(() => async () => {
+      const response = await dispatch(
+        deleteJobPostingThunk({ jobID })
+      ).unwrap();
+      if (response.success) {
+        setShowAlert(true);
+        setIsSuccess(false);
+        setTitle("Deleted !");
+        setMessage("Job Deleted Successfully.Navigating back to dashboard....");
+        setTimeout(() => {
+          navigate("/RecruiterDashboard");
+        }, 2500);
+      }
+    });
+    setShowDialog(true);
   };
 
   if (error) {
@@ -701,6 +715,14 @@ export default function IndividualJobPage() {
             isSuccess={isSuccess}
           />
         )}
+
+        <ConfirmationDialog
+          title={title}
+          message={message}
+          isOpen={showDialog}
+          onClose={() => setShowDialog(false)}
+          onConfirm={confirmAction}
+        />
       </div>
     </>
   );

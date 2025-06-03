@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
 import { Model } from "mongoose";
+import { JobApplicationSchema } from "../schema/JobApplicationSchema";
 
 dotenv.config();
 const SECRET_ACCESS_TOKEN = process.env.SECRET_ACCESS_TOKEN;
@@ -131,9 +132,10 @@ export const createUser = <T>(database: Model<T>) =>
     }
   });
 //FUNCTION TO DELETE USER
-export const deleteUser = <T, U>(
+export const deleteUser = <T, U,V>(
   userDatabase: Model<T>,
-  usernameDatabase: Model<U>
+  usernameDatabase: Model<U>,
+  jobApplicationDatabase:Model<V>
 ) =>
   expressAsyncHandler(async (req: Request, res: Response) => {
     const { username } = req.params;
@@ -146,6 +148,7 @@ export const deleteUser = <T, U>(
       await Promise.all([
         userDatabase.deleteOne({ username }),
         usernameDatabase.deleteOne({ username }),
+        
       ]);
       res.status(200).json({ Message: "User deleted successfully" });
     } catch (error) {
