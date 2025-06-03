@@ -77,6 +77,7 @@ Separate jobApplications collection with candidate + recruiter + job object
 |            |/logout  |  POST  |
 |            |/fetchAll  |  GET  |
 |            |/dashboard  |  GET  |
+|            |/fetch/:username  |  GET  |
 |/recruiter  |/create    |  POST  |
 |            |/delete/:username  |  DELETE  |
 |            |/login  |  POST    |
@@ -87,6 +88,16 @@ Separate jobApplications collection with candidate + recruiter + job object
 |            |/fetchAll  |  GET  |
 |            |/dashboard  |  GET  |
 |            |/fetch/:username  |  GET  |
+|/job        |/fetch    | GET  |
+|            |/fetchIndividualJob/:jobID  |  GET  |
+|            |/create  |  POST  |
+|            |/delete/:jobID  |  DELETE  |
+|            |/deleteID/:jobID  |  DELETE  |
+|            |screenID/:jobID  |  GET  |
+|/applications  |  /create  |  POST  |
+|               |/screening  |  GET  |
+|               | /jobStatus  |  GET  |
+
 
 
 
