@@ -78,8 +78,8 @@ Separate jobApplications collection with candidate + recruiter + job object
 |            |/fetchAll  |  GET  |  fetchAllCandidates  |  allCandidateSlice  |  fetch_all_candidates  |
 |            |/dashboard  |  GET  |  candidateDashboard  |  candidateDashboardSlice  |  candidateDashboard  |
 |            |/fetch/:username  |  GET  |  fetchCandidateDetails  |  candidateProfileSlice  |  candidate_profile  |
-|/recruiter  |/create    |  POST  |
-|            |/delete/:username  |  DELETE  |
+|/recruiter  |/create    |  POST  |  recruiterRegistration  |   No slice required, it provides only HTTP code for success or failure    |    N/A    |
+|            |/delete/:username  |  DELETE  |  delete
 |            |/login  |  POST    |
 |            |/refresh-token  |  POST  |
 |            |/username/check  |  POST  |
