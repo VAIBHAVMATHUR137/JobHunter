@@ -79,24 +79,27 @@ Separate jobApplications collection with candidate + recruiter + job object
 |            |/dashboard  |  GET  |  candidateDashboard  |  candidateDashboardSlice  |  candidateDashboard  |
 |            |/fetch/:username  |  GET  |  fetchCandidateDetails  |  candidateProfileSlice  |  candidate_profile  |
 |/recruiter  |/create    |  POST  |  recruiterRegistration  |   No slice required, it provides only HTTP code for success or failure    |    N/A    |
-|            |/delete/:username  |  DELETE  |  delete
-|            |/login  |  POST    |
-|            |/refresh-token  |  POST  |
-|            |/username/check  |  POST  |
-|            |/username/create  | POST  |
-|            |/logout  |  POST  |
-|            |/fetchAll  |  GET  |
-|            |/dashboard  |  GET  |
-|            |/fetch/:username  |  GET  |
-|/job        |/fetch    | GET  |
-|            |/fetchIndividualJob/:jobID  |  GET  |
-|            |/create  |  POST  |
-|            |/delete/:jobID  |  DELETE  |
-|            |/deleteID/:jobID  |  DELETE  |
-|            |screenID/:jobID  |  GET  |
-|/applications  |  /create  |  POST  |
-|               |/screening  |  GET  |
-|               | /jobStatus  |  GET  |
+|            |/delete/:username  |  DELETE  |  deleteRecruiter  |  No slice required, it provides only HTTP code for success or failure    |    N/A    |
+|            |/login  |  POST    |  recruiterLogin  |  recruiterLoginSlice  |  recruiterLoginThunk  |
+|            |/refresh-token  |  POST  |  No thunk required to hit this endpoint, it is handles by the axios interceptor  |  N/A  |  N/A
+|            |/username/check  |  POST  |  checkUsernameAvailability  |  No slice required, it provides only HTTP code for success or failure    |    N/A    |
+|            |/username/create  | POST  |  generateUsername  |  recruiterUsernameGeneratorSlice  |  recruiterUsernameGenerator  |
+|            |/logout  |  POST  |  recruiterLogout  |  No slice required, it provides only HTTP code for success or failure    |    N/A    |
+|            |/fetchAll  |  GET  |  fetchAllRecruiters  |  allRecruitersSlice  |  fetch_all_recruiters  |
+|            |/dashboard  |  GET  |  recruiterDashboard  |  recruiterDashboardSlice  |  recruiterDashboard
+|            |/fetch/:username  |  GET  |  fetchRecruiterDetails  |  recruiterProfileSlice  |  recruiter_profile
+|/job        |/fetch    | GET  |  fetchAllJobs  |  allJobsSlice  |  allJobs  |
+|            |/fetchIndividualJob/:jobID  |  GET  |  fetchIndividualJob  |  individualJobSlice  |  individual_job  |
+|            |/create  |  POST  |  createJobThunk  |  No slice required, it provides only HTTP code for success or failure    |    N/A    |
+|            |/delete/:jobID  |  DELETE  |  deleteJobPostingThunk  |  No slice required, it provides only HTTP code for success or failure    |    N/A    |
+|            |/deleteID/:jobID  |  DELETE  |  deleteJobID  |  No slice required, it provides only HTTP code for success or failure    |    N/A    |
+             |/createID  |  POST  |  generateJobID  |  No slice required, it provides only HTTP code for success or failure    |    N/A    | 
+|            |screenID/:jobID  |  GET  |  checkJobID  |  No slice required, it provides only HTTP code for success or failure    |    N/A    |
+|/applications  |  /create  |  POST  |  createApplicationThunk  |  No slice required, it provides only HTTP code for success or failure    |    N/A    |
+|               |/screening  |  GET  |  screenApplicationThunk  |  No slice required, it provides only HTTP code for success or failure    |    N/A    |
+|               | /jobStatus  |  GET  |  candidateJobApplicationThunk  |  allJobsAppliedSlice  |  jobsAppliedByCandidate  |
+|               | /jobStatus  |  GET  |  recruiterJobListingThunk  |  allRecruitmentSlice  |  allRecruitmentsBySlice  |
+|               | /jobStatus  |  GET  |  jobApplicantsThunk  |  jobApplicantsSlice  |  allApplicantsForJob  |
 
 
 
