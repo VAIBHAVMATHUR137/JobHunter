@@ -66,9 +66,9 @@ Separate jobApplications collection with candidate + recruiter + job object
 
 ### Table for APIs
 
-| Base Route | Sub Route | HTTP Method
-|------------|-----------|------------|
-|/candidate  |/create    |    POST    |
+| Base Route | Sub Route | HTTP Method |  Thunk function to call API  |  Slice name that is subscribed to the store   | reducer in store to provide access to useSelector hook, the state|
+|------------|-----------|-------------|------------------------------|-----------------------------------------------|------------------------------------------------------------------|
+|/candidate  |/create    |    POST    |  candidateRegistration  |  No slice required, it provides only HTTP code for success or failure    |    N/A    |
 |            |/delete/:username    |   DELETE   |
 |            |/login     |    POST    |
 |            |/refresh-token  |  POST  |
