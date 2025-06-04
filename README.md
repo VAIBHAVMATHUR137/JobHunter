@@ -66,18 +66,18 @@ Separate jobApplications collection with candidate + recruiter + job object
 
 ### Table for APIs
 
-| Base Route | Sub Route | HTTP Method |  Thunk function to call API  |  Slice name that is subscribed to the store   | Raceducer in store to provide access to useSelector hook of the state all across project  |
+| Base Route | Sub Route | HTTP Method |  Thunk function to call API  |  Slice name that is subscribed to the store   | Reducer in store to provide access to useSelector hook of the state all across project  |
 |------------|-----------|-------------|------------------------------|-----------------------------------------------|------------------------------------------------------------------|
 |/candidate  |/create    |    POST    |  candidateRegistration  |  No slice required, it provides only HTTP code for success or failure    |    N/A    |
 |            |/delete/:username    |   DELETE   |  deleteCandidate  |  No slice required, it provides only HTTP code for success or failure    |    N/A    |
 |            |/login     |    POST    |  candidateLogin  |  candidateLoginSlice  |  candidateLoginthunk  |
-|            |/refresh-token  |  POST  |
-|            |/username/check  |  POST  |
-|            |/username/create  |  POST  |
-|            |/logout  |  POST  |
-|            |/fetchAll  |  GET  |
-|            |/dashboard  |  GET  |
-|            |/fetch/:username  |  GET  |
+|            |/refresh-token  |  POST  |  No thunk required to hit this endpoint, it is handles by the axios interceptor  |  N/A  |  N/A  
+|            |/username/check  |  POST  |  checkUsernameAvailability  |  No slice required, it provides only HTTP code for success or failure    |    N/A    |
+|            |/username/create  |  POST  |  generateUsername  |  candidateUsernameGeneratorSlice  |  candidateUsernameGenerator  |
+|            |/logout  |  POST  |  candidateLogout  |  No slice required, it provides only HTTP code for success or failure    |    N/A    |
+|            |/fetchAll  |  GET  |  fetchAllCandidates  |  allCandidateSlice  |  fetch_all_candidates  |
+|            |/dashboard  |  GET  |  candidateDashboard  |  candidateDashboardSlice  |  candidateDashboard  |
+|            |/fetch/:username  |  GET  |  fetchCandidateDetails  |  candidateProfileSlice  |  candidate_profile  |
 |/recruiter  |/create    |  POST  |
 |            |/delete/:username  |  DELETE  |
 |            |/login  |  POST    |
