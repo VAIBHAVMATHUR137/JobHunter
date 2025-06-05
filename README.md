@@ -144,7 +144,19 @@ The thunk here proceeds only if username of either candidate or recruiter is ava
 |----------------------|--------------------|--------------------------------------|----------------------------------------------|
 |  No username  |  Thunk will not hit the endpoint  |  Backend can throw error  |  Backend can throw error  |
 |  Username of candidate  |  Sends candidateUsername and jobID as payload in query  |  Sends 200 when that candidateUsername is not present in jobApplications DB, infering, that following candidate didn't applied to that job with given jobID  |  If 403 is sent, it means that candidateUsername is present in the jobApplication, infering that the following candidate has already applied to that job  |
-| username of recruiter  |  Sends recruiterUsername and jobID as payload in query  |  Sends 200 when that recruiterUsername is not present in jobPosting DB, infering, that following recruiter has posted that job with given jobID  |  If 403 is sent, it means that recruiterUsername is present in the jobPosting, infering that the following recruiter has not posted that job  | 
+| username of recruiter  |  Sends recruiterUsername and jobID as payload in query  |  Sends 200 when that recruiterUsername is not present in jobPosting DB, infering, that following recruiter has posted that job with given jobID  |  If 403 is sent, it means that recruiterUsername is present in the jobPosting, infering that the following recruiter has not posted that job  |  
+
+6. /applications/jobStatus  
+
+It is a 3 in 1 multi-purpose API, that takes all the parameters as optional, but require 3 seperate thunks to hit the same endpoint, to yield the desired results. All filtering is done at the backend itself.  
+
+| Payload sent from frontend to backend  |  Result yielded by API from backend to frontend  |
+|----------------------------------------|--------------------------------------------------|
+|  recruiterUsername+jobID  |  Array of candidate Profile who applied to job with given jobID  |
+|  candidateUsername  |  List of all the jobs where candidate has applied  |
+|  recruiterUsername  |  List of all the jobs that recruiter has posted  |  
+
+
 
 
 
