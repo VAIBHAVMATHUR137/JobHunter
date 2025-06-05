@@ -156,6 +156,17 @@ It is a 3 in 1 multi-purpose API, that takes all the parameters as optional, but
 |  candidateUsername  |  List of all the jobs where candidate has applied  |
 |  recruiterUsername  |  List of all the jobs that recruiter has posted  |  
 
+### TypeScript Interface Design for Domain Modeling  
+
+Custom interfaces and data structures have been written to store the data at backend and in store on frontend in more appropriate and properly interfacing format.  
+
+![Screenshot (132)](https://github.com/user-attachments/assets/91999aa6-9309-4ee9-b3ea-d495dc628779)
+
+![Screenshot (133)](https://github.com/user-attachments/assets/f601e2c0-5d61-4110-9dbc-6ba6389bbfd4)
+
+
+
+
 
 
 
