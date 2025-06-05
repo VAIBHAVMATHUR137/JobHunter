@@ -106,5 +106,7 @@ Separate jobApplications collection with candidate + recruiter + job object
 1. /recruiter and /candidate  
 These APIs share common controller functions at the backend, making it reusbale in nature. They are made with generic functions. Just need to pass the user role and corresponding names of the databases.
 
+2. /username/create and /username/generate  
+Both databases are searched.Here also generic functions are used, such that the factor <T> can either be recruiterUsername database or candidateUsername database. If screening result is positive, then the API to save username, only uses the one between the two databases.
 
 
