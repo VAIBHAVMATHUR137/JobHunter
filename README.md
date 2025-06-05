@@ -164,9 +164,19 @@ Custom interfaces and data structures have been written to store the data at bac
 
 ![Screenshot (133)](https://github.com/user-attachments/assets/f601e2c0-5d61-4110-9dbc-6ba6389bbfd4)
 
+1. This case contain how the data is stored in the backend, and the structure of data, how to get  it stored.
 
+![WhatsApp Image 2025-06-05 at 20 23 23_f53b99f3](https://github.com/user-attachments/assets/3761d1b4-8d5a-4216-a7a7-80c461b4a9eb)
 
+![Screenshot (122)](https://github.com/user-attachments/assets/d7fe74cd-396a-4610-868b-b125590f9d59)
 
+2. Here the structure for college education is mentioned. User can enter multiple college degrees, for example, bachelors, masters, doctorate everything.
+
+![Screenshot (123)](https://github.com/user-attachments/assets/4b14fe8b-8076-46ba-84a4-a8c3c5555dc9)
+
+![Screenshot (124)](https://github.com/user-attachments/assets/b80cb1f4-ae88-45ed-9994-9eb67de209b9)
+
+![Screenshot (125)](https://github.com/user-attachments/assets/37e53fec-aeb9-455d-8efb-c8a5f5e04421)
 
 
 
