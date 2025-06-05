@@ -116,6 +116,30 @@ Both databases are searched.Here also generic functions are used, such that the 
 
 ![GmK8aYpa8AAX3bF](https://github.com/user-attachments/assets/56bda2a7-8e2b-412c-8fce-0caeba28ef69)
 
+3. /job/fetch  
+This API is basically to render all the jobs at frontend. It has reusable controller on backend with 3 in 1 functionality, and also reusable thunk with 3 in 1 auto payload transmission to backend    
+
+
+| Username status      | login status       |  Payload transmission from frontend to backend in form of query |  Data return to backend to frontend  |
+|----------------------|--------------------|--------------------------------------|----------------------------------------------|
+| No username provided |  No one logged in  |  thunk will send nothing as payload  |  backend will return all the available jobs  |
+| username of candidate provided from UI storage  |  Candidate has logged in  |  Thunk will send candidateUsername as username as payload to backend  |  It will check the jobApplication database, to check the jobs where candidate has applied. It will return those jobs where candidate has not applied |
+| username of recruiter provided from UI storage  |  Recruiter has logged in  | Thunk will send recruiterUsername as username as payload to backend  |  It will go to JobPosting DB and check the jobs which he posted.It will return those jobs which he has not applied  |
+| username of candidate provided from UI storage  |  Candidate has logged in  |  Thunk will send candidateUsername as username as payload to backend  |  It will check the jobApplication DB and check existing jobApplication of such candidate. If no trace of candidate, it means he has not applied anywhere yet, and it returns all the jobs available at the platform without filtering  |
+| username of recruiter provided from UI storage  |  Recruiter has logged in  |  Thunk will send recruiterUsername as username as payload to backend  |  It will check the jobPosting DB and if no trace of recruiter, it means he has not posted jobs yet, and it returns all the jobs available at the platform without filtering  |
+
+4. /job/delete/:jobID  
+
+When recruiter deletes a job he has posted, then along with the job, the jobID and all the JobApplications from concerning databases will also be deleted together.
+
+![Screenshot (121)](https://github.com/user-attachments/assets/ca9f79ec-3218-471b-bf12-6db1e038e7b1)  
+
+5. /applications/screening  
+The thunk here sends the username of rather candidate or recruiter to backend as payload. The thunk is designed in such a way that calling the API is not possible without logging in.
+And if tried to hit API without username (which is not possible), backend will throw error. jobID is mandatory here.  
+The backend controller serves 2 in 1 purpose. It tells that whether candidate has applied to a particular job or not, and also tells if a recruiter has posted a particular job or not.  
+The thunk here proceeds only if username of either candidate or recruiter is available. And it hits the exact endpoint with exact username ( username of either candidate or recruiter) with precision
+
 
 
 
