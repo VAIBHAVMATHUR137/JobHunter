@@ -178,7 +178,11 @@ Custom interfaces and data structures have been written to store the data at bac
 
 ![Screenshot (125)](https://github.com/user-attachments/assets/37e53fec-aeb9-455d-8efb-c8a5f5e04421)
 
+This is how the sata structure to store the college education at backend as well as for store has been declared. We created a seperate array names 'college_education'. It has been done so that user can be able to store multiple educational courses, like Bachelors, Masters, Doctorate or even more. Now its important to understand the structure of each element of this array. Interface CollegeEducation has been created containing various strings, and each element of the array college_education is of type CollegeEducation.
 
+![Screenshot (136)](https://github.com/user-attachments/assets/344e3634-b6e7-493f-b7c8-d618de236041)
+
+![Screenshot (135)](https://github.com/user-attachments/assets/33585fb1-b014-41fa-b95f-1b567c5701b7)
 
 
 
