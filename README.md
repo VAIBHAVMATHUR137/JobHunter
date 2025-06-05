@@ -138,7 +138,13 @@ When recruiter deletes a job he has posted, then along with the job, the jobID a
 The thunk here sends the username of rather candidate or recruiter to backend as payload. The thunk is designed in such a way that calling the API is not possible without logging in.
 And if tried to hit API without username (which is not possible), backend will throw error. jobID is mandatory here.  
 The backend controller serves 2 in 1 purpose. It tells that whether candidate has applied to a particular job or not, and also tells if a recruiter has posted a particular job or not.  
-The thunk here proceeds only if username of either candidate or recruiter is available. And it hits the exact endpoint with exact username ( username of either candidate or recruiter) with precision
+The thunk here proceeds only if username of either candidate or recruiter is available. And it hits the exact endpoint with exact username ( username of either candidate or recruiter) with precision.  
+
+| UI Storage      | Thunk Payload       |  If backend return status code 200 OK |  If backend returns status code 403 forbidden |
+|----------------------|--------------------|--------------------------------------|----------------------------------------------|
+|  No username  |  Thunk will not hit the endpoint  |  Backend can throw error  |  Backend can throw error  |
+|  Username of candidate  |  Sends candidateUsername and jobID as payload in query  |  Sends 200 when that candidateUsername is not present in jobApplications DB, infering, that following candidate didn't applied to that job with given jobID  |  If 403 is sent, it means that candidateUsername is present in the jobApplication, infering that the following candidate has already applied to that job  |
+| username of recruiter  |  Sends recruiterUsername and jobID as payload in query  |  Sends 200 when that recruiterUsername is not present in jobPosting DB, infering, that following recruiter has posted that job with given jobID  |  If 403 is sent, it means that recruiterUsername is present in the jobPosting, infering that the following recruiter has not posted that job  | 
 
 
 
