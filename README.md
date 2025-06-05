@@ -110,3 +110,12 @@ These APIs share common controller functions at the backend, making it reusbale 
 Both databases are searched.Here also generic functions are used, such that the factor <T> can either be recruiterUsername database or candidateUsername database. If screening result is positive, then the API to save username, only uses the one between the two databases.
 
 
+![GmK7-LoaEAA8Q1k](https://github.com/user-attachments/assets/8c2fbf2d-9d1f-46c5-b2b2-64c8df405e5c)
+
+![GmK8hNWaMAAow3_](https://github.com/user-attachments/assets/b6a942e3-7a2e-4a24-a4fc-23e3879ba96f)
+
+![GmK8aYpa8AAX3bF](https://github.com/user-attachments/assets/56bda2a7-8e2b-412c-8fce-0caeba28ef69)
+
+
+
+
