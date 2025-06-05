@@ -101,7 +101,10 @@ Separate jobApplications collection with candidate + recruiter + job object
 |               | /jobStatus  |  GET  |  recruiterJobListingThunk  |  allRecruitmentSlice  |  allRecruitmentsBySlice  |
 |               | /jobStatus  |  GET  |  jobApplicantsThunk  |  jobApplicantsSlice  |  allApplicantsForJob  |
 
+### Resuable APIs from above table
 
+1. /recruiter and /candidate
+These APIs share common controller functions at the backend, making it reusbale in nature. They are made with generic functions. Just need to pass the user role and corresponding names of the databases.
 
 
 
