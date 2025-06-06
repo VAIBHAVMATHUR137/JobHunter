@@ -2,6 +2,13 @@
 
 A job portal built in MERN stack, where user can register either as candidate or recruiter. Both roles were provided different functionalities as per the roles they will be registering on the app.  
 
+## Links
+App link  
+https://job-hunter-git-main-vaibhav-mathurs-projects.vercel.app/  
+
+Backend link  
+https://jobhunter-1-o7zz.onrender.com/
+
 ## 🚀 Features  
 
 1. 🧾 Multi-step registration for candidates (education, internships, experience).
@@ -18,7 +25,7 @@ A job portal built in MERN stack, where user can register either as candidate or
 12. 🖱️ Conditional rendering of buttons for job page as per status of job corresponding to candidate and recruiter.
 13. ❌ Filtering of irrelevant jobs for candidate and recruiter in Find Jobs section.
 14. 🌻 Custom components such as dialog box, jobID generator, username generator.
-15. 🎨 Custom structure for data storage at the backend and redux store on frontend, for user to store multiple educational and job experiences
+15. 🎨 Custom structure for data storage, in non primitive datatypes at the backend and redux store on frontend, for user to store multiple educational and job experiences
 
 ## 🧱 Tech Stack
 
