@@ -24,7 +24,7 @@ https://jobhunter-1-o7zz.onrender.com/
 11. 🔠 Autofill of details of recruiters in the job posting form.
 12. 🖱️ Conditional rendering of buttons for job page as per status of job corresponding to candidate and recruiter.
 13. ❌ Filtering of irrelevant jobs for candidate and recruiter in Find Jobs section.
-14. 🌻 Custom components such as dialog box, jobID generator, username generator.
+14. 🌻 Custom components such as dialog box, jobID generator, username generator, paginator, form validator at frontend.
 15. 🎨 Custom structure for data storage, in non primitive datatypes at the backend and redux store on frontend, for user to store multiple educational and job experiences
 
 ## 🧱 Tech Stack
