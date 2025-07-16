@@ -4,6 +4,8 @@ import expressAsyncHandler from "express-async-handler";
 import { jobIDSchema } from "../schema/JobIDschema";
 import { JobApplicationSchema } from "../schema/JobApplicationSchema";
 
+
+//THE PURPOSE OF THIS FUNCTION IS TO RETURN ALL THE JOB POSTINGS, AFTER FILTERING
 export const fetchAll = expressAsyncHandler(
   async (req: Request, res: Response) => {
     try {

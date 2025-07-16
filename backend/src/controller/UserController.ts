@@ -1,12 +1,10 @@
 import { client } from "../index";
-import { Request, Response, NextFunction, response } from "express";
+import { Request, Response } from "express";
 import expressAsyncHandler from "express-async-handler";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-
 import { Model } from "mongoose";
-import { JobApplicationSchema } from "../schema/JobApplicationSchema";
 
 dotenv.config();
 const SECRET_ACCESS_TOKEN = process.env.SECRET_ACCESS_TOKEN;

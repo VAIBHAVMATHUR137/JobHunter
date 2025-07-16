@@ -2,6 +2,7 @@ import expressAsyncHandler from "express-async-handler";
 import { Request, Response } from "express";
 import { JobApplicationSchema } from "../schema/JobApplicationSchema";
 import JobPosting from "../schema/JobPostingSchema";
+
 export const JobApplicationController = expressAsyncHandler(
   async (req: Request, res: Response) => {
     const { candidateProfile, job, recruiterUsername } = req.body;
@@ -37,6 +38,10 @@ export const screeningController = expressAsyncHandler(
         res.status(400).json({ Message: "Job field is mandatory" });
         return;
       }
+      if (!candidateUsername && !recruiterUsername) {
+        res.status(400).json({ Message: "Username is mandatory" });
+        return;
+      }
 
       // If the candidate's job application is undergoing verification
       if (!recruiterUsername && candidateUsername && jobID) {
@@ -50,7 +55,7 @@ export const screeningController = expressAsyncHandler(
           // Case where candidate has not applied for this job before
           res.status(200).json({
             hasApplied: false,
-            applicationDetails: null, 
+            applicationDetails: null,
           });
           return;
         } else {

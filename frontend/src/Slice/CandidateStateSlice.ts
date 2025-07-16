@@ -239,3 +239,4 @@ export const { candidateRegistrationReset, candidateRegistrationUpdate } =
   candidateRegistrationSlice.actions;
 export const candidateLoginReducer = candidateLoginSlice.reducer;
 export const candidateRegistrationReducer = candidateRegistrationSlice.reducer;
+

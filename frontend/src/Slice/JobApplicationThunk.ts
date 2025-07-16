@@ -249,6 +249,7 @@ export const screenApplicationThunk = createAsyncThunk<
     const url = data.recruiterUsername
       ? `/screening?jobID=${data.jobID}&recruiterUsername=${data.recruiterUsername}`
       : `/screening?jobID=${data.jobID}&candidateUsername=${data.candidateUsername}`;
+      console.log("URL is "+url)
     const response = await applicationsApi.get(url);
 
     if (response.status === 200) {
