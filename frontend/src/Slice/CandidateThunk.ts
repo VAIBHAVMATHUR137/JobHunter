@@ -373,6 +373,7 @@ export const candidateLogin = createAsyncThunk<
       data: response.data,
     };
   } catch (error) {
+    console.log(error)
     if (axios.isAxiosError(error)) {
       return rejectWithValue({
         message: error.response?.data?.message || "Login Failed",

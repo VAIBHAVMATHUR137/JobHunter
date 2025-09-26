@@ -243,9 +243,17 @@ export const userLogin = <T extends UserDB>(model: Model<T>, role: UserRole) =>
       refreshToken
     );
 
-    await client.set(`${modelName}_${user.username}_Access_Token`, accessToken);
-    client.set("key", "value");
-    client.get("key").then(console.log); // Should print 'value'
+    try {
+      await client.set(
+        `${modelName}_${user.username}_Access_Token`,
+        accessToken
+      );
+      client.set("key", "value");
+      client.get("key").then(console.log);
+      console.log('yo')
+    } catch (error) {
+      console.log("Fasaad ki jad " + error);
+    }
 
     // Prepare response
     const responseData = {
@@ -257,7 +265,7 @@ export const userLogin = <T extends UserDB>(model: Model<T>, role: UserRole) =>
         username: user.username,
       },
     };
-
+    console.log(responseData);
     res.status(200).json(responseData);
   });
 
