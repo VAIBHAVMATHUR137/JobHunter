@@ -1,6 +1,6 @@
 import axios from "axios";
 export const applicationsApi= axios.create({
-  baseURL: "https://jobhunter-1-o7zz.onrender.com/applications",
+  baseURL: "https://jobhunter-2-firj.onrender.com/applications",
 });
 
 export const addAuthHeaderForCandidate = () => {

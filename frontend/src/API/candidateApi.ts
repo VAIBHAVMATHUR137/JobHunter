@@ -1,6 +1,6 @@
 import axios from "axios";
 export const candidateApi = axios.create({
-  baseURL: "https://jobhunter-1-o7zz.onrender.com/candidate",
+  baseURL: "https://jobhunter-2-firj.onrender.com/candidate",
 });
 
 // Function to decode the token and extract expiration time
