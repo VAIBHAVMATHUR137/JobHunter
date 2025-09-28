@@ -168,7 +168,7 @@ const initialCandidateRegisterState: candidateAuthentication = {
 //common reducer to update the field
 const loginUpdateField = <T extends keyof loginFormState>(
   state: loginFormState,
-  action: PayloadAction<{ field: T; value: loginFormState[T] }>
+  action: PayloadAction<{ field: T; value: loginFormState[T]}>
 ) => {
   const { field, value } = action.payload;
   return {
