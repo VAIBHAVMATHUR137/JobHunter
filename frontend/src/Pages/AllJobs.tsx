@@ -47,60 +47,14 @@ function JobListing() {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
       <Navbar />
 
-      {/* Hero Section */}
-      <div className="bg-gradient-to-r from-purple-700 to-indigo-800 text-white py-16">
-        <div className="container mx-auto px-4">
-          <h1 className="text-4xl md:text-5xl font-bold text-center mb-4">
-            Find Your Dream Job
-          </h1>
-          <p className="text-lg md:text-xl text-center text-purple-100 max-w-2xl mx-auto">
-            Discover opportunities that match your skills and career aspirations
-          </p>
-        </div>
-      </div>
-
       <div className="container mx-auto px-4 py-12">
         {/* Stats Bar */}
         {!jobsData.isLoading &&
           !jobsData.error &&
           jobsData.jobData.length > 0 && (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-              <div className="bg-white rounded-lg shadow-md p-4 text-center">
-                <p className="text-3xl font-bold text-purple-600">
-                  {jobsData.jobData.length}
-                </p>
-                <p className="text-gray-600">Total Jobs</p>
-              </div>
-              <div className="bg-white rounded-lg shadow-md p-4 text-center">
-                <p className="text-3xl font-bold text-indigo-600">
-                  {
-                    jobsData.jobData.filter(
-                      (job) => job.work_environment === "Remote"
-                    ).length
-                  }
-                </p>
-                <p className="text-gray-600">Remote Jobs</p>
-              </div>
-              <div className="bg-white rounded-lg shadow-md p-4 text-center">
-                <p className="text-3xl font-bold text-violet-600">
-                  {
-                    jobsData.jobData.filter((job) => job.isFresherEligible)
-                      .length
-                  }
-                </p>
-                <p className="text-gray-600">Fresher Friendly</p>
-              </div>
-              <div className="bg-white rounded-lg shadow-md p-4 text-center">
-                <p className="text-3xl font-bold text-fuchsia-600">
-                  {
-                    jobsData.jobData.filter(
-                      (job) => job.type_of_employment === "Full-time"
-                    ).length
-                  }
-                </p>
-                <p className="text-gray-600">Full-time</p>
-              </div>
-            </div>
+            <h2 className="text-3xl mb-9">
+              {jobsData.jobData.length} Jobs available{" "}
+            </h2>
           )}
 
         {/* Loading State */}
@@ -149,7 +103,7 @@ function JobListing() {
               {jobsData.jobData.map((job, index) => (
                 <Card
                   key={job.work_environment || index}
-                  className="group w-full bg-white border-0 overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-all duration-300 relative"
+                  className="group w-full bg-white border-2 overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-all duration-300 relative"
                 >
                   {/* Card content that's clickable */}
                   <div
@@ -158,13 +112,10 @@ function JobListing() {
                       handleJobCardClick(job.jobID || index.toString())
                     }
                   >
-                    {/* Company badge at top */}
-                    <div className="h-3 bg-gradient-to-r from-purple-500 to-indigo-600"></div>
-
                     <CardContent className="p-6">
                       {/* Job title and company */}
                       <div className="mb-4">
-                        <h3 className="font-bold text-xl text-gray-800 group-hover:text-purple-700 transition-colors">
+                        <h3 className="font-bold text-xl text-gray-800 group-hover:text-black transition-colors">
                           {job.designation}
                         </h3>
                         <div className="flex items-center mt-1 text-gray-600">
@@ -265,7 +216,7 @@ function JobListing() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="text-purple-600 hover:text-purple-700 hover:bg-purple-50 group-hover:translate-x-1 transition-transform"
+                          className="text-white bg-orange-700 hover:text-black hover:bg-white group-hover:translate-x-1 transition-transform"
                         >
                           View Details <ExternalLink className="ml-1 h-3 w-3" />
                         </Button>

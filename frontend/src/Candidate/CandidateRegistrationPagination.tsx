@@ -114,14 +114,14 @@ const CandidateRegistrationPagination: React.FC<PaginationProps> = ({
 
   return (
     <div className="flex flex-col items-center space-y-4 w-full">
-      <div className="flex justify-between items-center w-full">
+      <div className="flex justify-between items-center w-full flex-wrap">
         <Button
           variant="outline"
           onClick={() => goToPage(currentPage - 1)}
           disabled={currentPage === 1}
           className="flex items-center"
         >
-          <ChevronLeft className="mr-2 h-4 w-4" /> Previous
+          <ChevronLeft className="h-4 w-1" /> 
         </Button>
         <div className="flex space-x-2">
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
@@ -146,7 +146,7 @@ const CandidateRegistrationPagination: React.FC<PaginationProps> = ({
             </>
           ) : (
             <>
-              Next <ChevronRight className="ml-2 h-4 w-4" />
+               <ChevronRight className=" h-4 w-1" />
             </>
           )}
         </Button>
