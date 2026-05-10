@@ -343,7 +343,7 @@ function JobPosting() {
                         <div className="flex items-center space-x-2">
                           <input
                             type="radio"
-                            id="yes"
+                            id="fresher_yes"
                             name="fresherApply"
                             value="true"
                             checked={jobState.isFresherEligible === true}
@@ -367,7 +367,7 @@ function JobPosting() {
                         <div className="flex items-center space-x-2">
                           <input
                             type="radio"
-                            id="no"
+                            id="fresher_no"
                             name="fresherApply"
                             value="false"
                             checked={jobState.isFresherEligible === false}
@@ -778,7 +778,7 @@ function JobPosting() {
                         <div className="flex items-center space-x-2">
                           <input
                             type="radio"
-                            id="yes"
+                            id="visa_yes"
                             name="visaSponsored"
                             value="true"
                             checked={jobState.isVisaSponsored === true}
@@ -802,7 +802,7 @@ function JobPosting() {
                         <div className="flex items-center space-x-2">
                           <input
                             type="radio"
-                            id="no"
+                            id="visa_no"
                             name="fresherApply"
                             value="false"
                             checked={jobState.isVisaSponsored === false}

@@ -17,7 +17,7 @@ const initialCTC: CTC = {
   maxCTC: "",
 };
 interface JobPosting {
-  designation:string,
+  designation: string;
   CTC: CTC;
   experience_required_in_months: string;
   isFresherEligible: boolean;
@@ -27,18 +27,18 @@ interface JobPosting {
   job_location: string[];
   company_name: string;
   skills_required: string[];
-  job_description:string;
+  job_description: string;
   type_of_employment: EmploymentType;
   perks_and_benefits: string;
   required_languages: string[];
   isVisaSponsored: boolean;
   username: string;
-  name:string;
-  email:string;
-  jobID:string
+  name: string;
+  email: string;
+  jobID: string;
 }
 const initialJobPosting: JobPosting = {
-  designation:"",
+  designation: "",
   CTC: initialCTC,
   experience_required_in_months: "",
   isFresherEligible: false,
@@ -47,37 +47,27 @@ const initialJobPosting: JobPosting = {
   work_environment: initialWorkEnvironment,
   job_location: [],
   company_name: "",
-  job_description:"",
+  job_description: "",
   skills_required: [],
   type_of_employment: initialEmploymentType,
   perks_and_benefits: "",
   required_languages: [],
   isVisaSponsored: false,
   username: "",
-  name:"",
-  email:"",
-  jobID:""
+  name: "",
+  email: "",
+  jobID: "",
 };
 
 export const updateJobPosting = <T extends keyof JobPosting>(
   state: JobPosting,
   action: PayloadAction<{ field: T; value: JobPosting[T] }>
 ) => {
-  const { field, value } = action.payload;
-  return {
-    ...state,
-    [field]: value,
-  };
+  state[action.payload.field] = action.payload.value;
 };
 
-export const resetJobPosting = <T extends keyof JobPosting>(
-  state: JobPosting,
-  action: PayloadAction<{ field: T }>
-) => {
-  return {
-    ...state,
-    [action.payload.field]: initialJobPosting[action.payload.field],
-  };
+export const resetJobPosting = () => {
+  return initialJobPosting;
 };
 
 const jobPostingSlice = createSlice({
