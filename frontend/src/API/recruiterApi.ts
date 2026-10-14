@@ -1,6 +1,7 @@
 import axios from "axios";
+import { url } from "./baseURL";
 export const recruiterApi = axios.create({
-  baseURL: "https://jobhunter-2-firj.onrender.com/recruiter"
+  baseURL: `${url}/recruiter`
 });
 
 // Track the refresh timer so we can clear it on logout
